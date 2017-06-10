@@ -121,6 +121,30 @@ class GUIComponent:
     
 
         
+class ImageComponent(GUIComponent):
+    """
+        for components which are images
+    """
+
+    def __init__(self, display_level, position, img, events_to_handle=[],
+                 events_actions=[], identifier=""):
+        """
+            for display_level, position, events_to_handle, events_actions, and
+            identifier, see GUIComponent
+
+            img :
+                will be the background of the GUIComponent
+                can be a string (= path to an image file) or a surface
+        """
+
+        if isinstance(img, str):
+            img = image.load(img).convert_alpha()
+
+        GUIComponent.__init__(self, display_level, position, img.get_size(),
+                              events_to_handle, events_actions, background=img,
+                              identifier=identifier)
+                              
+                
         
         
 

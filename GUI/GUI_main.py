@@ -16,11 +16,9 @@ def main():
     pygame.display.set_caption("Blackjack")
 
     charger_img()
-    
 
-    img_tapis = pygame.image.load("img/tapis_blackjack_big.png").convert_alpha()
     
-    tapis = GUIComponent(0, (0, 0), img_tapis.get_size(), [], [], img_tapis)
+    tapis = ImageComponent(0, (0, 0), "img/tapis_blackjack_big.png")
     main_joueur = MainGraphique([Carte(i, CARREAU) for i in range(1, 14)],
                                 (150, 300), HORIZONTAL, "main du joueur")
     
