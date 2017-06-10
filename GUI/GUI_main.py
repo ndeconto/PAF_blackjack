@@ -19,14 +19,12 @@ def main():
     
 
     img_tapis = pygame.image.load("img/tapis_blackjack_big.png").convert_alpha()
-    img_main = get_img(Main([Carte(i, COEUR) for i in range(1, 14)]),
-                       sens=HORIZONTAL)
-
     
     tapis = GUIComponent(0, (0, 0), img_tapis.get_size(), [], [], img_tapis)
-    as_de_coeur = GUIComponent(1, (150, 300), img_main.get_size(), [], [], img_main)
-        
-    game_manager = GUIComponentManager([tapis, as_de_coeur], 10)
+    main_joueur = MainGraphique([Carte(i, CARREAU) for i in range(1, 14)],
+                                (150, 300), HORIZONTAL, "main du joueur")
+    
+    game_manager = GUIComponentManager([tapis, main_joueur], 10)
 
     game_manager.run()
 

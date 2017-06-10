@@ -7,7 +7,7 @@ class GUIComponent:
 
     def __init__(self, display_level, position, size,
                  events_to_handle, events_actions,
-                 background=None):
+                 background=None, identifier=""):
 
         """
             parameters description :
@@ -37,6 +37,9 @@ class GUIComponent:
 
             background (optionnal):
                 background of the component
+
+            identifier (optionnal):
+                just to reconize the component easily
         """
 
 
@@ -45,6 +48,7 @@ class GUIComponent:
         self.size               =   size
         self.events_to_handle   =   events_to_handle
         self.background         =   background
+        self.id                 =   identifier
 
         self.alive              =   True
 

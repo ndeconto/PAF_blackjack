@@ -2,6 +2,7 @@
 #en images affichables par l'interface graphique
 
 from pygame import *
+from GUI_component import *
 
 
 import sys
@@ -101,7 +102,30 @@ def get_img(c, sens=VERTICAL):
         
 
     
+class MainGraphique(GUIComponent, Main):
+    """
+        objet graphique qui represente une Main de cartes
+    """
 
+    def __init__(self, contenu, position, sens=VERTICAL, identifier=""):
+        """
+            contenu = contenu de la Main
+            position = position a l'ecran
+            sens = cf get_img
+        """
+
+        Main.__init__(self, contenu)
+        img = get_img(self, sens)
+        self.sens = sens
+        GUIComponent.__init__(self, 1, position, img.get_size(), [], [], img,
+                              identifier)
+
+    def ajouter(self, nouvelle_carte): #redefinition de la methode
+        
+        Main.rajouter(self, nouvelle_carte)
+        self.background = get_img(self, self.sens)
+        
+            
             
 
     
