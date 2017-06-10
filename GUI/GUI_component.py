@@ -1,5 +1,7 @@
 from pygame import *
 
+from GUI_component_manager import CONTINUE, EXIT_MAIN_LOOP
+
 class GUIComponent:
     
 
@@ -42,12 +44,36 @@ class GUIComponent:
         self.position           =   position
         self.size               =   size
         self.events_to_handle   =   events_to_handle
-        self.bg                 =   background
+        self.background         =   background
+
+        self.alive              =   True
+
+
+    def update(self, other_components):
+        """
+            this method is called periodically, and can modify the component
+
+            this function returns a couple (list, boolean).
+            First, the list is a list of components which can contain :
+                self if this component is still "alive" ; if self is not present
+                    in that list, this component will be removed by the manager
+                new components which just have been created by this function
+
+
+            the returned boolean is True if self has been modified and should be
+            printed again, False otherwise
+            
+        """
+
+        if self.alive:
+            return (True, [self])
+
+        return []
 
         
 
 
-    def update(self):
+    def display(self):
         """
             prints the component on the screen
         """
@@ -55,18 +81,22 @@ class GUIComponent:
         if self.background == None: return
 
         r = Rect(self.position, self.size)
-        display.get_surface().blit(background, r)
+        display.get_surface().blit(self.background, r)
         display.update(r)
 
 
     #---------------------------------- TODO -------------------------------#
-    # the caller of this function should give extra paramters to this function
+    # the caller of this function should give extra parameters to this function
     #in order to enable it to use events_actions functions with context's
     #parameters
     def manage_event(self, event_list):
         """
             handles the events whose type is in self.events_to_handle
             ignores the others
+
+            this function must return GUI_component_manager.CONTINUE most of the
+            time, GUI_component_manager.EXIT_MAIN_LOOP to quit the main loop of
+            the component manager
         """
 
         #NB : loop's complexity is maybe not optimal...
@@ -80,6 +110,9 @@ class GUIComponent:
             # ------------------------------ TODO ----------------------------#
             # see commentar above for the parameters
             self.events_actions[i]()
+
+
+        return CONTINUE
 
     
 
