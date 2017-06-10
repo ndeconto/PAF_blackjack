@@ -2,7 +2,6 @@ from time import clock, sleep
 from pygame import *
 from pygame.locals import *
 
-
 CONTINUE                =   0
 EXIT_MAIN_LOOP          =   -1
 

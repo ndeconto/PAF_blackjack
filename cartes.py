@@ -130,8 +130,8 @@ class Main:
             self.valeur = [x + nouvelle_carte.valeur for x in self.valeur]
 
         else:
-            self.valeur = [[x + 1 for x in self.valeur],
-                           [x + 11 for x in self.valeur]]
+            self.valeur = ([x + 1 for x in self.valeur]
+                           + [x + 11 for x in self.valeur])
 
 
         
