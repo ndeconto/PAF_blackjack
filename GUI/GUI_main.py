@@ -25,7 +25,8 @@ def main():
     
     tapis = ImageComponent(0, (0, 0), "img/tapis_blackjack_big.png")
     main_joueur = MainGraphique([Carte(i, CARREAU) for i in range(1, 14)],
-                                (150, 300), HORIZONTAL, "main du joueur")
+                                (150, 300), HORIZONTAL, "main du joueur",
+                                [2 * i for i in range(7)])
     
     game_manager = GUIComponentManager([tapis, main_joueur], 20)
 
