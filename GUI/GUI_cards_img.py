@@ -28,7 +28,7 @@ DECALAGE_RELATIF_Y = .3
 img_cartes = [[None] * 13 for i in range(4)]
 
 
-def charger_img():
+def init_lib_cartes():
     """
         fonction d'initialisation
         doit etre appelee avant le premier appel a get_img !!!
@@ -124,6 +124,24 @@ class MainGraphique(GUIComponent, Main):
         
         Main.rajouter(self, nouvelle_carte)
         self.background = get_img(self, self.sens)
+
+
+    def manage_event(self, event_list):
+
+        GUIComponent.manage_event(self, event_list)
+
+        for ev in event_list:
+
+            if Rect(self.position, self.size).collidepoint(mouse.get_pos()) :
+
+                if ev.type == MOUSEBUTTONDOWN:
+                    x1, y1 = mouse.get_pos()
+                    x2, y2 = self.position
+                    self.offset = (x1 - x2, y1 - y2)
+
+                if ev.type == MOUSEMOTION and mouse.get_pressed()[0]:
+                    x, y = mouse.get_pos()
+                    self.position = (x - self.offset[0], y - self.offset[1])
         
             
             
