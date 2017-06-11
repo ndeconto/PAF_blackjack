@@ -120,6 +120,10 @@ class MainGraphique(GUIComponent, Main):
         GUIComponent.__init__(self, 1, position, img.get_size(), [], [], img,
                               identifier)
 
+
+        #pour deplacer les cartes
+        self.drag = False
+
     def ajouter(self, nouvelle_carte): #redefinition de la methode
         
         Main.rajouter(self, nouvelle_carte)
@@ -132,16 +136,21 @@ class MainGraphique(GUIComponent, Main):
 
         for ev in event_list:
 
-            if Rect(self.position, self.size).collidepoint(mouse.get_pos()) :
+            if (self.drag or
+                Rect(self.position, self.size).collidepoint(mouse.get_pos())) :
 
                 if ev.type == MOUSEBUTTONDOWN:
                     x1, y1 = mouse.get_pos()
                     x2, y2 = self.position
                     self.offset = (x1 - x2, y1 - y2)
+                    self.drag = True
 
                 if ev.type == MOUSEMOTION and mouse.get_pressed()[0]:
                     x, y = mouse.get_pos()
                     self.position = (x - self.offset[0], y - self.offset[1])
+
+                if ev.type == MOUSEBUTTONUP:
+                    self.drag = False
         
             
             
