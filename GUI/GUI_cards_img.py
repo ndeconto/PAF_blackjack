@@ -21,7 +21,7 @@ VERTICAL    =   1
 
 #decalage des cartes lorsqu'on en affiche plusieurs
 DECALAGE_RELATIF_X = .2
-DECALAGE_RELATIF_Y = .3
+DECALAGE_RELATIF_Y = .1
 
 
 #matrice 4 * 13 contenant les images
@@ -111,7 +111,7 @@ def get_img(c, sens=VERTICAL, face_cachee=[], d_x=DECALAGE_RELATIF_X,
         r = Rect(0, 0, TX, TY)
         for i, img in enumerate(l_img):
             s.blit(img, r)
-            r = Rect(i * dx, i * dy, TX, TY)
+            r = Rect((i + 1) * dx, (i + 1) * dy, TX, TY)
 
         return s
 
