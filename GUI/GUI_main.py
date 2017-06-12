@@ -27,8 +27,10 @@ def main():
     main_joueur = MainGraphique([Carte(i, CARREAU) for i in range(1, 14)],
                                 (150, 300), HORIZONTAL, "main du joueur",
                                 [2 * i for i in range(7)])
+
+    pioche = DeckGraphique((10, 10))
     
-    game_manager = GUIComponentManager([tapis, main_joueur], 20)
+    game_manager = GUIComponentManager([tapis, main_joueur, pioche], 20)
 
     game_manager.run()
 

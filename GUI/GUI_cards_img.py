@@ -50,7 +50,8 @@ def init_lib_cartes():
 
 
 
-def get_img(c, sens=VERTICAL, face_cachee=[]):
+def get_img(c, sens=VERTICAL, face_cachee=[], d_x=DECALAGE_RELATIF_X,
+            d_y=DECALAGE_RELATIF_Y):
     """
         prend en parametre une Carte ou une Main
         renvoie une image representant cet objet
@@ -64,6 +65,8 @@ def get_img(c, sens=VERTICAL, face_cachee=[]):
             contenu qui doivent etre affichees face cachee
             par exemple, face_cachee = [2, 5] signifie que les cartes contenu[2]
             et contenu[5] seront affichees face cachees
+
+        d_x, d_y : decalage de position relatif entre 2 cartes
     """
 
     if isinstance(c, Carte):
@@ -87,16 +90,16 @@ def get_img(c, sens=VERTICAL, face_cachee=[]):
         n = len(l_img)
 
         if sens == VERTICAL:
-            s = Surface((TX, TY * (1 + (n - 1) * DECALAGE_RELATIF_Y)), SRCALPHA, 32)
+            s = Surface((TX, TY * (1 + (n - 1) * d_y)), SRCALPHA, 32)
 
             dx = 0
-            dy = TY * DECALAGE_RELATIF_Y
+            dy = TY * d_y
             
 
         elif sens == HORIZONTAL:
-            s = Surface((TX * (1 + (n - 1) * DECALAGE_RELATIF_X), TY), SRCALPHA, 32)
+            s = Surface((TX * (1 + (n - 1) * d_x), TY), SRCALPHA, 32)
 
-            dx = TX * DECALAGE_RELATIF_X
+            dx = TX * d_x
             dy = 0
 
         else:
@@ -106,9 +109,9 @@ def get_img(c, sens=VERTICAL, face_cachee=[]):
 
 
         r = Rect(0, 0, TX, TY)
-        for img in l_img:
+        for i, img in enumerate(l_img):
             s.blit(img, r)
-            r.move_ip(dx, dy)
+            r = Rect(i * dx, i * dy, TX, TY)
 
         return s
 
@@ -124,17 +127,19 @@ class MainGraphique(GUIComponent, Main):
     """
 
     def __init__(self, contenu, position, sens=VERTICAL, identifier="",
-                 face_cachee=[]):
+                 face_cachee=[], d_x=DECALAGE_RELATIF_X, d_y=DECALAGE_RELATIF_Y):
         """
             contenu = contenu de la Main
             position = position a l'ecran
             sens = cf get_img
 
             face_cachee = cf get_img
+
+            d_x et d_y : cf get_img
         """
 
         Main.__init__(self, contenu)
-        img = get_img(self, sens, face_cachee)
+        img = get_img(self, sens, face_cachee, d_x, d_y)
         self.sens = sens
         GUIComponent.__init__(self, 1, position, img.get_size(), [], [], img,
                               identifier)
@@ -192,5 +197,12 @@ class MainGraphique(GUIComponent, Main):
         
             
             
+class DeckGraphique(MainGraphique, Deck):
 
+    def __init__(self, position):
+        
+        Deck.__init__(self)
+        MainGraphique.__init__(self, self.pile, position, HORIZONTAL, "",
+                               list(range(52)), d_x=0.001)
+    
     
