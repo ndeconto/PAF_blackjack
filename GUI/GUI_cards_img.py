@@ -12,7 +12,7 @@ from cartes import *
 
 
 #taille des cartes en pixels
-TX = 192
+TX = 192.3
 TY = 279
 
 #constantes pour parametrer l'affichage
@@ -87,14 +87,14 @@ def get_img(c, sens=VERTICAL, face_cachee=[]):
         n = len(l_img)
 
         if sens == VERTICAL:
-            s = Surface((TX, TY * (1 + (n - 1) * DECALAGE_RELATIF_Y)))
+            s = Surface((TX, TY * (1 + (n - 1) * DECALAGE_RELATIF_Y)), SRCALPHA, 32)
 
             dx = 0
             dy = TY * DECALAGE_RELATIF_Y
             
 
         elif sens == HORIZONTAL:
-            s = Surface((TX * (1 + (n - 1) * DECALAGE_RELATIF_X), TY))
+            s = Surface((TX * (1 + (n - 1) * DECALAGE_RELATIF_X), TY), SRCALPHA, 32)
 
             dx = TX * DECALAGE_RELATIF_X
             dy = 0
@@ -102,6 +102,8 @@ def get_img(c, sens=VERTICAL, face_cachee=[]):
         else:
             raise(ValueError("la valeur de sens = " + str(sens) + 
                              " n'est pas reconnue"))
+
+
 
         r = Rect(0, 0, TX, TY)
         for img in l_img:
@@ -185,6 +187,8 @@ class MainGraphique(GUIComponent, Main):
 
                 if ev.type == MOUSEBUTTONUP:
                     self.drag = False
+
+        return CONTINUE
         
             
             
