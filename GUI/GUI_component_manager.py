@@ -49,7 +49,6 @@ class GUIComponentManager:
 
             ev_list = event.get()
             new_component_list = []
-            need_display = []
 
 
             #manage "special" events
@@ -61,6 +60,7 @@ class GUIComponentManager:
 
             if not running : break
 
+           
 
             for c in self.component_list:
 
@@ -68,8 +68,7 @@ class GUIComponentManager:
                     running = False
                     break
                 
-                b, l = c.update(self.component_list)
-                need_display.extend([b] * len(l))
+                l = c.update(self.component_list)
                 new_component_list.extend(l)
 
             if not running : break
@@ -79,9 +78,15 @@ class GUIComponentManager:
             #sort by display_level
             index_order = [i for i, x in sorted(enumerate(new_component_list),
                                         key = lambda x : x[1].display_level)]
-            
+            to_update = []
+             
             for i in index_order :
-                if need_display[i] : new_component_list[i].display()
+                to_update.append(new_component_list[i].display())
+
+
+            #probably not optimal, to_update should be used to refresh modified
+            #parts only
+            display.flip()
 
 
             self.component_list = new_component_list

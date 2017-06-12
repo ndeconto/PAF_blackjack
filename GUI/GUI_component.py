@@ -57,22 +57,26 @@ class GUIComponent:
         """
             this method is called periodically, and can modify the component
 
-            this function returns a couple (list, boolean).
-            First, the list is a list of components which can contain :
+            this function returns a list.
+            This is a list of components which can contain :
                 self if this component is still "alive" ; if self is not present
                     in that list, this component will be removed by the manager
                 new components which just have been created by this function
-
-
-            the returned boolean is True if self has been modified and should be
-            printed again, False otherwise
-            
+        
         """
 
         if self.alive:
-            return (True, [self])
+            return [self]
 
         return []
+
+
+    def die(self):
+        """
+            removes proprely the component
+        """
+        
+        self.alive = False
 
         
 
@@ -80,13 +84,16 @@ class GUIComponent:
     def display(self):
         """
             prints the component on the screen
+            must return the area which has to be refresh on screen
+            if nothing has been displayed, it can return Rect(0, 0, 0, 0)
         """
 
         if self.background == None: return
 
         r = Rect(self.position, self.size)
         display.get_surface().blit(self.background, r)
-        display.update(r)
+
+        return r
 
 
     #---------------------------------- TODO -------------------------------#
