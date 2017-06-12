@@ -186,12 +186,16 @@ class MainGraphique(GUIComponent, Main):
                     self.offset = (x1 - x2, y1 - y2)
                     self.drag = True
 
-                if ev.type == MOUSEMOTION and mouse.get_pressed()[0]:
+                    self.display_level += .5
+
+                if self.drag and ev.type == MOUSEMOTION and mouse.get_pressed()[0]:
                     x, y = mouse.get_pos()
                     self.position = (x - self.offset[0], y - self.offset[1])
 
                 if ev.type == MOUSEBUTTONUP:
                     self.drag = False
+
+                    self.display_level -= .5
 
         return CONTINUE
         
