@@ -27,6 +27,10 @@ def main():
 
     pioche = DeckGraphique((10, 10))
 
+    # il va falloir un "arbitre" pour mettre fin a la partie, donner la liste
+    # des cartes visibles aux autres joueurs, leur dire quelles cartes sont
+    # tombees...
+
     main_banque = MainGraphique([pioche.piocher() for i in range(2)], (700, 10),
                                 face_cachee = [0])
 

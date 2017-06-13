@@ -91,8 +91,6 @@ class GUIComponentManager:
 
             self.component_list = new_component_list
 
-            print [c.display_level for c in self.component_list]
-
 
             sleep(max(0, self.period - (clock() - t_start)))
 
