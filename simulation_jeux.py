@@ -18,7 +18,7 @@ def win(state):
         return(1)
     elif ((state < state_oponent) and (state_oponent < 22)):
         return(-1)
-    elif (state == state_oponant):
+    elif (state == state_oponent):
         return(0)
     elif (state > 21 and state_oponent > 21):
         return(-1)          #Dans les regles qu'on prend nous, considerons que les deux dépassent donne une perte.
@@ -58,7 +58,8 @@ def manche():
     #Boucle de jeu. Pour l'instant seulement deux actions. A adapter si on veut plus d'actions.
     while (decision == 1): 
         carte = input("Hauteur de la carte tirée : ")
-        main_en_cours.ajouter(Carte(int(carte),COEUR))
+        carte = Carte(int(carte),COEUR)
+        main_en_cours.ajouter(carte)
         #selon la carte tirée, MAJ de la main puis de la valeur state
         if (isinstance(carte.get_valeur(),int)):
             state = state + carte.get_valeur()
