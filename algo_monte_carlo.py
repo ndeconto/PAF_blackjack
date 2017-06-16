@@ -13,6 +13,7 @@ def updateValue(statesActionsList,result):    #statesActionsList est la liste de
 		pi = policy[cpl[0]][cpl[1]];          #pi est le poids (toujours positif) de la décision cpl[1] dans l'état cpl[0]
 		pi = (result + alpha*pi);             #mise à jour du poids
 		if pi<epsilon/(1-alpha) : pi = epsilon/(1-alpha);         #on est à epsilon-greedy transition (sans oublier la normalisation)
+		policy[cpl[0]][cpl[1]] = pi
 		
 def getRealValues():          #renvoie le poids de chaque décision normalisé
 	return(policy*(1-alpha));

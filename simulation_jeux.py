@@ -80,7 +80,7 @@ def manche():
     updateValue(statesActions,result)
     
     
-    
+manche()
         
     
     
