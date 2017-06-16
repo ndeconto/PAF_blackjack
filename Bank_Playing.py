@@ -8,39 +8,24 @@ Created on Fri Jun 16 14:57:12 2017
 
 from cartes import *
 
-#Définition du paquet de cartes
-paquet = Deck()
 
-def bank_playing():
-    
-    #Main de la banque
-    carte1 = paquet.piocher()
-    carte2 = paquet.piocher()
-    bank_hand = [carte1,carte2]
-    
-    #Début calcul etat initial
+def bank_playing(bank_hand): #parametre = la main de la banque à un instant T
+    #DEBUT calcul de la valeur optimale de la main de la banque
     somme = 0
-    if (isinstance(carte1.get_valeur(),int) and isinstance(carte2.get_valeur(),int)):
-        somme = carte1.get_valeur() + carte2.get_valeur()
-    elif (not((isinstance(carte1.get_valeur(),int))) and (isinstance(carte2.get_valeur(),int))):
-        somme = 11 + carte2.get_valeur()
-    elif (isinstance(carte1.get_valeur(),int) and not(isinstance(carte2.get_valeur(),int))):
-        somme = carte1.get_valeur() + 11
-    else :
-        somme = 12
-    #fin
-        
-    #Définition de la stratégie de la banque
-    while (somme < 17) : 
-        carte = paquet.piocher()
-        card_value = carte.get_valeur()
-        if (not(isinstance(card,int))):
-            if (somme < 11):
-                somme = somme + 11
-            else :
-                somme = somme + 1
-        else : 
-            somme = somme + card_value
+    val_possibles = bank_hand.valeur
+    print(val_possibles)
+    taille = len(val_possibles)
+    print (taille)
+    for k in range(taille):
+        if (val_possibles[k] > somme):
+            somme = val_possibles[k]
+    #FIN
     
+    #Définition de la stratégie de la banque : pioche à 16, s'arretes à 17
+    if (somme < 17):
+        return(1)
+    else :
+        return(0)
+#0:draw => on s'arretes, 1:fold => on continue
 
     
