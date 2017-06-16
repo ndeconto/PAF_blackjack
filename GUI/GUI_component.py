@@ -153,7 +153,44 @@ class ImageComponent(GUIComponent):
                               
                 
         
+class Bouton(ImageComponent):
+
+    def __init__(self, display_level, position, img, on_click, identifier=""):
+        """
+            represente un bouton d'image img.
+            onClick doit etre une fonction sans parametre qui est appelee
+            quand on clique sur le bouton
+        """
+
+        ImageComponent.__init__(self, display_level, position, img,
+                                identifier=identifier)
+
+        self.on_click = on_click
+
+        self.click_in = False
+
+
+    def manage_event(self, ev_list):
         
+        ImageComponent.manage_event(self, ev_list)
+
+        for ev in ev_list:
+
+
+            if (ev.type == MOUSEBUTTONDOWN and
+                Rect(self.position, self.size).collidepoint(mouse.get_pos())):
+
+                self.click_in = True
+
+
+            if ev.type == MOUSEBUTTONUP :
+
+                if Rect(self.position, self.size).collidepoint(mouse.get_pos()):
+
+                    if self.click_in: self.on_click()
+
+                else :
+                    self.click_in = False
 
         
 

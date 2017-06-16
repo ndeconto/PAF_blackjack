@@ -4,7 +4,8 @@ from pygame.locals import *
 from GUI_component_manager import *
 from GUI_component import *
 from GUI_cards_img import*
-
+from GUI_players import *
+from GUI_arbitre_bj import *
 
 
 def init_GUI():
@@ -16,31 +17,52 @@ def init_GUI():
     #TODO mettre une icone
 
 
+def stop_button_action(joueur_humain, joueur_ordi):
+    def f():
+        joueur_humain.sarreter()
+        joueur_ordi.commencer_tour()
+    return f
+
 def main():
+
+
     
-    
+    # ----------   intialisation  ----------------- #
     init_GUI()
     init_lib_cartes()
+
+
+
+
+    # ---------- creation des composants de la GUI -------- #
 
     
     tapis = ImageComponent(0, (0, 0), "img/tapis_blackjack_big.png")
 
     pioche = DeckGraphique((10, 10))
 
-    # il va falloir un "arbitre" pour mettre fin a la partie, donner la liste
-    # des cartes visibles aux autres joueurs, leur dire quelles cartes sont
-    # tombees...
+    joueur_humain = JoueurHumain((150, 300), pioche, "humain")
+    joueur_ordi = JoueurOrdi((700, 10), pioche, "IA")
 
-    main_banque = MainGraphique([pioche.piocher() for i in range(2)], (700, 10),
-                                face_cachee = [0])
+    arbitre = Arbitre()
+
+
+    bouton_piocher = Bouton(2, (500, 200), "img/bouton_piocher.png",
+                            joueur_humain.piocher)
+
+    bouton_stop = Bouton(2, (600, 300), "img/bouton_stop.png",
+                         stop_button_action(joueur_humain, joueur_ordi))
 
     
-    main_joueur = MainGraphique([pioche.piocher() for i in range(2)],
-                                (150, 300), HORIZONTAL, "main du joueur")
 
-    
-    
-    game_manager = GUIComponentManager([tapis, main_joueur, pioche, main_banque], 20)
+
+
+    # ---------- on donne tous les composants a un manager ------------ #
+    # le manager se debrouille avec tout ca et fait sa cuisine
+    game_manager = GUIComponentManager([tapis, joueur_humain, joueur_ordi,
+                                        pioche, bouton_piocher, bouton_stop,
+                                        arbitre],
+                                       20)
 
     game_manager.run()
 

@@ -155,8 +155,9 @@ class MainGraphique(GUIComponent, Main):
 
     def ajouter(self, nouvelle_carte): #redefinition de la methode de Main
         
-        Main.rajouter(self, nouvelle_carte)
+        Main.ajouter(self, nouvelle_carte)
         self.background = get_img(self, self.sens)
+        self.size = self.background.get_size()
 
     def retourner_carte(self, i):
         """
