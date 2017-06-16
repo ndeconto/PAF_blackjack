@@ -130,8 +130,16 @@ class Main:
             self.valeur = [x + nouvelle_carte.valeur for x in self.valeur]
 
         else:
-            self.valeur = ([x + 1 for x in self.valeur]
-                           + [x + 11 for x in self.valeur])
+            #NB : s'il y a deux as, le deuxieme as est forcement compte comme
+            #un 1 (et le premier reste au choix 1 ou 11)
+            # NB 2 : ne pas se faire avoir pas le cas d'initialisation !
+            # (self.valeur == [0])
+            if self.valeur == [0] or (not (AS in self.contenu)):
+                self.valeur = ([x + 1 for x in self.valeur]
+                               + [x + 11 for x in self.valeur])
+
+            else :
+                self.valeur = [x + 1 for x in self.valeur]
 
 
         

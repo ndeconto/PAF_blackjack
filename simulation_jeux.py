@@ -15,13 +15,15 @@ def win(state):
     state_oponent = input("Entrez l'état du jeu adverse : ") #Etat du jeu de la personne en face
     state_oponent = int(state_oponent)
     if ((state > state_oponent) and (state < 22)):
-        return(1)
+        return(2)
     elif ((state < state_oponent) and (state_oponent < 22)):
-        return(-1)
-    elif (state == state_oponent):
         return(0)
+    elif (state>21 and state_oponent<22):
+        return(0)
+    elif (state == state_oponent):
+        return(1)
     elif (state > 21 and state_oponent > 21):
-        return(-1)          #Dans les regles qu'on prend nous, considerons que les deux dépassent donne une perte.
+        return(0)          #Dans les regles qu'on prend nous, considerons que les deux dépassent donne une perte.
 
 
 
@@ -29,7 +31,6 @@ def win(state):
 def manche(): 
     """Fonction qui representera une main
        Pour l'instant, les cartes ne sont pas pioché par python"""
-
     
     carte1 = input("Premiere carte reçue (hauteur de la carte seulement) : ")   #Respecter la syntaxe du package cartes.py
     carte2 = input("Seconde carte reçue (hauteur de la carte seulement) : ")
@@ -47,16 +48,16 @@ def manche():
     else :
         state = 12
     #fin
-    
+
     
     #premiere prise de décision
     decision = makeDecision(state)
     if state<12 : ind = 0
-    elif state>21 : ind = -1
+    elif state>21 : ind = 11
     else: ind = state-11
     statesActions.append([ind,decision]) 
     #Boucle de jeu. Pour l'instant seulement deux actions. A adapter si on veut plus d'actions.
-    while (decision == 1): 
+    while (decision == 1 and state<22): 
         carte = input("Hauteur de la carte tirée : ")
         carte = Carte(int(carte),COEUR)
         main_en_cours.ajouter(carte)
@@ -70,17 +71,27 @@ def manche():
             else :
                 state = state + 11
         decision = makeDecision(state)
+        print(decision)
         if state<12 : ind = 0
-        elif state>21 : ind = -1
+        elif state>21 : ind = 11
         else: ind = state-11
         statesActions.append([ind,decision])
     
     #On est à la fin de la manche : on connait l'état, reste à évaluer si c'est un gain ou une perte. Pour l'instant gain unitaire.
     result = win(state)
-    updateValue(statesActions,result)
+    print(statesActions)
+    updateValue(statesActions,result, mypolicy)
+ 
+
+def updateValue(statesActionsList,result,mypolicy):#statesActionsList est la liste de couples des (états; actions) prises lors de la partie
+    for cpl in statesActionsList:
+        pi = mypolicy[cpl[0]][cpl[1]];          #pi est le poids (toujours positif) de la décision cpl[1] dans l'état cpl[0]
+        pi = (result + alpha*pi);             #mise à jour du poids
+        #if pi<epsilon/(1-alpha) : pi = epsilon/(1-alpha);         #on est à epsilon-greedy transition (sans oublier la normalisation)
+        mypolicy[cpl[0]][cpl[1]] = pi			  #mise à jour de policy
     
-    
-    
+
+manche()
         
     
     
