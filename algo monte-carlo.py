@@ -24,7 +24,7 @@ def makeDecision(state):      #renvoie une décision étant donné un état
 		summ += i;
 	x = random()*summ;
 	decis = 0;
-	for i in range len(coeff):
+	for i in range (len(coeff)):
 		decis += coeff[i];
 		if x <= decis : return(i);   #prise de décision aléatoire
 	return(len(coeff)-1);
