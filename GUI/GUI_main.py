@@ -25,6 +25,9 @@ def stop_button_action(joueur_humain, joueur_ordi):
 
 def main():
 
+    X_PREMIER_BOUTON = 150
+    D_X_BOUTON = 200
+    Y_BOUTON = 670
 
     
     # ----------   intialisation  ----------------- #
@@ -47,11 +50,21 @@ def main():
     arbitre = Arbitre()
 
 
-    bouton_piocher = Bouton(2, (500, 200), "img/bouton_piocher.png",
+    bouton_piocher = Bouton(2, (X_PREMIER_BOUTON, Y_BOUTON),
+                            "img/bouton_piocher.png",
                             joueur_humain.piocher)
 
-    bouton_stop = Bouton(2, (600, 300), "img/bouton_stop.png",
+    bouton_stop = Bouton(2, (X_PREMIER_BOUTON + D_X_BOUTON, Y_BOUTON),
+                         "img/bouton_stop.png",
                          stop_button_action(joueur_humain, joueur_ordi))
+
+    bouton_split = Bouton(2, (X_PREMIER_BOUTON + 2 * D_X_BOUTON, Y_BOUTON),
+                          "img/bouton_split.png",
+                          lambda : None)
+
+    bouton_double = Bouton(2, (X_PREMIER_BOUTON + 3 * D_X_BOUTON, Y_BOUTON),
+                           "img/bouton_double.png",
+                           lambda : None)
 
     
 
@@ -61,7 +74,7 @@ def main():
     # le manager se debrouille avec tout ca et fait sa cuisine
     game_manager = GUIComponentManager([tapis, joueur_humain, joueur_ordi,
                                         pioche, bouton_piocher, bouton_stop,
-                                        arbitre],
+                                        arbitre, bouton_split, bouton_double],
                                        20)
 
     game_manager.run()

@@ -21,7 +21,7 @@ VERTICAL    =   1
 
 #decalage des cartes lorsqu'on en affiche plusieurs
 DECALAGE_RELATIF_X = .2
-DECALAGE_RELATIF_Y = .1
+DECALAGE_RELATIF_Y = .2
 
 
 #matrice 4 * 13 contenant les images

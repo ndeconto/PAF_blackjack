@@ -38,7 +38,8 @@ class Arbitre(GUIComponent):
 
             if isinstance(c, JoueurOrdi):
                 c.arreter_tour()
-            
+                
+        #TODO creer un ecran de finn de partie 
         return [self]
 
             
