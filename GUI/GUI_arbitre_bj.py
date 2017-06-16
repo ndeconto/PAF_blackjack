@@ -30,9 +30,16 @@ class Arbitre(GUIComponent):
         """
 
         for c in other_components :
-            c.die()
 
-        return [] 
+
+            if isinstance(c, Bouton):
+                c.desactiver()
+
+
+            if isinstance(c, JoueurOrdi):
+                c.arreter_tour()
+            
+        return [self]
 
             
 

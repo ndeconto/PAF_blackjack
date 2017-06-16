@@ -169,6 +169,20 @@ class Bouton(ImageComponent):
 
         self.click_in = False
 
+        self.enable = True
+
+
+
+    def activer(self):
+        """
+            quand le bouton est actif, on peut cliquer dessus
+            quand il est inactif, ca ne fait rien
+        """
+        self.enable = True
+
+    def desactiver(self):
+        self.enable = False
+
 
     def manage_event(self, ev_list):
         
@@ -187,7 +201,7 @@ class Bouton(ImageComponent):
 
                 if Rect(self.position, self.size).collidepoint(mouse.get_pos()):
 
-                    if self.click_in: self.on_click()
+                    if self.click_in and self.enable: self.on_click()
 
                 else :
                     self.click_in = False

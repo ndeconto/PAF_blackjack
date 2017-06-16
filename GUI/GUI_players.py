@@ -143,6 +143,10 @@ class JoueurOrdi(Joueur):
 
         self.playing = True
 
+
+    def arreter_tour(self):
+        self.playing = False
+
         
 
     def jouer(self, carte_adversaire, l_cartes_passees):
