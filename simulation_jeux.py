@@ -24,7 +24,7 @@ def win(state):
         return(-1)          #Dans les regles qu'on prend nous, considerons que les deux dépassent donne une perte.
 
 class Jouer : 
-    game = AlgoMC
+    game = AlgoMC()
     play = input("Entrez 'play' pour jouer une autre manche")  #entrer "play" pour jouer une manche
     if (play == "play"):
         Manche()
