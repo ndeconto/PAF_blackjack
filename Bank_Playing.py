@@ -16,13 +16,15 @@ def bank_playing(bank_hand): #parametre = la main de la banque à un instant T
     print(val_possibles)
     taille = len(val_possibles)
     print (taille)
+    
+"""    
     for k in range(taille):
         if (val_possibles[k] > somme):
             somme = val_possibles[k]
     #FIN
-    
+"""    
     #Définition de la stratégie de la banque : pioche à 16, s'arretes à 17
-    if (somme < 17):
+    if (val_possibles[0] < 17 or val_possibles[1] < 17):
         return(1)
     else :
         return(0)

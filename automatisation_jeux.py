@@ -5,78 +5,88 @@ Created on Fri Jun 16 15:41:44 2017
 
 @author: majdagoumi
 """
+from cartes import *
+from algo_monte_carlo import *
+
 
 #Définition du paquet de cartes
 paquet = Deck()
 
 Bank_Hand_used = Main([paquet.piocher()])
-Player_Hand_used = Main([paquet.piocher()])
+carte = paquet.piocher()
+Player_Hand_used = [Main([carte])]##Mettre la valeur 1 de l'AS
+#Gestion du cas de l'AS
 
+global premierAs
+premierAs = False
+
+if (isinstance(carte.get_valeur(),int) == False):
+    Player_Hand_used.append(Main([carte])) ##Mettre la valeur 11 de l'AS
+    premierAs = True
+else:
+    premierAs = False
 
 
 def manche():
-    statesActions = []
-    decision = tour(Player_Hand_used,statesActions)
-    while (decision == 1 and state<22):
-        Player_Hand_used.piocher()
-        #MAJ de la valeur de la main
-        tableau_valeur_poosibles_joueur = Player_Hand_used.valeur
-        state = 0
-        for k in range (len(tableau_valeur_poosibles_joueur)):
-            if (tableau_valeur_poosibles_joueur[k] > state and tableau_valeur_poosibles_joueur[k] < 22):
-                state = tableau_valeur_poosibles_joueur[k]   
-
-
-
-
-
-
-
+    statesActions = [[] for k in range (len(Player_Hand_used))]
+    forward = 1
+    while (forward == 1):
+        forward = tour(Player_Hand_used,statesActions)
+            
+        
+decision0 = 1
+decision1 = 1
 #Adaptation de la simulation joueur
-def tour(player_hand,statesActions): 
-    """Fonction qui representera une main
-       Pour l'instant, les cartes ne sont pas pioché par python"""
-    #Début calcul etat initial
-    tableau_valeur_poosibles_joueur = player_hand.valeur
-    state = 0
-    for k in range (len(tableau_valeur_poosibles_joueur)):
-        if (tableau_valeur_poosibles_joueur[k] > state and tableau_valeur_poosibles_joueur[k] < 22):
-            state = tableau_valeur_poosibles_joueur[k]   
-    #fin
-
-    
-    #premiere prise de décision
-    decision = makeDecision(state)
-    if state<12 : ind = 0
-    elif state>21 : ind = 11
-    else: ind = state-11
-    statesActions.append([ind,decision]) 
-    return(decision)
-    
-    
-    #Boucle de jeu. Pour l'instant seulement deux actions. A adapter si on veut plus d'actions.
-    while (decision == 1 and state<22): 
-        carte = input("Hauteur de la carte tirée : ")
-        carte = Carte(int(carte),COEUR)
-        main_en_cours.ajouter(carte)
-        #selon la carte tirée, MAJ de la main puis de la valeur state
-        if (isinstance(carte.get_valeur(),int)):
-            state = state + carte.get_valeur()
-        else :
-            choix = input("Choisissez la valeur de votre AS : '1' ou '11' : ")                 #Choisir la valeur de notre As : 1 ou 11
-            if (choix == '1'):
-                state = state + 1
-            else :
-                state = state + 11
+def tour(hand,statesActions): 
+    """renvoie une prise de décision et modifie la main du joueur"""
+    if (premierAs == True):
+        ###On traite le cas ou le premier as compte pour 1
+        if decision0 == 1 :
+            state0 = Player_Hand_used[0].valeur
+            decision0 = makeDecision(state0)
+            if state0<12 : ind = 0
+            elif state0>21 : ind = 11
+            else: ind = state0-11
+            statesActions[0].append([ind,decision0])
+        ###Cas ou l'as vaut 11
+        if decision1 == 1 :
+            state1 = Player_Hand_used[0].valeur
+            decision1 = makeDecision(state0)
+            if state1<12 : ind = 0
+            elif state1>21 : ind = 11
+            else: ind = state1-11
+            statesActions[1].append([ind,decision1])
+        if (decision0 == 1 or decision1 ==1):
+            carte = paquet.piocher()
+            if decision0==1:
+                if (isinstance(carte.get_valeur(),int) == False):
+                    Player_Hand_used[0].ajouter(Carte(ASUN,carte.couleur))
+                else:
+                    Player_Hand_used[0].ajouter(carte)
+            if decision1 == 1:
+                if (isinstance(carte.get_valeur(),int) == False):
+                    Player_Hand_used[1].ajouter(Carte(ASUN,carte.couleur))
+                else:
+                    Player_Hand_used[1].ajouter(carte)
+            return 1
+        return 0
+    else :
+        state = Player_Hand_used[0].valeur
         decision = makeDecision(state)
-        print(decision)
         if state<12 : ind = 0
         elif state>21 : ind = 11
         else: ind = state-11
-        statesActions.append([ind,decision])
-    
-    #On est à la fin de la manche : on connait l'état, reste à évaluer si c'est un gain ou une perte. Pour l'instant gain unitaire.
-    result = win(state)
-    print(statesActions)
-    updateValue(statesActions,result, mypolicy)
- 
+        statesActions[0].append([ind,decision])
+        if (decision == 1):
+            carte = paquet.piocher()
+            if (isinstance(carte.get_valeur(),int) == False):
+                Player_Hand_used.append(copy.deepcopy(Player_Hand_used[0])) 
+                statesActions.append(copy.deepcopy(statesActions[0]))
+                Player_Hand_used[0].ajouter(Carte(ASUN,carte.couleur))
+                Player_Hand_used[0].ajouter(Carte(ASONZE,carte.couleur))
+                premierAs = True
+            else :
+                Player_Hand_used[0].ajouter(carte)
+            return(1)
+        else:
+            return(0)

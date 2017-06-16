@@ -2,12 +2,12 @@ import random
 #definition des constantes bien pratiques 
 
 
-VALET   = 12
-DAME    = 13
-ROI     = 14
+VALET   = 11
+DAME    = 12
+ROI     = 13
 AS      = 0
 ASUN    = 1
-ASONZE  = 11
+ASONZE  = 18
 
 COEUR   =   14
 PIQUE   =   15
@@ -53,10 +53,10 @@ class Carte:
             NB : POUR UN AS, CETTE METHODE RENVOIE UNE LISTE !!
         """
 
-        if 1 <= self.hauteur <= 14: return self.hauteur
+        if 1 <= self.hauteur <= 13: return min(self.hauteur,10)
 
         if self.hauteur == AS: return [1, 11]
-
+        if self.hauteur == ASONZE: return(11)
         return 10
 
 
