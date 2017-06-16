@@ -2,6 +2,8 @@
 from random import *;
 
 class AlgoMC :
+    
+    def __init__(self):
 
 	actions = {"draw":0, "fold":1};        #Set d'actions disponibles
 	states = range(12);           #Set de states disponibles {<12, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, >21}
