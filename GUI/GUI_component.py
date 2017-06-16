@@ -7,7 +7,7 @@ class GUIComponent:
 
     def __init__(self, display_level, position, size,
                  events_to_handle, events_actions,
-                 background=None):
+                 background=None, identifier=""):
 
         """
             parameters description :
@@ -37,6 +37,9 @@ class GUIComponent:
 
             background (optionnal):
                 background of the component
+
+            identifier (optionnal):
+                just to reconize the component easily
         """
 
 
@@ -45,6 +48,7 @@ class GUIComponent:
         self.size               =   size
         self.events_to_handle   =   events_to_handle
         self.background         =   background
+        self.id                 =   identifier
 
         self.alive              =   True
 
@@ -53,22 +57,26 @@ class GUIComponent:
         """
             this method is called periodically, and can modify the component
 
-            this function returns a couple (list, boolean).
-            First, the list is a list of components which can contain :
+            this function returns a list.
+            This is a list of components which can contain :
                 self if this component is still "alive" ; if self is not present
                     in that list, this component will be removed by the manager
                 new components which just have been created by this function
-
-
-            the returned boolean is True if self has been modified and should be
-            printed again, False otherwise
-            
+        
         """
 
         if self.alive:
-            return (True, [self])
+            return [self]
 
         return []
+
+
+    def die(self):
+        """
+            removes proprely the component
+        """
+        
+        self.alive = False
 
         
 
@@ -76,13 +84,16 @@ class GUIComponent:
     def display(self):
         """
             prints the component on the screen
+            must return the area which has to be refresh on screen
+            if nothing has been displayed, it can return Rect(0, 0, 0, 0)
         """
 
         if self.background == None: return
 
         r = Rect(self.position, self.size)
         display.get_surface().blit(self.background, r)
-        display.update(r)
+
+        return r
 
 
     #---------------------------------- TODO -------------------------------#
@@ -117,8 +128,83 @@ class GUIComponent:
     
 
         
+class ImageComponent(GUIComponent):
+    """
+        for components which are images
+    """
+
+    def __init__(self, display_level, position, img, events_to_handle=[],
+                 events_actions=[], identifier=""):
+        """
+            for display_level, position, events_to_handle, events_actions, and
+            identifier, see GUIComponent
+
+            img :
+                will be the background of the GUIComponent
+                can be a string (= path to an image file) or a surface
+        """
+
+        if isinstance(img, str):
+            img = image.load(img).convert_alpha()
+
+        GUIComponent.__init__(self, display_level, position, img.get_size(),
+                              events_to_handle, events_actions, background=img,
+                              identifier=identifier)
+                              
+                
         
+class Bouton(ImageComponent):
+
+    def __init__(self, display_level, position, img, on_click, identifier=""):
+        """
+            represente un bouton d'image img.
+            onClick doit etre une fonction sans parametre qui est appelee
+            quand on clique sur le bouton
+        """
+
+        ImageComponent.__init__(self, display_level, position, img,
+                                identifier=identifier)
+
+        self.on_click = on_click
+
+        self.click_in = False
+
+        self.enable = True
+
+
+
+    def activer(self):
+        """
+            quand le bouton est actif, on peut cliquer dessus
+            quand il est inactif, ca ne fait rien
+        """
+        self.enable = True
+
+    def desactiver(self):
+        self.enable = False
+
+
+    def manage_event(self, ev_list):
         
+        ImageComponent.manage_event(self, ev_list)
+
+        for ev in ev_list:
+
+
+            if (ev.type == MOUSEBUTTONDOWN and
+                Rect(self.position, self.size).collidepoint(mouse.get_pos())):
+
+                self.click_in = True
+
+
+            if ev.type == MOUSEBUTTONUP :
+
+                if Rect(self.position, self.size).collidepoint(mouse.get_pos()):
+
+                    if self.click_in and self.enable: self.on_click()
+
+                else :
+                    self.click_in = False
 
         
 
