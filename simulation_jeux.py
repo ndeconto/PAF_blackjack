@@ -11,9 +11,7 @@ Created on Fri Jun 16 10:37:38 2017
 from cartes import *
 from algo_monte_carlo import *
 
-def win(state):
-    state_oponent = input("Entrez l'état du jeu adverse : ") #Etat du jeu de la personne en face
-    state_oponent = int(state_oponent)
+def win(state, state_oponent):
     if ((state > state_oponent) and (state < 22)):
         return(2)
     elif ((state < state_oponent) and (state_oponent < 22)):
@@ -34,6 +32,7 @@ def manche():
     
     carte1 = input("Premiere carte reçue (hauteur de la carte seulement) : ")   #Respecter la syntaxe du package cartes.py
     carte2 = input("Seconde carte reçue (hauteur de la carte seulement) : ")
+    state_oponent = int(input("Entrez l'état du jeu adverse : ")) #Etat du jeu de la personne en face
     carte1, carte2 = Carte(int(carte1), COEUR), Carte(int(carte2), COEUR)
     main_en_cours = Main([carte1,carte2])
     
@@ -51,7 +50,7 @@ def manche():
 
     
     #premiere prise de décision
-    decision = makeDecision(state)
+    decision = makeDecision(state,state_oponent)
     if state<12 : ind = 0
     elif state>21 : ind = 11
     else: ind = state-11
@@ -78,7 +77,7 @@ def manche():
         statesActions.append([ind,decision])
     
     #On est à la fin de la manche : on connait l'état, reste à évaluer si c'est un gain ou une perte. Pour l'instant gain unitaire.
-    result = win(state)
+    result = win(state,state_oponent)
     print(statesActions)
     updateValue(statesActions,result, mypolicy)
  
