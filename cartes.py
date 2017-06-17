@@ -170,7 +170,7 @@ class Deck:
     """
 
     def __init__(self):
-        self.pile = [Carte(i, j) for i in range(AS, ROI + 1)
+        self.pile = [Carte(i, j) for i in range(ASUN, ROI + 1)
                      for j in [COEUR, PIQUE, CARREAU, TREFLE]]
 
         random.shuffle(self.pile)
