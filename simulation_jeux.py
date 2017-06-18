@@ -42,7 +42,7 @@ def manche():
     carte1, carte2 = jeu.piocher(), jeu.piocher()  #cartes piochée par nous
     carte3, carte4 = jeu.piocher(), jeu.piocher()  #cartes de la banque
     main_en_cours = Main([carte1,carte2])
-    
+    main_adverse = Main([carte3,carte4])
     statesActions =[] 
     #Début calcul etat initial
     
@@ -60,8 +60,8 @@ def manche():
     	state_oponent = carte3.get_valeur() - 1
     else : state_oponent = 0'''
 
-    state = carte1.get_valeur() + carte2.get_valeur()
-    score_oponent = carte3.get_valeur() + carte4.get_valeur()
+    state = main_en_cours.get_m_valeur()
+    score_oponent = main_adverse.get_m_valeur()
     state_oponent = carte3.get_valeur() - 1
     #fin
 
@@ -74,20 +74,13 @@ def manche():
         carte = jeu.piocher()
         main_en_cours.ajouter(carte)
         #selon la carte tirée, MAJ de la main puis de la valeur state
-        if (isinstance(carte.get_valeur(),int)):
-            state = state + carte.get_valeur()
-        else :
-            choix = 0 #input("Choisissez la valeur de votre AS : '1' ou '11' : ")                 #Choisir la valeur de notre As : 1 ou 11
-            if (choix == '1'):
-                state = state + 1
-            else :
-                state = state + 11
+        state = main_en_cours.get_m_valeur()
         decision = makeDecision2(state,state_oponent)
         statesActions.append([state_oponent,ind(state),decision])
     
     #On est à la fin de la manche : on connait l'état, reste à évaluer si c'est un gain ou une perte. Pour l'instant gain unitaire.
     result = win(state, score_oponent)
-    updateValue(statesActions,result, mypolicy)
+    updateValue(statesActions, result, mypolicy)
  
 
 def updateValue(statesActionsList,result,mypolicy):#statesActionsList est la liste de couples des (états; actions) prises lors de la partie
