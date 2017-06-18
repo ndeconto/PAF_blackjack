@@ -4,7 +4,7 @@ from random import *;
 
 actions = {"draw":1, "fold":0};        #Set d'actions disponibles
 states = range(12);           #Set de states disponibles {<12, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, >21}
-enemystate = {0,1,2,3,4,5,6,7,8,9,10} # 0 = as, 1= deux ....
+enemystate = {0,1,2,3,4,5,6,7,8,9} # 0 = as, 1= deux .... 9 = 10 ou tête
 alpha = 0.95;                 #Taux d'évaporation
 epsilon = 0.05;               #seuil de valeur minimal
 mypolicy = [[[10.0]*len(actions) for i in range(len(states))] for j in range(len(enemystate))];    #valeurs initiales de chaques coups dans chaque situatio 
