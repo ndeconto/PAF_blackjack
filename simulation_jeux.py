@@ -6,10 +6,11 @@ Created on Fri Jun 16 10:37:38 2017
 @author: majdagoumi
 """
 
-#Créer une manche
+#Créer une manchefrom Bank_Playing import *
 
 from cartes import *
 from algo_monte_carlo import *
+from Bank_Playing import *
 
 def win(state):
     state_oponent = input("Entrez l'état du jeu adverse : ") #Etat du jeu de la personne en face

@@ -165,8 +165,9 @@ class Main:
 class Deck:
     """
         represente un jeu (initalement) de 52 cartes
+        Au blackjack : cartes melangées entre chaque tours ? (Est-ce qu'on peut compter les cartes)
     """
-
+    
     def __init__(self):
         self.pile = [Carte(i, j) for i in range(AS, ROI + 1)
                      for j in [COEUR, PIQUE, CARREAU, TREFLE]]
@@ -175,6 +176,8 @@ class Deck:
 
     def piocher(self):
         return self.pile.pop()
+    
+    
         
 
         

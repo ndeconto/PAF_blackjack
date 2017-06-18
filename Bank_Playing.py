@@ -10,12 +10,11 @@ from cartes import *
 
 
 def bank_playing(bank_hand): #parametre = la main de la banque à un instant T
+
     #DEBUT calcul de la valeur optimale de la main de la banque
     somme = 0
     val_possibles = bank_hand.valeur
-    print(val_possibles)
     taille = len(val_possibles)
-    print (taille)
     for k in range(taille):
         if (val_possibles[k] > somme):
             somme = val_possibles[k]
@@ -26,6 +25,6 @@ def bank_playing(bank_hand): #parametre = la main de la banque à un instant T
         return(1)
     else :
         return(0)
-#0:draw => on s'arretes, 1:fold => on continue
+#0 => on s'arretes, 1 => on continue
 
     

@@ -2,7 +2,7 @@
 from random import *;
 
 
-actions = {"draw":0, "fold":1};        #Set d'actions disponibles
+actions = {"fold":0, "draw":1};        #Set d'actions disponibles --> 1 on tire, 2 on s'arretes
 states = range(12);           #Set de states disponibles {<12, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, >21}
 alpha = 0.95;                 #Taux d'évaporation
 epsilon = 0.05;               #seuil de valeur minimal
