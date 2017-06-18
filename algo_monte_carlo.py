@@ -14,7 +14,7 @@ mypolicy = [[[1.0]*len(actions) for i in range(len(states))] for j in range(len(
 def getRealValues():          #renvoie le poids de chaque décision normalisé
 	return(policy*(1-alpha));
 	
-def makeDecision(state,enemystate):      #renvoie une décision étant donné un état
+def makeDecision(state):      #renvoie une décision étant donné un état
 	if state<12 : ind = 0
 	elif state>21 : ind = 11
 	else: ind = state-11
