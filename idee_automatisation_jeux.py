@@ -31,8 +31,7 @@ def win(state,state_oponent): # 2 --> gain, 1 --> égalité, 0 --> perte
     elif (state < 22 and state_oponent > 21):
         return(2)
     else:
-        print("probleme dans la fonction win")
-        print(state,state_oponent)
+        print("Cas d'une issue non traitée dans la fx win")
 
 def isAs(carte):
     if (isinstance(carte.get_valeur(),int)):
@@ -52,8 +51,8 @@ def prise_decision(state,statesActions):
 def update_stat_gain(statesActions,resultat):
     indices_selection_etats_sortis = []
     for tab in range (len(statesActions)):
-        print("probleme 1 dans la fx update_stat_gain")
-        print(statesActions[tab][0])
+        #print("probleme 1 dans la fx update_stat_gain")
+        #print(statesActions[tab][0])
         indices_selection_etats_sortis.append(statesActions[tab][0])
     for k in range(len(indices_selection_etats_sortis)):
         ind = indices_selection_etats_sortis[k]
@@ -81,14 +80,17 @@ def manche():
     IsThereAs = False
     strat_a_11 = False
     global main_cree
-    main_cree = False
-    #cartes_piochee = [] #Autre idee pour la création de la main du joueur
+    
+    #main_cree = False
+    cartes_piochees = [] #Autre idee pour la création de la main du joueur
+    
     decision = 1 #On doit piocher au moins une carte
     state = 0
     while (decision == 1 and state < 22):
-        print("debut de boucle while, etat de la main crée")
-        print(main_cree)
+        #print("debut de boucle while, etat de la main crée")
+        #print(main_cree)
         carte = paquet.piocher()
+        cartes_piochees.append(carte)
         valeurs_possibles = carte.get_valeur()
         
         #MAJ de la variable state
@@ -112,7 +114,7 @@ def manche():
                 ind2 = calcul_indice(s2)
                 
                 best = max(stat_gain[ind1],stat_gain[ind2])
-                if (best == stat_gain[s1]): #Meilleure stratégie de prendre l'As à 1
+                if (best == stat_gain[ind1]): #Meilleure stratégie de prendre l'As à 1
                     state = s1
                 else: #meilleure stratégie à 11
                     state = s2
@@ -125,21 +127,22 @@ def manche():
                 decision = prise_decision(state,statesActions)
                 
         #MAJ de la main de joueur      
-        if (main_cree == False): #Gestion du cas de la première carte
-            Player_Hand = Main([carte]) #Est-ce qu'il faut créer une Main sans carte au début ?
-            print("la main n'est toujours pas créé")
-            main_cree == True
-            print("resolution du probleme de création de la main")
-            print(main_cree)
-        else:
-            Player_Hand.ajouter(carte)
-            print("main créé")
-        print("fin de fx while, valeur de decision")  
-        print(decision)
+#        if (main_cree == False): #Gestion du cas de la première carte
+#            Player_Hand = Main([carte]) #Est-ce qu'il faut créer une Main sans carte au début ?
+#            print("la main n'est toujours pas créé")
+#            main_cree == True
+#            print("resolution du probleme de création de la main")
+#            print(main_cree)
+#        else:
+#            Player_Hand.ajouter(carte)
+#            print("main créé")
+        #print("fin de fx while, valeur de decision")  
+        #print(decision)
     if (strat_a_11 == True and state > 21): #Si on a choisit de prendre notre As à 11 mais qu'on a dépasser, 21, alors on remet l'As à 1 et on rejoue
-        print("cas ou l'as à 11 depasse, on le remet à 1") #En fait cela revient a dire qu'on choisit à la fin du jeu la valeur réélle de notre As
+        #print("cas ou l'as à 11 depasse, on le remet à 1") #En fait cela revient a dire qu'on choisit à la fin du jeu la valeur réélle de notre As
         state = state - 10
         decision = 1 
+    Player_Hand = Main(cartes_piochees)
     
     #A la banque de jouer
     carteb = paquet.piocher()
@@ -164,11 +167,14 @@ def manche():
             
         
     #resultat de la manche
-    print("fx manche : avant calcul du resultat")
-    print(statesActions)
+    #print("fx manche : avant calcul du resultat")
+    #print(statesActions)
     result = win(state,state_bank)
-    print("fx manche : resultat obtenu")
-    print(result)
+    #print("main joueur + valeur main : ",Player_Hand," / ",state)
+    #print("Main de la banque / valeur de la banque : ",Bank_Hand," / ",state_bank)
+    #print("issue : ",result)
+    #print("fx manche : resultat obtenu")
+    #print(result)
     updateValue(statesActions,result,mypolicy)
     update_stat_gain(statesActions,result)
         
