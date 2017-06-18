@@ -65,6 +65,10 @@ def manche():
     state_oponent = carte3.get_valeur() - 1
     #fin
 
+    #stratégie de la banque
+    while score_oponent<17 :
+    	main_adverse.ajouter(jeu.piocher())
+    	score_oponent = main_adverse.get_m_valeur()
     
     #premiere prise de décision
     decision = makeDecision2(state,state_oponent)
