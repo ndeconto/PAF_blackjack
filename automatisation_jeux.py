@@ -9,7 +9,7 @@ from cartes import *
 from algo_monte_carlo import *
 
 
-#Définition du paquet de cartes
+#Definition du paquet de cartes
 paquet = Deck()
 
 Bank_Hand_used = Main([paquet.piocher()])

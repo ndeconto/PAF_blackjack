@@ -31,6 +31,7 @@ from cartes import *
 from algo_monte_carlo import *
 from Bank_Playing import *
 from idee_automatisation_jeux import *
+from load_object import *
 
 CONTINUER   =   1
 ARRETER     =   0
@@ -53,7 +54,7 @@ def decision_banque(main, carte_adversaire, l_cartes_passees):
     return ARRETER
 
 
-def decision_joueur_vs_banque(main, carte_adversaire, l_cartes_passees, policy):
+def decision_joueur_vs_banque(main, carte_adversaire, l_cartes_passees):
     #Traduction de la valeur de la carte adverse
     if (isAs(carte_adversaire)):
         #La carte de la banque est un as
@@ -61,7 +62,7 @@ def decision_joueur_vs_banque(main, carte_adversaire, l_cartes_passees, policy):
     else:
         ennemy_state = carteb.get_valeur()
     #fin
-    
+    policy = getPolicy()
     state = main.get_m_valeur()
     coeffs = policy[enemy_state][state][:]
     print("Longueur coeffs : ", len(coeffs))
@@ -76,7 +77,7 @@ def decision_un_vs_un(main, carte_adversaire, l_cartes_passees):    ##modifier  
     else:
         ennemy_state = carteb.get_valeur()
     #fin
-    
+    policy = getPolicy()
     state = main.get_m_valeur()
     coeffs = policy[enemy_state][state][:]
     print("Longueur coeffs : ", len(coeffs))
