@@ -11,9 +11,10 @@ sys.path.append("..")
 from cartes import *
 
 
+
 #taille des cartes en pixels
-TX = 192.3
-TY = 279
+TX = 153.85 #192.3
+TY = 223.4 #279
 
 #constantes pour parametrer l'affichage
 HORIZONTAL  =   0
@@ -36,7 +37,7 @@ def init_lib_cartes():
     """
     global img_carte_cachee
     
-    all_cards = image.load("img/img_cartes_2.png").convert_alpha()
+    all_cards = image.load("img/img_cartes_2_petit.png").convert_alpha()
 
     
 
@@ -197,6 +198,8 @@ class MainGraphique(GUIComponent, Main):
                     self.drag = False
 
                     self.display_level -= .5
+
+                    print self.position
 
         return CONTINUE
         

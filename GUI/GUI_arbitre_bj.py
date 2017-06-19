@@ -53,7 +53,8 @@ class Arbitre(GUIComponent):
 
             if isinstance(c, Joueur):
 
-                if all(x > 21 for x in c.valeur):
+                x = c.get_m_valeur()
+                if x > 21:
 
                     return self.terminer_partie(other_components)
 

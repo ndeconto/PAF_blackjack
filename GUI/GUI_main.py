@@ -40,12 +40,12 @@ def main():
     # ---------- creation des composants de la GUI -------- #
 
     
-    tapis = ImageComponent(0, (0, 0), "img/tapis_blackjack_big.png")
+    tapis = ImageComponent(0, (0, 0), "img/tapis_bj_new.png")
 
-    pioche = DeckGraphique((10, 10))
+    pioche = DeckGraphique((422, 330))
 
-    joueur_humain = JoueurHumain((150, 300), pioche, "humain")
-    joueur_ordi = JoueurOrdi((700, 10), pioche, "IA")
+    joueur_humain = JoueurHumain((125, 250), pioche, "humain")
+    joueur_ordi = JoueurOrdi((735, 250), pioche, "IA")
 
     arbitre = Arbitre()
 

@@ -90,7 +90,7 @@ class JoueurHumain(Joueur):
 
     def __init__(self, position, pioche, identifier=""):
 
-        Joueur.__init__(self, position, pioche, HORIZONTAL, identifier)
+        Joueur.__init__(self, position, pioche, VERTICAL, identifier)
 
 
     
