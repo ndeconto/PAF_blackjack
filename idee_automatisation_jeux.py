@@ -105,7 +105,7 @@ def manche():
         else :
             #On vient de piocher un As
             
-            if (IsThereAs == False):
+            if (IsThereAs == False or strat_a_11 == False):
                 #C'est le premier As pioché
                 #Il faut garder une trace de la proba de gagner sachant qu'on est dans un certain état... --> Stat Gain
                 #On considere une égalité comme un gain dans les stat (cas d'un etat à 21)
@@ -122,7 +122,7 @@ def manche():
                     strat_a_11 = True #On retient qu'on a un as qui vaut 11
                 decision = prise_decision(state,statesActions)
                 IsThereAs = True #On retient qu'on a vient de piocher un as
-            else :
+            else:
                 #C'est le second (ou plus) As pioché
                 state = state + 1
                 decision = prise_decision(state,statesActions)
