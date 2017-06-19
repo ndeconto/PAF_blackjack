@@ -16,6 +16,8 @@ from Bank_Playing import *
 nombre_etats_joue = [0 for i in range (12)] #Nombre de fois que chaque état sort : [<12,12,13,14,15,16,17,18,19,20,21,>21]
 nombre_etats_gagnes = [0 for i in range (12)]
 stat_gain = [0 for i in range (12)] #Proba de gagner par état [<12,12,13,...,21,>21]
+nb_partie_jouee = 0
+nombre_partie_gagnee = 0
 
 
 def win(state,state_oponent): # 2 --> gain, 1 --> égalité, 0 --> perte
@@ -48,8 +50,8 @@ def prise_decision(state,ennemy_state,statesActions):
 
 
 def update_stat_gain(statesActions,resultat,state_bank,state):
-    global nb_partie_jouee 
-    global nombre_partie_gagnee 
+    global nb_partie_jouee
+    global nombre_partie_gagnee
     nb_partie_jouee = 0
     nombre_partie_gagnee = 0
     indices_selection_etats_sortis = []

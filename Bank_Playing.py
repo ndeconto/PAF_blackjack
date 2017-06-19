@@ -28,8 +28,6 @@ def bank_playing(bank_hand): #parametre = la main de la banque a un instant T
         return(0)
 #0 => on s'arretes, 1 => on continue
 
-
-
-def save_mypolicy():
-    filehandler = open("mypolicy",w)
-    pickle.dump(mypolicy,filehandler)
+def save_mypolicy(policy):
+    file_handler = open("mypolicy", "w")
+    pickle.dump(policy,file_handler)
