@@ -7,10 +7,10 @@ Created on Fri Jun 16 14:57:12 2017
 """
 
 from cartes import *
+import pickle
+import os
 
-
-def bank_playing(bank_hand): #parametre = la main de la banque à un instant T
-
+def bank_playing(bank_hand): #parametre = la main de la banque a un instant T
     #DEBUT calcul de la valeur optimale de la main de la banque
     somme = 0
     bank_hand.calcul_valeur()
@@ -21,9 +21,15 @@ def bank_playing(bank_hand): #parametre = la main de la banque à un instant T
             somme = val_possibles[k]
     #FIN
     
-    #Définition de la stratégie de la banque : pioche à 16, s'arretes à 17
+    #Definition de la strategie de la banque : pioche a 16, s'arretes a 17
     if (somme < 17):
         return(1)
     else :
         return(0)
 #0 => on s'arretes, 1 => on continue
+
+
+
+def save_mypolicy():
+    filehandler = open("mypolicy",w)
+    pickle.dump(mypolicy,filehandler)

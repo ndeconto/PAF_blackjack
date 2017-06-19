@@ -201,7 +201,7 @@ def manche():
     #print(result)
     updateValue(statesActions,ennemy_state,result,mypolicy)
     pourcentage_gagne = update_stat_gain(statesActions,result,state_bank,state)
-    return(pourcentage_gagne)    
+    return(pourcentage_gagne)
 
 def updateValue(statesActionsList,ennemy_state,result,mypolicy):#statesActionsList est la liste de couples des (états; actions) prises lors de la partie
     for cpl in statesActionsList:
