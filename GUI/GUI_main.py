@@ -7,6 +7,8 @@ from GUI_cards_img import*
 from GUI_players import *
 from GUI_arbitre_bj import *
 
+from GUI_slidemenu import slidemenu
+
 
 def init_GUI():
     
@@ -23,18 +25,13 @@ def stop_button_action(joueur_humain, joueur_ordi):
         joueur_ordi.commencer_tour()
     return f
 
-def main():
+
+
+def jeu_un_joueur():
 
     X_PREMIER_BOUTON = 150
     D_X_BOUTON = 200
     Y_BOUTON = 670
-
-    
-    # ----------   intialisation  ----------------- #
-    init_GUI()
-    init_lib_cartes()
-
-
 
 
     # ---------- creation des composants de la GUI -------- #
@@ -67,7 +64,7 @@ def main():
                            lambda : None)
 
     
-
+    
 
 
     # ---------- on donne tous les composants a un manager ------------ #
@@ -79,6 +76,32 @@ def main():
 
     game_manager.run()
 
+
+def main():
+
+
+    m, t = slidemenu(['one player',
+                'two players',
+                '',
+                'options',
+                're-show::click here to show again',
+                'quit::good bye'])
+
+    if t == 4:
+        quit()
+        return
+
+    
+    # ----------   intialisation  ----------------- #
+    init_GUI()
+    init_lib_cartes()
+
+
+    #
+    jeu_un_joueur()
+
+
+    
     pygame.quit()
 
 

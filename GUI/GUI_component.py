@@ -1,5 +1,7 @@
 from pygame import *
 
+from time import clock
+
 from GUI_component_manager import CONTINUE, EXIT_MAIN_LOOP
 
 class GUIComponent:
@@ -151,7 +153,57 @@ class ImageComponent(GUIComponent):
                               events_to_handle, events_actions, background=img,
                               identifier=identifier)
                               
-                
+
+
+class FlashingImageComponent(GUIComponent):
+
+    def __init__(self, display_level, position, l_img, period,
+                 events_to_handle=[], events_actions=[], identifier=""):
+        """
+            same as ImageComponent, but displays alternatively different
+            images
+            l_img is the list of images
+            period is the time (in second) between the image change
+            NB : this period cannot be smaller than game manager's period
+            so you can set period to 0, it means "change as fast as possible"
+
+            all images must have the same size
+        """
+
+        self.l_img = []
+        self.cpt = 0
+        self.last_change = clock()
+
+        for img in l_img:
+            if isinstance(img, str):
+                self.l_img.append(image.load(img).convert_alpha())
+            else :
+                self.l_img.append(img)
+
+
+        self.period = period
+
+            
+        GUIComponent.__init__(self, display_level, position, img.get_size(),
+                              events_to_handle, events_actions, background=img,
+                              identifier=identifier)
+
+
+    def update(self, other_comp):
+
+        r = GUIComponent.update(self, other_comp)
+
+        if (clock() - self.last_change > self.period):
+
+            self.cpt = (self.cpt + 1) % len(self.l_img)
+            self.background = self.l_img[self.cpt]
+
+            self.last_change = clock()
+
+        return r
+                     
+    
+             
         
 class Bouton(ImageComponent):
 
