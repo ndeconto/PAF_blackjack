@@ -83,7 +83,7 @@ def main():
     m, t = slidemenu(['one player',
                 'two players',
                 '',
-                'options',
+                'rules::click here to learn the rules',
                 're-show::click here to show again',
                 'quit::good bye'])
 
