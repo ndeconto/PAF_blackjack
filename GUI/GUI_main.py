@@ -7,6 +7,8 @@ from GUI_cards_img import*
 from GUI_players import *
 from GUI_arbitre_bj import *
 
+from GUI_slidemenu import slidemenu
+
 
 def init_GUI():
     
@@ -23,29 +25,24 @@ def stop_button_action(joueur_humain, joueur_ordi):
         joueur_ordi.commencer_tour()
     return f
 
-def main():
+
+
+def jeu_un_joueur():
 
     X_PREMIER_BOUTON = 150
     D_X_BOUTON = 200
     Y_BOUTON = 670
 
-    
-    # ----------   intialisation  ----------------- #
-    init_GUI()
-    init_lib_cartes()
-
-
-
 
     # ---------- creation des composants de la GUI -------- #
 
     
-    tapis = ImageComponent(0, (0, 0), "img/tapis_blackjack_big.png")
+    tapis = ImageComponent(0, (0, 0), "img/tapis_bj_new.png")
 
-    pioche = DeckGraphique((10, 10))
+    pioche = DeckGraphique((422, 330))
 
-    joueur_humain = JoueurHumain((150, 300), pioche, "humain")
-    joueur_ordi = JoueurOrdi((700, 10), pioche, "IA")
+    joueur_humain = JoueurHumain((125, 250), pioche, "humain")
+    joueur_ordi = JoueurOrdi((735, 250), pioche, "IA")
 
     arbitre = Arbitre()
 
@@ -67,7 +64,7 @@ def main():
                            lambda : None)
 
     
-
+    
 
 
     # ---------- on donne tous les composants a un manager ------------ #
@@ -77,8 +74,35 @@ def main():
                                         arbitre, bouton_split, bouton_double],
                                        20)
 
-    game_manager.run()
+    return game_manager.run()
 
+
+def main():
+
+
+    m, t = slidemenu(['one player',
+                'two players',
+                '',
+                'rules::click here to learn the rules',
+                're-show::click here to show again',
+                'quit::good bye'])
+
+    if t == 4:
+        quit()
+        return
+
+    
+    # ----------   intialisation  ----------------- #
+    init_GUI()
+    init_lib_cartes()
+
+
+    #
+    if jeu_un_joueur() == EXIT_GAME_LOOP:
+        main()
+
+
+    
     pygame.quit()
 
 

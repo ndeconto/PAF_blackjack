@@ -2,7 +2,7 @@ from pygame import *
 
 from GUI_component import *
 from GUI_players import *
-from GUI_component import *
+from GUI_component_manager import EXIT_GAME_LOOP
 
 
 class Arbitre(GUIComponent):
@@ -20,15 +20,24 @@ class Arbitre(GUIComponent):
 
         GUIComponent.__init__(self, 0, (0, 0), (0, 0),
                               [], [], background=None, identifier="arbitre")
+
+
+        self.jeu_fini = False
         
 
 
-    def terminer_partie(self, other_components):
+    def terminer_partie(self, cote_gagnant, other_components):
         """
             tue tous les autres composants, ie fait le menage,
             et termine la partie
+
+            cote_gagnant doit valoir 1 si le joueur de gauche a gagne,
+            0 sinon
         """
 
+        if self.jeu_fini : return [self]
+        self.jeu_fini = True
+        
         for c in other_components :
 
 
@@ -38,9 +47,24 @@ class Arbitre(GUIComponent):
 
             if isinstance(c, JoueurOrdi):
                 c.arreter_tour()
-                
-        #TODO creer un ecran de finn de partie 
-        return [self]
+
+
+        tx, ty = display.get_surface().get_size()
+        cache = Surface((int(tx / 2), ty), SRCALPHA, 32)
+        cache.fill(Color(255, 0, 0, 120))
+
+        vide = Surface((int(tx / 2), ty), SRCALPHA, 32)
+        vide.fill(Color(0, 0, 0, 0))
+        
+        cache_comp = FlashingImageComponent(3,
+                                            (int(tx / 2) if cote_gagnant == 1
+                                             else 0, 0),
+                                            [cache, vide], 0.15)
+
+
+        pause = PauseComponent(K_RETURN, EXIT_GAME_LOOP)
+        
+        return [self, cache_comp, pause]
 
             
 
@@ -53,9 +77,14 @@ class Arbitre(GUIComponent):
 
             if isinstance(c, Joueur):
 
-                if all(x > 21 for x in c.valeur):
+                x = c.get_m_valeur()
+                
+                if x > 21:
 
-                    return self.terminer_partie(other_components)
+                    w, h = display.get_surface().get_size()
+
+                    return self.terminer_partie(int(2 * c.position[0] / w),
+                                                other_components)
 
         return r
 

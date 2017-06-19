@@ -1,6 +1,8 @@
 from pygame import *
 
-from GUI_component_manager import CONTINUE, EXIT_MAIN_LOOP
+from time import clock
+
+from GUI_component_manager import CONTINUE, EXIT_GAME_LOOP
 
 class GUIComponent:
     
@@ -106,7 +108,7 @@ class GUIComponent:
             ignores the others
 
             this function must return GUI_component_manager.CONTINUE most of the
-            time, GUI_component_manager.EXIT_MAIN_LOOP to quit the main loop of
+            time, GUI_component_manager.EXIT_GAME_LOOP to quit the main loop of
             the component manager
         """
 
@@ -151,7 +153,57 @@ class ImageComponent(GUIComponent):
                               events_to_handle, events_actions, background=img,
                               identifier=identifier)
                               
-                
+
+
+class FlashingImageComponent(GUIComponent):
+
+    def __init__(self, display_level, position, l_img, period,
+                 events_to_handle=[], events_actions=[], identifier=""):
+        """
+            same as ImageComponent, but displays alternatively different
+            images
+            l_img is the list of images
+            period is the time (in second) between the image change
+            NB : this period cannot be smaller than game manager's period
+            so you can set period to 0, it means "change as fast as possible"
+
+            all images must have the same size
+        """
+
+        self.l_img = []
+        self.cpt = 0
+        self.last_change = clock()
+
+        for img in l_img:
+            if isinstance(img, str):
+                self.l_img.append(image.load(img).convert_alpha())
+            else :
+                self.l_img.append(img)
+
+
+        self.period = period
+
+            
+        GUIComponent.__init__(self, display_level, position, img.get_size(),
+                              events_to_handle, events_actions, background=img,
+                              identifier=identifier)
+
+
+    def update(self, other_comp):
+
+        r = GUIComponent.update(self, other_comp)
+
+        if (clock() - self.last_change > self.period):
+
+            self.cpt = (self.cpt + 1) % len(self.l_img)
+            self.background = self.l_img[self.cpt]
+
+            self.last_change = clock()
+
+        return r
+                     
+    
+             
         
 class Bouton(ImageComponent):
 
@@ -206,6 +258,34 @@ class Bouton(ImageComponent):
                 else :
                     self.click_in = False
 
-        
+        return CONTINUE
 
+        
+class PauseComponent(GUIComponent):
+    """
+        invisible component which waits that one specified key is pressed
+        then sends a signal to the GameManager
+    """
+
+    def __init__(self, pressed_key, signal):
+        """
+            pressed_key :
+                descripbes the key one wich the component will react
+                must be a keyboard constant, ie K_RETURN, K_a, ...
+                (cf pygame documentation for an exhaustive list)
+        """
+
+        GUIComponent.__init__(self, 0, (0, 0), (0, 0), [], [])
+        self.signal = signal
+        self.pressed_key = pressed_key
+
+    def manage_event(self, ev_list):
+
+        for ev in ev_list:
+
+            if ev.type == KEYDOWN and ev.key == self.pressed_key:
+                return self.signal
+
+        return CONTINUE
+            
         

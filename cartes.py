@@ -51,10 +51,10 @@ class Carte:
             NB : POUR UN AS, CETTE METHODE RENVOIE UNE LISTE !!
         """
 
-        if 2 <= self.hauteur <= 10: return self.hauteur
+        if 1 <= self.hauteur <= 13: return min(self.hauteur,10)
 
         if self.hauteur == AS: return [1, 11]
-
+        if self.hauteur == ASONZE: return(11)
         return 10
 
 
@@ -104,8 +104,8 @@ class Main:
         #liste des cartes dans la main
         self.contenu = contenu
 
-        #liste des valeurs possibles de la  main
-        self.valeur = [0]
+        #valeur optimale de la main
+        self.valeur = 0
         self.calcul_valeur()
 
 
@@ -117,30 +117,7 @@ class Main:
 
         self.contenu.append(nouvelle_carte)
 
-        self.maj_valeur(nouvelle_carte)
-
-        
-
-    def maj_valeur(self, nouvelle_carte):
-        """
-            met a jour la valeur de la main quand on rajoute une nouvelle carte
-        """
-
-        if nouvelle_carte != AS:
-            self.valeur = [x + nouvelle_carte.valeur for x in self.valeur]
-
-        else:
-            #NB : s'il y a deux as, le deuxieme as est forcement compte comme
-            #un 1 (et le premier reste au choix 1 ou 11)
-            # NB 2 : ne pas se faire avoir pas le cas d'initialisation !
-            # (self.valeur == [0])
-            if self.valeur == [0] or (not (AS in self.contenu)):
-                self.valeur = ([x + 1 for x in self.valeur]
-                               + [x + 11 for x in self.valeur])
-
-            else :
-                self.valeur = [x + 1 for x in self.valeur]
-
+        self.calcul_valeur()
 
         
 
@@ -149,11 +126,19 @@ class Main:
             calcule en place la liste des valeurs possibles de la main
         """
 
-        self.valeur = [0]
-
+        v = 0
+        b = False   #on regarde si on a un as
         for c in self.contenu:
-            self.maj_valeur(c)
+            if c != AS :
+            	v += c.valeur
+            else: 
+            	v += 1
+            	b = True
+        if (v<12 and b) : v+=10
+        self.valeur = v
 
+    def get_m_valeur(self):
+    	return self.valeur
 
     def __str__(self):
         return "[" + "; ".join(map(str, self.contenu)) + "]"

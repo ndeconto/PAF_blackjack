@@ -1,6 +1,8 @@
 from pygame import *
 from pygame.locals import *
-
+from sys import path
+path.append("..")
+import Prise_De_Decision as pdd
 
 from time import clock
 
@@ -90,7 +92,7 @@ class JoueurHumain(Joueur):
 
     def __init__(self, position, pioche, identifier=""):
 
-        Joueur.__init__(self, position, pioche, HORIZONTAL, identifier)
+        Joueur.__init__(self, position, pioche, VERTICAL, identifier)
 
 
     
@@ -170,4 +172,17 @@ class JoueurOrdi(Joueur):
         # de reflexion... ne serait-ce que pour faire plaisir au prof qui va
         #lire ce code...
 
-        self.piocher()
+        decision = pdd.decision_banque(self, carte_adversaire, l_cartes_passees)
+
+
+        if decision == pdd.CONTINUER:
+            self.piocher()
+        elif decision == pdd.ARRETER:
+            self.arreter_tour()
+        elif decision == pdd.SPLITTER:
+            self.splitter()
+        elif decision == pdd.DOUBLER:
+            self.doubler()
+        else:
+            raise (ValueError("la decision " + str(decision)
+                              + " n'est pas reconnue"))
