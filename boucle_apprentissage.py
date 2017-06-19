@@ -11,3 +11,4 @@ def apprentissage(n):
     for k in range(n):
         manche()
     print(mypolicy)
+    print(stat_gain)

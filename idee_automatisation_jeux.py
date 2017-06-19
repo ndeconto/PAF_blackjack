@@ -75,6 +75,7 @@ def calcul_indice(valeur):
     
 def manche(): 
     paquet = Deck() #Mettre le paquet ici revient à melanger le paquet entre deux tours
+    carteb = paquet.piocher() #Premiere carte piochée de la banque
     #Le joueur joue
     statesActions = []
     IsThereAs = False
@@ -145,7 +146,7 @@ def manche():
     Player_Hand = Main(cartes_piochees)
     
     #A la banque de jouer
-    carteb = paquet.piocher()
+#    carteb = paquet.piocher()
     Bank_Hand = Main([carteb])
     decision_bank = bank_playing(Bank_Hand)
     state_bank = 0
