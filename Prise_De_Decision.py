@@ -68,7 +68,7 @@ def decision_joueur_vs_banque(main, carte_adversaire, l_cartes_passees, policy):
     return coeffs.index(max(coeffs))        # 0 : ARRETER; 1 : CONTINUER
 
 
-def decision_un_vs_un(main, carte_adversaire, l_cartes_passees):    ##à modifier  quand on joue contre un vrai joueur
+def decision_un_vs_un(main, carte_adversaire, l_cartes_passees):    ##modifier  quand on joue contre un vrai joueur
     #Traduction de la valeur de la carte adverse
     if (isAs(carte_adversaire)):
         #La carte de la banque est un as

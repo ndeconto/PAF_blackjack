@@ -80,12 +80,13 @@ def jeu_un_joueur():
 def main():
 
 
-    m, t = slidemenu(['one player',
-                'two players',
-                '',
-                'rules::click here to learn the rules',
-                're-show::click here to show again',
-                'quit::good bye'])
+    m, t = slidemenu(['zero player::the AI will play against the dealer',
+                      'one player::play against the dealer',
+                      'two players::play against an other player',
+                      '',
+                      'rules::click here to learn the rules',
+                      're-show::click here to show again',
+                      'quit::good bye'])
 
     if t == 4:
         quit()
