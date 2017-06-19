@@ -27,11 +27,15 @@ SORTIES :
     DOUBLER
 """
 
+from cartes import *
+from algo_monte_carlo import *
+from Bank_Playing import *
+from idee_automatisation_jeux import *
 
-CONTINUER   =   0
-ARRETER     =   1
-SPLITTER    =   2
-DOUBLER     =   0
+CONTINUER   =   1
+ARRETER     =   0
+SPLITTER    =   3
+DOUBLER     =   2
 
 
 def decision_banque(main, carte_adversaire, l_cartes_passees):
@@ -49,11 +53,31 @@ def decision_banque(main, carte_adversaire, l_cartes_passees):
     return ARRETER
 
 
-def decision_joueur_vs_banque(main, carte_adversaire, l_cartes_passees):
-    #TODO a implementer
-    return
+def decision_joueur_vs_banque(main, carte_adversaire, l_cartes_passees, policy):
+    #Traduction de la valeur de la carte adverse
+    if (isAs(carte_adversaire)):
+        #La carte de la banque est un as
+        ennemy_state = 1
+    else:
+        ennemy_state = carteb.get_valeur()
+    #fin
+    
+    state = main.get_m_valeur()
+    coeffs = policy[enemy_state][state][:]
+    print("Longueur coeffs : ", len(coeffs))
+    return coeffs.index(max(coeffs))        # 0 : ARRETER; 1 : CONTINUER
 
 
-def decision_un_vs_un(main, carte_adversaire, l_cartes_passees):
-    #TODO a implementer
-    return
+def decision_un_vs_un(main, carte_adversaire, l_cartes_passees):    ##à modifier  quand on joue contre un vrai joueur
+    #Traduction de la valeur de la carte adverse
+    if (isAs(carte_adversaire)):
+        #La carte de la banque est un as
+        ennemy_state = 1
+    else:
+        ennemy_state = carteb.get_valeur()
+    #fin
+    
+    state = main.get_m_valeur()
+    coeffs = policy[enemy_state][state][:]
+    print("Longueur coeffs : ", len(coeffs))
+    return coeffs.index(max(coeffs))        # 0 : ARRETER; 1 : CONTINUER
