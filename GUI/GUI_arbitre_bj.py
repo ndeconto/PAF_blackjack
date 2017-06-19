@@ -2,7 +2,7 @@ from pygame import *
 
 from GUI_component import *
 from GUI_players import *
-from GUI_component import *
+from GUI_component_manager import EXIT_GAME_LOOP
 
 
 class Arbitre(GUIComponent):
@@ -60,7 +60,11 @@ class Arbitre(GUIComponent):
                                             (int(tx / 2) if cote_gagnant == 1
                                              else 0, 0),
                                             [cache, vide], 0.15)
-        return [self, cache_comp]
+
+
+        pause = PauseComponent(K_RETURN, EXIT_GAME_LOOP)
+        
+        return [self, cache_comp, pause]
 
             
 

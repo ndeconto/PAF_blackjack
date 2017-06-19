@@ -74,7 +74,7 @@ def jeu_un_joueur():
                                         arbitre, bouton_split, bouton_double],
                                        20)
 
-    game_manager.run()
+    return game_manager.run()
 
 
 def main():
@@ -98,7 +98,8 @@ def main():
 
 
     #
-    jeu_un_joueur()
+    if jeu_un_joueur() == EXIT_GAME_LOOP:
+        main()
 
 
     
