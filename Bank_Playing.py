@@ -27,5 +27,3 @@ def bank_playing(bank_hand): #parametre = la main de la banque à un instant T
     else :
         return(0)
 #0 => on s'arretes, 1 => on continue
-
-    

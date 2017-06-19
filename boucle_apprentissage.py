@@ -8,9 +8,11 @@ Created on Sun Jun 18 18:23:29 2017
 from idee_automatisation_jeux import *
 
 def apprentissage(n):
+    victoire = 0
     for k in range(n):
-        manche()
+        victoire = manche()
 #    print("My policy : ",mypolicy)
     print("Stats victoires : ",stat_gain)
     print("Nb etat joué et nb etats ganés : ", nombre_etats_joue,nombre_etats_gagnes)
-    victoire = nombre_partie_gagnee / nb_partie_jouee
+    print("Pourcentage de victoire : ",victoire)
+    

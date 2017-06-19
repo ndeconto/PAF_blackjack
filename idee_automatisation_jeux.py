@@ -16,8 +16,7 @@ from Bank_Playing import *
 nombre_etats_joue = [0 for i in range (12)] #Nombre de fois que chaque état sort : [<12,12,13,14,15,16,17,18,19,20,21,>21]
 nombre_etats_gagnes = [0 for i in range (12)]
 stat_gain = [0 for i in range (12)] #Proba de gagner par état [<12,12,13,...,21,>21]
-nb_partie_jouee = 0
-nombre_partie_gagnee = 0
+
 
 def win(state,state_oponent): # 2 --> gain, 1 --> égalité, 0 --> perte
     if (state > 21):
@@ -49,6 +48,10 @@ def prise_decision(state,ennemy_state,statesActions):
 
 
 def update_stat_gain(statesActions,resultat,state_bank,state):
+    global nb_partie_jouee 
+    global nombre_partie_gagnee 
+    nb_partie_jouee = 0
+    nombre_partie_gagnee = 0
     indices_selection_etats_sortis = []
     nb_partie_jouee += 1
     for tab in range (len(statesActions)):
@@ -65,12 +68,11 @@ def update_stat_gain(statesActions,resultat,state_bank,state):
                 print("stateActions : ",statesActions[k])
                 print("statesActions : ", statesActions)
                 print("Etats opposant : ", state_bank)
-                print("etat de la main : ", state)
-                
+                print("etat de la main : ", state)  
     for i in range (len(nombre_etats_joue)):
         if (nombre_etats_joue[i] != 0):
             stat_gain[i] = nombre_etats_gagnes[i] / nombre_etats_joue[i]
-    
+    return(nombre_partie_gagnee / nb_partie_jouee)
     
 def calcul_indice(valeur):
     if (valeur < 12):
@@ -198,8 +200,8 @@ def manche():
     #print("fx manche : resultat obtenu")
     #print(result)
     updateValue(statesActions,ennemy_state,result,mypolicy)
-    update_stat_gain(statesActions,result,state_bank,state)
-        
+    pourcentage_gagne = update_stat_gain(statesActions,result,state_bank,state)
+    return(pourcentage_gagne)    
 
 def updateValue(statesActionsList,ennemy_state,result,mypolicy):#statesActionsList est la liste de couples des (états; actions) prises lors de la partie
     for cpl in statesActionsList:
