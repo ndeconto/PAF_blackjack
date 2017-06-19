@@ -10,5 +10,5 @@ from idee_automatisation_jeux import *
 def apprentissage(n):
     for k in range(n):
         manche()
-    print(mypolicy)
-    print(stat_gain)
+    print("My policy : ",mypolicy)
+    print("Stats victoires : ",stat_gain)
