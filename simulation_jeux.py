@@ -23,13 +23,8 @@ def win(state, state_oponent):
     elif (state > 21 and state_oponent > 21):
         return(0)          #Dans les regles qu'on prend nous, considerons que les deux dépassent donne une perte.
 
-def ind(state):
-    if state<12 : return 0
-    elif state>21 : return 11
-    else: return state-11
-
     
-def manche(): 
+def manche(maj): 
     """Fonction qui representera une main
        Pour l'instant, les cartes ne sont pas pioché par python"""
 
@@ -45,20 +40,6 @@ def manche():
     main_adverse = Main([carte3,carte4])
     statesActions =[] 
     #Début calcul etat initial
-    
-    #à conserver pour le cas où l'as prendra plusieurs valeurs?
-    '''if (isinstance(carte1.get_valeur(),int) and isinstance(carte2.get_valeur(),int)):
-        state = carte1.get_valeur() + carte2.get_valeur()
-    elif (not((isinstance(carte1.get_valeur(),int))) and (isinstance(carte2.get_valeur(),int))):
-        state = 11 + carte2.get_valeur()
-    elif (isinstance(carte1.get_valeur(),int) and not(isinstance(carte2.get_valeur(),int))):
-        state = carte1.get_valeur() + 11
-    else :
-        state = 12
-
-    if (isinstance(carte3.get_valeur(),int)):
-    	state_oponent = carte3.get_valeur() - 1
-    else : state_oponent = 0'''
 
     state = main_en_cours.get_m_valeur()
     score_oponent = main_adverse.get_m_valeur()
@@ -71,7 +52,8 @@ def manche():
     	score_oponent = main_adverse.get_m_valeur()
     
     #premiere prise de décision
-    decision = makeDecision2(state,state_oponent)
+    if maj : decision =  makeDecision2(state,state_oponent) 
+    else : decision = makeBestDecision(state,state_oponent) 
     statesActions.append([state_oponent, ind(state), decision]) 
     #Boucle de jeu. Pour l'instant seulement deux actions. A adapter si on veut plus d'actions.
     while (decision == 1 and state<22): 
@@ -79,12 +61,17 @@ def manche():
         main_en_cours.ajouter(carte)
         #selon la carte tirée, MAJ de la main puis de la valeur state
         state = main_en_cours.get_m_valeur()
-        decision = makeDecision2(state,state_oponent)
+        if maj : 
+        	decision =  makeDecision2(state,state_oponent)
+        else :
+        	decision = makeBestDecision(state,state_oponent)
         statesActions.append([state_oponent,ind(state),decision])
     
     #On est à la fin de la manche : on connait l'état, reste à évaluer si c'est un gain ou une perte. Pour l'instant gain unitaire.
     result = win(state, score_oponent)
-    updateValue(statesActions, result, mypolicy)
+    if maj : 
+    	updateValue(statesActions, result, mypolicy)
+    else : return(result)
  
 
 def updateValue(statesActionsList,result,mypolicy):#statesActionsList est la liste de couples des (états; actions) prises lors de la partie
