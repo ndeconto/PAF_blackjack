@@ -148,6 +148,7 @@ class JoueurOrdi(Joueur):
 
     def arreter_tour(self):
         self.playing = False
+        self.sarreter()
 
         
 
