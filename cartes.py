@@ -54,7 +54,6 @@ class Carte:
         if 1 <= self.hauteur <= 13: return min(self.hauteur,10)
 
         if self.hauteur == AS: return [1, 11]
-        if self.hauteur == ASONZE: return(11)
         return 10
 
 
