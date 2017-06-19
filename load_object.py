@@ -1,4 +1,5 @@
 import pickle
+import os
 
 def getPolicy ():
     file_handler = open("mypolicy", "r")
