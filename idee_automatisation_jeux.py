@@ -24,7 +24,7 @@ def win(state,state_oponent): # 2 --> gain, 1 --> égalité, 0 --> perte
         return(0)
     elif (state>21 and state_oponent<22):
         return(0)
-    elif (state == state_oponent):
+    elif (state == state_oponent and state < 22):
         return(1)
     elif (state > 21 and state_oponent > 21):
         return(0)          # Dans les regles qu'on prend nous, considerons que les deux dépassent donne une perte.
@@ -39,8 +39,8 @@ def isAs(carte):
     else:
         return(True)
 
-def prise_decision(state,statesActions):
-    decision = makeDecision(state)
+def prise_decision(state,ennemy_state,statesActions):
+    decision = makeDecision2(state,ennemy_state)
     if state<12 : ind = 0
     elif state>21 : ind = 11
     else: ind = state-11
@@ -76,6 +76,13 @@ def calcul_indice(valeur):
 def manche(): 
     paquet = Deck() #Mettre le paquet ici revient à melanger le paquet entre deux tours
     carteb = paquet.piocher() #Premiere carte piochée de la banque
+    state_bank = 0
+    ennemy_state = 0
+    if (isAs(carteb)):
+        #La carte de la banque est un as
+        ennemy_state = 1
+    else:
+        ennemy_state = carteb.get_valeur()
     #Le joueur joue
     statesActions = []
     IsThereAs = False
@@ -100,7 +107,7 @@ def manche():
             #Gestion du cas où l'on ne pioche pas d'as
             state = state + valeurs_possibles #Ici un entier car c'est pas un As
             #Prise de décision
-            decision = prise_decision(state,statesActions)
+            decision = prise_decision(state,ennemy_state,statesActions)
             
         else :
             #On vient de piocher un As
@@ -120,12 +127,12 @@ def manche():
                 else: #meilleure stratégie à 11
                     state = s2
                     strat_a_11 = True #On retient qu'on a un as qui vaut 11
-                decision = prise_decision(state,statesActions)
+                decision = prise_decision(state,ennemy_state,statesActions)
                 IsThereAs = True #On retient qu'on a vient de piocher un as
             else:
                 #C'est le second (ou plus) As pioché
                 state = state + 1
-                decision = prise_decision(state,statesActions)
+                decision = prise_decision(state,ennemy_state,statesActions)
                 
         #MAJ de la main de joueur      
 #        if (main_cree == False): #Gestion du cas de la première carte
@@ -149,12 +156,11 @@ def manche():
 #    carteb = paquet.piocher()
     Bank_Hand = Main([carteb])
     decision_bank = bank_playing(Bank_Hand)
-    state_bank = 0
     if (isAs(carteb) == True):
         state_bank = 11
     else:
         state_bank = carteb.get_valeur()
-    while (decision_bank == 1):
+    while (decision_bank == 1 and state_bank < 22):
         carteb = paquet.piocher()
         Bank_Hand.ajouter(carteb)
         decision_bank = bank_playing(Bank_Hand)
@@ -176,16 +182,19 @@ def manche():
     #print("issue : ",result)
     #print("fx manche : resultat obtenu")
     #print(result)
-    updateValue(statesActions,result,mypolicy)
+    updateValue(statesActions,ennemy_state,result,mypolicy)
     update_stat_gain(statesActions,result)
         
 
-def updateValue(statesActionsList,result,mypolicy):#statesActionsList est la liste de couples des (états; actions) prises lors de la partie
+def updateValue(statesActionsList,ennemy_state,result,mypolicy):#statesActionsList est la liste de couples des (états; actions) prises lors de la partie
     for cpl in statesActionsList:
-        pi = mypolicy[cpl[0]][cpl[1]];          #pi est le poids (toujours positif) de la décision cpl[1] dans l'état cpl[0]
+        #print("cpl[0]" , cpl[0])
+        #print("cpl[1]" , cpl[1])
+        #print("ennemy_state : ", ennemy_state )
+        pi = mypolicy[ennemy_state-1][cpl[0]][cpl[1]];          #pi est le poids (toujours positif) de la décision cpl[1] dans l'état cpl[0]
         pi = (result + alpha*pi);             #mise à jour du poids
         #if pi<epsilon/(1-alpha) : pi = epsilon/(1-alpha);         #on est à epsilon-greedy transition (sans oublier la normalisation)
-        mypolicy[cpl[0]][cpl[1]] = pi			  #mise à jour de policy
+        mypolicy[ennemy_state-1][cpl[0]][cpl[1]] = pi			  #mise à jour de policy
     
 
 

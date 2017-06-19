@@ -13,6 +13,7 @@ def bank_playing(bank_hand): #parametre = la main de la banque à un instant T
 
     #DEBUT calcul de la valeur optimale de la main de la banque
     somme = 0
+    bank_hand.calcul_valeur()
     val_possibles = bank_hand.valeur
     taille = len(val_possibles)
     for k in range(taille):
