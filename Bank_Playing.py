@@ -15,7 +15,11 @@ def bank_playing(bank_hand): #parametre = la main de la banque a un instant T
     somme = 0
     bank_hand.calcul_valeur()
     val_possibles = bank_hand.valeur
-    taille = len(val_possibles)
+    if (isinstance(val_possibles,int)):   
+        taille = 1
+        val_possibles = [val_possibles]
+    else :
+        taille = len(val_possibles)
     for k in range(taille):
         if (val_possibles[k] > somme):
             somme = val_possibles[k]
