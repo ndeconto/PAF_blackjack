@@ -13,3 +13,4 @@ def apprentissage(n):
 #    print("My policy : ",mypolicy)
     print("Stats victoires : ",stat_gain)
     print("Nb etat joué et nb etats ganés : ", nombre_etats_joue,nombre_etats_gagnes)
+    victoire = nombre_partie_gagnee / nb_partie_jouee

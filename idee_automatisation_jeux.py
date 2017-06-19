@@ -16,24 +16,20 @@ from Bank_Playing import *
 nombre_etats_joue = [0 for i in range (12)] #Nombre de fois que chaque état sort : [<12,12,13,14,15,16,17,18,19,20,21,>21]
 nombre_etats_gagnes = [0 for i in range (12)]
 stat_gain = [0 for i in range (12)] #Proba de gagner par état [<12,12,13,...,21,>21]
+nb_partie_jouee = 0
+nombre_partie_gagnee = 0
 
 def win(state,state_oponent): # 2 --> gain, 1 --> égalité, 0 --> perte
-
-    if (state == 21):
-            print(state_oponent)
-            
-    if ((state > state_oponent) and (state < 22)):
+    if (state > 21):
+        return(0)
+    elif (state_oponent > 21):
         return(2)
-    elif ((state < state_oponent) and (state_oponent < 22)):
+    elif (state > state_oponent):
+        return(2)
+    elif (state < state_oponent):
         return(0)
-    elif (state > 21):
-        return(0)
-    elif (state == state_oponent and state < 22):
+    elif (state == state_oponent):
         return(1)
-    elif (state > 21 and state_oponent > 21):
-        return(0)          # Dans les regles qu'on prend nous, considerons que les deux dépassent donne une perte.
-    elif (state < 22 and state_oponent > 21):
-        return(2)
     else:
         print("Cas d'une issue non traitée dans la fx win")
 
@@ -54,6 +50,7 @@ def prise_decision(state,ennemy_state,statesActions):
 
 def update_stat_gain(statesActions,resultat,state_bank,state):
     indices_selection_etats_sortis = []
+    nb_partie_jouee += 1
     for tab in range (len(statesActions)):
         #print("probleme 1 dans la fx update_stat_gain")
         #print(statesActions[tab][0])
@@ -63,6 +60,7 @@ def update_stat_gain(statesActions,resultat,state_bank,state):
         nombre_etats_joue[ind] = nombre_etats_joue[ind] + 1
         if (resultat == 2 or resultat == 1):
             nombre_etats_gagnes[ind] = nombre_etats_gagnes[ind] + 1
+            nombre_partie_gagnee += 1 
             if (ind == 11):
                 print("stateActions : ",statesActions[k])
                 print("statesActions : ", statesActions)
@@ -81,7 +79,7 @@ def calcul_indice(valeur):
         return(11)
     else:
         return(11 - valeur)
-
+    
     
 def manche(): 
     paquet = Deck() #Mettre le paquet ici revient à melanger le paquet entre deux tours
@@ -97,6 +95,7 @@ def manche():
     statesActions = []
     IsThereAs = False
     strat_a_11 = False
+    indiceAs = 0
     global main_cree
     
     #main_cree = False
@@ -135,6 +134,7 @@ def manche():
                 if (best == stat_gain[ind1]): #Meilleure stratégie de prendre l'As à 1
                     state = s1
                 else: #meilleure stratégie à 11
+                    indiceAs = len(statesActions)
                     state = s2
                     strat_a_11 = True #On retient qu'on a un as qui vaut 11
                 decision = prise_decision(state,ennemy_state,statesActions)
@@ -143,7 +143,7 @@ def manche():
                 #C'est le second (ou plus) As pioché
                 state = state + 1
                 decision = prise_decision(state,ennemy_state,statesActions)
-                
+                IsThereAs = True #On retient qu'on a vient de piocher un as
         #MAJ de la main de joueur      
 #        if (main_cree == False): #Gestion du cas de la première carte
 #            Player_Hand = Main([carte]) #Est-ce qu'il faut créer une Main sans carte au début ?
@@ -156,10 +156,15 @@ def manche():
 #            print("main créé")
         #print("fin de fx while, valeur de decision")  
         #print(decision)
-    if (strat_a_11 == True and state > 21): #Si on a choisit de prendre notre As à 11 mais qu'on a dépasser, 21, alors on remet l'As à 1 et on rejoue
-        #print("cas ou l'as à 11 depasse, on le remet à 1") #En fait cela revient a dire qu'on choisit à la fin du jeu la valeur réélle de notre As
-        state = state - 10
-        decision = 1 
+##############################################################################################        
+        if (strat_a_11 == True and state > 21): #Si on a choisit de prendre notre As à 11 mais qu'on a dépasser, 21, alors on remet l'As à 1 et on rejoue
+            #print("cas ou l'as à 11 depasse, on le remet à 1") #En fait cela revient a dire qu'on choisit à la fin du jeu la valeur réélle de notre As
+            state = state - 10
+            decision = 1 
+            for o in range(indiceAs,len(statesActions)):
+                statesActions[o][0] = 0
+            statesActions.append([calcul_indice(state),1])
+##############################################################################################
     Player_Hand = Main(cartes_piochees)
     
     #A la banque de jouer
