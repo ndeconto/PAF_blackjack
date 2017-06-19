@@ -18,11 +18,15 @@ nombre_etats_gagnes = [0 for i in range (12)]
 stat_gain = [0 for i in range (12)] #Proba de gagner par état [<12,12,13,...,21,>21]
 
 def win(state,state_oponent): # 2 --> gain, 1 --> égalité, 0 --> perte
+
+    if (state == 21):
+            print(state_oponent)
+            
     if ((state > state_oponent) and (state < 22)):
         return(2)
     elif ((state < state_oponent) and (state_oponent < 22)):
         return(0)
-    elif (state>21 and state_oponent<22):
+    elif (state > 21):
         return(0)
     elif (state == state_oponent and state < 22):
         return(1)
@@ -48,7 +52,7 @@ def prise_decision(state,ennemy_state,statesActions):
     return (decision)
 
 
-def update_stat_gain(statesActions,resultat):
+def update_stat_gain(statesActions,resultat,state_bank,state):
     indices_selection_etats_sortis = []
     for tab in range (len(statesActions)):
         #print("probleme 1 dans la fx update_stat_gain")
@@ -59,6 +63,12 @@ def update_stat_gain(statesActions,resultat):
         nombre_etats_joue[ind] = nombre_etats_joue[ind] + 1
         if (resultat == 2 or resultat == 1):
             nombre_etats_gagnes[ind] = nombre_etats_gagnes[ind] + 1
+            if (ind == 11):
+                print("stateActions : ",statesActions[k])
+                print("statesActions : ", statesActions)
+                print("Etats opposant : ", state_bank)
+                print("etat de la main : ", state)
+                
     for i in range (len(nombre_etats_joue)):
         if (nombre_etats_joue[i] != 0):
             stat_gain[i] = nombre_etats_gagnes[i] / nombre_etats_joue[i]
@@ -183,7 +193,7 @@ def manche():
     #print("fx manche : resultat obtenu")
     #print(result)
     updateValue(statesActions,ennemy_state,result,mypolicy)
-    update_stat_gain(statesActions,result)
+    update_stat_gain(statesActions,result,state_bank,state)
         
 
 def updateValue(statesActionsList,ennemy_state,result,mypolicy):#statesActionsList est la liste de couples des (états; actions) prises lors de la partie

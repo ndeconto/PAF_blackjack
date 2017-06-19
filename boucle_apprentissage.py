@@ -10,5 +10,6 @@ from idee_automatisation_jeux import *
 def apprentissage(n):
     for k in range(n):
         manche()
-    print("My policy : ",mypolicy)
+#    print("My policy : ",mypolicy)
     print("Stats victoires : ",stat_gain)
+    print("Nb etat joué et nb etats ganés : ", nombre_etats_joue,nombre_etats_gagnes)
