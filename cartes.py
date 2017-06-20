@@ -53,7 +53,7 @@ class Carte:
 
         if 1 <= self.hauteur <= 13: return min(self.hauteur,10)
 
-        if self.hauteur == AS: return [1, 11]
+        if self.hauteur == AS: return 1
         return 10
 
 
@@ -118,7 +118,11 @@ class Main:
 
         self.calcul_valeur()
 
-        
+    def special_hand(self):
+    	c = self.contenu
+    	if len(self.contenu) == 2 :
+    		return (c[0]==AS or c[1]==AS),(c[0]==c[1].get_valeur())
+    	return (c[0]==AS or c[1]==AS),False
 
     def calcul_valeur(self):
         """
@@ -138,6 +142,12 @@ class Main:
 
     def get_m_valeur(self):
     	return self.valeur
+
+    def get_state(self):
+    	t = 0
+    	for c in self.contenu:
+    		t+=c.valeur
+    	return t
 
     def __str__(self):
         return "[" + "; ".join(map(str, self.contenu)) + "]"

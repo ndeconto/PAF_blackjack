@@ -13,10 +13,11 @@ for i in range(testing_time):
 
 def f(values):
 	return values.index(max(values))
-
-result = [[f(values) for values in i]for i in algo_monte_carlo.mypolicy]
-print("     ↑ low enemy card   | high enemy card ↓")
-print("     <- low value hand  |  high value hand ->")
-print('\n'.join([''.join(['{:4}'.format(item) for item in row]) for row in result]))
+	
+for m in algo_monte_carlo.mypolicy:
+	result = [[f(values) for values in i]for i in m]
+	print("     ↑ low enemy card   | high enemy card ↓")
+	print("     <- low value hand  |  high value hand ->")
+	print('\n'.join([''.join(['{:4}'.format(item) for item in row]) for row in result]))
 
 print("\nAverage score : " + str(int(score*50/testing_time)) + "%")

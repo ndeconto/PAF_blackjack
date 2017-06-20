@@ -25,8 +25,7 @@ def win(state, state_oponent):
 
     
 def manche(maj): 
-    """Fonction qui representera une main
-       Pour l'instant, les cartes ne sont pas pioché par python"""
+    """Fonction qui representera une main"""
 
     jeu = Deck()
     """
@@ -41,7 +40,8 @@ def manche(maj):
     statesActions =[] 
     #Début calcul etat initial
 
-    state = main_en_cours.get_m_valeur()
+    gotas, gotdouble = main_en_cours.special_hand()
+    state = main_en_cours.get_state()
     score_oponent = main_adverse.get_m_valeur()
     state_oponent = carte3.get_valeur() - 1
     #fin
@@ -52,8 +52,8 @@ def manche(maj):
     	score_oponent = main_adverse.get_m_valeur()
     
     #premiere prise de décision
-    if maj : decision =  makeDecision2(state,state_oponent) 
-    else : decision = makeBestDecision(state,state_oponent) 
+    if maj : decision =  makeDecision2(state,state_oponent,gotas,gotdouble) 
+    else : decision = makeBestDecision(state,state_oponent,gotas,gotdouble) 
     statesActions.append([state_oponent, ind(state), decision]) 
     #Boucle de jeu. Pour l'instant seulement deux actions. A adapter si on veut plus d'actions.
     while (decision == 1 and state<22): 
@@ -66,9 +66,10 @@ def manche(maj):
         else :
         	decision = makeBestDecision(state,state_oponent)
         statesActions.append([state_oponent,ind(state),decision])
+    if decision == 2
     
     #On est à la fin de la manche : on connait l'état, reste à évaluer si c'est un gain ou une perte. Pour l'instant gain unitaire.
-    result = win(state, score_oponent)
+    result = win(main_en_cours.get_m_valeur(), score_oponent)
     if maj : 
     	updateValue(statesActions, result, mypolicy)
     else : return(result)
