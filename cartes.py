@@ -108,7 +108,9 @@ class Main:
         self.valeur = 0
         self.calcul_valeur()
 
-
+    def get_card_at(self,indice):
+        return(self.contenu[indice].valeur)
+        
     def ajouter(self, nouvelle_carte):
         """
             rajoute 'carte' a la main
