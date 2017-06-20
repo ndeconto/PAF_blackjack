@@ -30,8 +30,6 @@ def makeDecision2(state,enemystate):       #renvoie la meilleure decision a epsi
 	elif gotas and not(cansplit) : mystate = 10
 	elif cansplit : mystate = int(mystate/2) - 1
 	else : mystate = ind(mystate)
-	print("mystate", mystate)
-	print("enemystate", enemystate)
 	coeff = mypolicy[level(gotas,cansplit)][enemystate][mystate]
 	x = random();
 	if x<epsilon:            #prise de décision non optimale avec proba epsilon
