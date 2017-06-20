@@ -66,11 +66,11 @@ def update_stat_gain(statesActions,resultat,state_bank,state):
         if (resultat == 2 or resultat == 1):
             nombre_etats_gagnes[ind] = nombre_etats_gagnes[ind] + 1
             nombre_partie_gagnee += 1 
-            if (ind == 11):
-                print("stateActions : ",statesActions[k])
-                print("statesActions : ", statesActions)
-                print("Etats opposant : ", state_bank)
-                print("etat de la main : ", state)  
+#            if (ind == 11):
+#                print("stateActions : ",statesActions[k])
+#                print("statesActions : ", statesActions)
+#                print("Etats opposant : ", state_bank)
+#                print("etat de la main : ", state)  
     for i in range (len(nombre_etats_joue)):
         if (nombre_etats_joue[i] != 0):
             stat_gain[i] = nombre_etats_gagnes[i] / nombre_etats_joue[i]
@@ -175,18 +175,21 @@ def manche():
 #    carteb = paquet.piocher()
     Bank_Hand = Main([carteb])
     decision_bank = bank_playing(Bank_Hand)
+    state_bank = 0
     if (isAs(carteb) == True):
         state_bank = 11
     else:
         state_bank = carteb.get_valeur()
+#    print("Etat de statebank initial", state_bank)
     while (decision_bank == 1 and state_bank < 22):
         carteb = paquet.piocher()
         Bank_Hand.ajouter(carteb)
         decision_bank = bank_playing(Bank_Hand)
+#        print("Etat de la banque dans la boucle", state_bank)
         if (isAs(carteb) == False):
             state_bank = state_bank + carteb.get_valeur()
         else:
-            if (state + 11 < 22):
+            if (state_bank + 11 < 22):
                 state_bank = state_bank + 11
             else:
                 state_bank = state_bank + 1
@@ -196,14 +199,16 @@ def manche():
     #print("fx manche : avant calcul du resultat")
     #print(statesActions)
     result = win(state,state_bank)
-    #print("main joueur + valeur main : ",Player_Hand," / ",state)
-    #print("Main de la banque / valeur de la banque : ",Bank_Hand," / ",state_bank)
-    #print("issue : ",result)
-    #print("fx manche : resultat obtenu")
-    #print(result)
+#    print("main joueur + valeur main : ",Player_Hand," / ",state)
+#    print("Main de la banque / valeur de la banque : ",Bank_Hand," / ",state_bank)
+#    print("issue : ",result)
+#    print("fx manche : resultat obtenu")
+#    print(result)
     updateValue(statesActions,ennemy_state,result,mypolicy)
     pourcentage_gagne = update_stat_gain(statesActions,result,state_bank,state)
-    return(pourcentage_gagne)
+#    if (state_bank < 17):
+#        print(Bank_Hand)
+#    return(pourcentage_gagne)
 
 def updateValue(statesActionsList,ennemy_state,result,mypolicy):#statesActionsList est la liste de couples des (états; actions) prises lors de la partie
     for cpl in statesActionsList:

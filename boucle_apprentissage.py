@@ -16,3 +16,7 @@ def apprentissage(n):
     print("Nb etat joué et nb etats ganés : ", nombre_etats_joue,nombre_etats_gagnes)
     print("Pourcentage de victoire : ",100*nombre_etats_gagnes[0]/nombre_etats_joue[0])
     
+
+def save_mypolicy(policy):
+    file_handler = open("mypolicy", "w")
+    pickle.dump(policy,file_handler)
