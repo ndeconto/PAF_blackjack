@@ -1,6 +1,7 @@
 from cartes import *
 from algo_monte_carlo import *
 from Bank_Playing import *
+import copy
 ############################################################################################################################
 nombre_etats_joue = [0 for i in range (12)] #Nombre de fois que chaque état sort : [<12,12,13,14,15,16,17,18,19,20,21,>21]
 nombre_etats_gagnes = [0 for i in range (12)]
@@ -17,7 +18,7 @@ def win2(player_hand,bank_hand,bet): #bet est la mise
         return(bet)
     elif(bank_best_value > 21):
         return(bet)
-    elif(player_best_player == bank_best_value):
+    elif(player_best_value == bank_best_value):
         return(0)
     elif(player_best_value < bank_best_value):
         return(- bet)
@@ -32,17 +33,17 @@ def win_split(player_hand_1,player_hand_2,bank_hand,bet):
     vic = 0
     draw = 0
     loose = 0
-    if (win2(player_best_value_1,bank_best_value,bet) == bet):
+    if (win2(player_hand_1,bank_hand,bet) == bet):
         vic += 1
-    if (win2(player_best_value_2,bank_best_value,bet) == bet):
+    if (win2(player_hand_2, bank_hand,bet) == bet):
         vic += 1
-    if (win2(player_best_value_1,bank_best_value,bet) == - bet):
+    if (win2(player_hand_1,bank_hand,bet) == - bet):
         loose += 1
-    if (win2(player_best_value_2,bank_best_value,bet) == - bet):
+    if (win2(player_hand_2,bank_hand,bet) == - bet):
         loose += 1
-    if (win2(player_best_value_1,bank_best_value,bet) == 0):
+    if (win2(player_hand_1,bank_hand,bet) == 0):
         draw += 1
-    if (win2(player_best_value_2,bank_best_value,bet) == 0):
+    if (win2(player_hand_2,bank_hand,bet) == 0):
         draw += 1
     if (vic == 2):
         return(2)
@@ -66,7 +67,7 @@ def manche2(bet): #bet est la mise
     bool_splitted = False
     bool_can_doble = False
     bool_dobled = False
-    bool_paire = False
+    bool_pair = False
     number_card = 1
     bank_card = deck.piocher()
     ennemy_state = 0 # 1 = as, 2= deux .... 10 = 10 ou tete
@@ -75,6 +76,14 @@ def manche2(bet): #bet est la mise
     player_hand = Main([player_card])
     player_state = 0
     bank_state = 0
+    bank_decision = bank_playing(bank_hand)
+    bank_state = 0
+    bool_bank_at_11 = False
+    if (isAs(bank_card) == True):
+        bank_state = 11
+        bool_bank_at_11 = True
+    else:
+        bank_state = bank_card.get_valeur()
     player_decision = 0
     bank_decision = 0
     result = 0
@@ -87,17 +96,23 @@ def manche2(bet): #bet est la mise
         ennemy_state = 1
     else:
         ennemy_state = bank_card.get_valeur()
-        
-    player_decision = makeDecision2([player_state,bool_as,bool_can_split,bool_can_doble],bank_state-1)
-    player_statesActions.append([player_state,Player_decision])
+      
+    print("etat initial", player_state)
+    print("boulasses", bool_as)
+    print("bool_can_split", bool_can_split)
+    print("bool_can_DOBLE", bool_can_doble)
+    print("bank_state", bank_state)    
+    player_decision = makeDecision2([player_state,bool_as,bool_can_split,bool_can_doble],(bank_state-1) % 10)
+    print("decision initiale", player_decision)
+    player_statesActions.append([player_state,player_decision])
     #####################Ce que l'on fait si la decision c'est de s'arreter#####################################
     while(player_decision != 0):
         if (player_decision == 1):
     #####################Ce que l'on fait si la decision c'est de tirer#########################################
-            if(number_card != 2):
-                bool_can_split,bool_can_doble = False,False
             player_card = deck.piocher()
             number_card += 1
+            if(number_card != 2):
+                bool_can_split,bool_can_doble = False,False
             player_hand.ajouter(player_card)
             if (isAs(player_card)):
                 bool_as = True
@@ -107,9 +122,9 @@ def manche2(bet): #bet est la mise
             if(number_card == 2):
                 bool_can_doble = True
                 bool_pair = True
-                if (get_card_at(0)==get_card_at(1)):
+                if (player_hand.get_card_at(0)==player_hand.get_card_at(1)):
                     bool_can_split = True
-            player_decision = makedecision2([player_state,bool_as,bool_can_split,bool_can_doble],bank_state-1)
+            player_decision = makeDecision2([player_state,bool_as,bool_can_split,bool_can_doble],(bank_state-1) % 10)
             player_statesActions.append([player_state,player_decision])
         elif(player_decision == 2):
     #####################Ce que l'on fait si la decision c'est de doubler#######################################
@@ -141,40 +156,33 @@ def manche2(bet): #bet est la mise
     ###############################################FIN DU WHILE#################################################
     
     ########A la banque de jouer###########
-    bank_decision = bank_playing(bank_hand)
-    bank_state = 0
-    bool_bank_at_11 = False
-    if (isAs(bank_card) == True):
-        bank_state = 11
-        bool_bank_at_11 = True
-    else:
-        bank_state = bank_card.get_valeur()
     while (bank_decision == 1 and bank_state < 22):
-        bank_card = paquet.piocher()
-        bank_hand.ajouter(carteb)
+        bank_card = deck.piocher()
+        bank_hand.ajouter(bank_card)
         bank_decision = bank_playing(bank_hand)
         if (isAs(bank_card) == False):
-            state_bank = state_bank + carteb.get_valeur()
+            bank_state = bank_state + bank_card.get_valeur()
         else:
-            bool_bank_get_as
-            if (state_bank + 11 < 22):
-                state_bank = state_bank + 11
+            if (bank_state + 11 < 22):
+                bank_state = bank_state + 11
                 bool_bank_at_11 = True
             else:
-                state_bank = state_bank + 1
-        if(state_bank > 21 and bool_bank_at_11 == True):
+                bank_state = bank_state + 1
+        if(bank_state > 21 and bool_bank_at_11 == True):
             bank_state = bank_state - 10
             bool_bank_at_11 = False
             bank_decision = 1    
     ########La banque a fini de jouer########
     
     ########MAJ de my policy#################
-    if (bool_splited == False):
+    if (bool_splitted == False):
         result = win2(player_hand,bank_hand,bet)
+        print("result win2 : ", result)
     else:
         result = win_split(player_hand_1,player_hand_2,bank_hand,bet)
-    updateValue(player_statesActions,bool_as,bool_pair,bank_hand.get_card_at(0),result,mypolicy) #banque state --> premiere carte
-    update_stat_gain(player_statesActions,result,bank_state,player_state)
+        print("result winsplit",result)
+    updateValue(player_statesActions,bool_as,bool_pair,bank_hand.get_card_at(0)-1,result,mypolicy) #banque state --> premiere carte
+    #update_stat_gain(player_statesActions,result,bank_state,player_state)
     ########Fin de la MAJ de mypolicy########
     
 
@@ -188,7 +196,7 @@ def isAs(carte):
     else:
         return(True)
 
-def update_stat_gain(statesActions,resultat,state_bank,state):
+def update_stat_gain(statesActions,resultat,bank_state,state):
     global nb_partie_jouee
     global nombre_partie_gagnee
     nb_partie_jouee = 0
@@ -208,7 +216,7 @@ def update_stat_gain(statesActions,resultat,state_bank,state):
 #            if (ind == 11):
 #                print("stateActions : ",statesActions[k])
 #                print("statesActions : ", statesActions)
-#                print("Etats opposant : ", state_bank)
+#                print("Etats opposant : ", bank_state)
 #                print("etat de la main : ", state)  
     for i in range (len(nombre_etats_joue)):
         if (nombre_etats_joue[i] != 0):
