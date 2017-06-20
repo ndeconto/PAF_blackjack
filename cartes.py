@@ -56,8 +56,7 @@ class Carte:
         if self.hauteur == AS: return [1, 11]
         #if self.hauteur == ASONZE: return(11)
         return 10
-
-
+        
     def __str__(self):
         return  REPR[self.hauteur] + " de " + REPR[self.couleur]
 
@@ -109,7 +108,10 @@ class Main:
         self.calcul_valeur()
 
     def get_card_at(self,indice):
-        return(self.contenu[indice].valeur)
+        if (isinstance(self.contenu[indice].valeur,int)): 
+            return(self.contenu[indice].valeur)
+        else: 
+            return(1)
         
     def ajouter(self, nouvelle_carte):
         """
@@ -126,6 +128,7 @@ class Main:
     def calcul_valeur(self):
         """
             calcule en place la liste des valeurs possibles de la main
+            NON --> calcul la meilleur main possible 
         """
 
         v = 0

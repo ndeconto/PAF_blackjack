@@ -9,10 +9,54 @@ nb_partie_jouee = 0
 nombre_partie_gagnee = 0
 
 def win2(player_hand,bank_hand,bet): #bet est la mise 
-    return()
+    player_best_value = player_hand.valeur
+    bank_best_value = bank_hand.valeur
+    if(player_best_value > 21):
+        return(- bet)
+    elif(player_best_value > bank_best_value):
+        return(bet)
+    elif(bank_best_value > 21):
+        return(bet)
+    elif(player_best_player == bank_best_value):
+        return(0)
+    elif(player_best_value < bank_best_value):
+        return(- bet)
+    else:
+        print("fatal error")
+    
 
 def win_split(player_hand_1,player_hand_2,bank_hand,bet):
-    return()
+    player_best_value_1 = player_hand_1.valeur
+    player_best_value_2 = player_hand_2.valeur
+    bank_best_value = bank_hand.valeur
+    vic = 0
+    draw = 0
+    loose = 0
+    if (win2(player_best_value_1,bank_best_value,bet) == bet):
+        vic += 1
+    if (win2(player_best_value_2,bank_best_value,bet) == bet):
+        vic += 1
+    if (win2(player_best_value_1,bank_best_value,bet) == - bet):
+        loose += 1
+    if (win2(player_best_value_2,bank_best_value,bet) == - bet):
+        loose += 1
+    if (win2(player_best_value_1,bank_best_value,bet) == 0):
+        draw += 1
+    if (win2(player_best_value_2,bank_best_value,bet) == 0):
+        draw += 1
+    if (vic == 2):
+        return(2)
+    if (draw == 2):
+        return(0)
+    if (loose == 2):
+        return(-2)
+    if (vic == 1 and draw == 1):
+        return(1)
+    if (draw == 1 and loose == 1):
+        return(-1)
+    if (loose == 1 and vic == 1):
+        return(0)
+
 
 def manche2(bet): #bet est la mise
     deck = Deck()
@@ -27,8 +71,8 @@ def manche2(bet): #bet est la mise
     bank_card = deck.piocher()
     ennemy_state = 0 # 1 = as, 2= deux .... 10 = 10 ou tete
     player_card = deck.piocher()
-    bank_hand = Main(bank_card)
-    player_hand = Main(card)
+    bank_hand = Main([bank_card])
+    player_hand = Main([player_card])
     player_state = 0
     bank_state = 0
     player_decision = 0
@@ -38,13 +82,13 @@ def manche2(bet): #bet est la mise
         player_state = 1
         bool_as = True
     else:
-        player_state = player_card.getvaleur()
+        player_state = player_card.get_valeur()
     if (isAs(bank_card)):
         ennemy_state = 1
     else:
-        ennemy_state = carteb.get_valeur()
+        ennemy_state = bank_card.get_valeur()
         
-    player_decision = makedecision2([player_state,bool_as,bool_can_split,bool_can_doble],bank_state)
+    player_decision = makeDecision2([player_state,bool_as,bool_can_split,bool_can_doble],bank_state)
     player_statesActions.append([player_state,Player_decision])
     #####################Ce que l'on fait si la decision c'est de s'arreter#####################################
     while(player_decision != 0):
@@ -94,9 +138,9 @@ def manche2(bet): #bet est la mise
                 bool_as = True
             player_statesActions.append([player_state,player_decision])
             player_decision = 0 #Une seule carte à piocher
-    ###FIN DU WHILE###
+    ###############################################FIN DU WHILE#################################################
     
-    ###A la banque de jouer###
+    ########A la banque de jouer###########
     bank_decision = bank_playing(bank_hand)
     bank_state = 0
     bool_bank_at_11 = False
@@ -122,21 +166,21 @@ def manche2(bet): #bet est la mise
             bank_state = bank_state - 10
             bool_bank_at_11 = False
             bank_decision = 1    
-    ###La banque a fini de jouer###
+    ########La banque a fini de jouer########
     
+    ########MAJ de my policy#################
     if (bool_splited == False):
         result = win2(player_hand,bank_hand,bet)
     else:
         result = win_split(player_hand_1,player_hand_2,bank_hand,bet)
     updateValue(player_statesActions,bool_as,bool_pair,bank_hand.get_card_at(0),result,mypolicy) #banque state --> premiere carte
     update_stat_gain(player_statesActions,result,bank_state,player_state)
-    return()
-
-
+    ########Fin de la MAJ de mypolicy########
+    
 
 
 def updateValue(statesActionsList,bool_as,bool_pair,bank_state,result,mypolicy):
-    return()
+    return("bonjour")
 
 
 
@@ -174,13 +218,3 @@ def update_stat_gain(statesActions,resultat,state_bank,state):
         if (nombre_etats_joue[i] != 0):
             stat_gain[i] = nombre_etats_gagnes[i] / nombre_etats_joue[i]
     return(nombre_partie_gagnee / nb_partie_jouee)
-    
-def calcul_indice(valeur):
-    if (valeur < 12):
-        return(0)
-    elif(valeur > 21):
-        return(11)
-    else:
-        return(11 - valeur)
-    
-    
