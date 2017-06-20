@@ -12,7 +12,7 @@ def win2(player_hand,bank_hand,bet): #bet est la mise
     player_best_value = player_hand.valeur
     bank_best_value = bank_hand.valeur
     if(player_best_value > 21):
-        return(- bet)
+        return(-bet)
     elif(player_best_value > bank_best_value):
         return(bet)
     elif(bank_best_value > 21):
@@ -88,7 +88,7 @@ def manche2(bet): #bet est la mise
     else:
         ennemy_state = bank_card.get_valeur()
         
-    player_decision = makeDecision2([player_state,bool_as,bool_can_split,bool_can_doble],bank_state)
+    player_decision = makeDecision2([player_state,bool_as,bool_can_split,bool_can_doble],bank_state-1)
     player_statesActions.append([player_state,Player_decision])
     #####################Ce que l'on fait si la decision c'est de s'arreter#####################################
     while(player_decision != 0):
@@ -109,7 +109,7 @@ def manche2(bet): #bet est la mise
                 bool_pair = True
                 if (get_card_at(0)==get_card_at(1)):
                     bool_can_split = True
-            player_decision = makedecision2([player_state,bool_as,bool_can_split,bool_can_doble],bank_state)
+            player_decision = makedecision2([player_state,bool_as,bool_can_split,bool_can_doble],bank_state-1)
             player_statesActions.append([player_state,player_decision])
         elif(player_decision == 2):
     #####################Ce que l'on fait si la decision c'est de doubler#######################################
