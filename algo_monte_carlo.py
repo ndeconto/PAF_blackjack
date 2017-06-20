@@ -70,3 +70,12 @@ def makeBestDecision(state,enemystate):
 	if s==2 and not candouble : s = 1
 	return(s)
 
+def updateValue(statesActionsList,bool_as,bool_pair,bank_state,result,mypolicy):
+	for cpl in statesActionsList[level(bool_as,bool_pair):
+        pi = mypolicy[cpl[0]]
+        pi = pi[cpl[1]]
+        pi = pi[cpl[2]];          #pi est le poids (toujours positif) de la décision cpl[1] dans l'état cpl[0]
+        pi = (result + alpha*pi);             #mise à jour du poids
+        #if pi<epsilon/(1-alpha) : pi = epsilon/(1-alpha);         #on est à epsilon-greedy transition (sans oublier la normalisation)
+        mypolicy[cpl[0]][cpl[1]][cpl[2]] = pi			  #mise à jour de policy
+    

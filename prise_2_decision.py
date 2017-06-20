@@ -179,10 +179,6 @@ def manche2(bet): #bet est la mise
     
 
 
-def updateValue(statesActionsList,bool_as,bool_pair,bank_state,result,mypolicy):
-    return("bonjour")
-
-
 
 
 

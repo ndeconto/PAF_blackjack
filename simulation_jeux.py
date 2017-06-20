@@ -87,16 +87,3 @@ def manche():
     result = win(state, score_oponent)
     updateValue(statesActions, result, mypolicy)
  
-
-def updateValue(statesActionsList,result,mypolicy):#statesActionsList est la liste de couples des (états; actions) prises lors de la partie
-    #print(mypolicy)
-    #print(statesActionsList)
-    for cpl in statesActionsList:
-    	#print(cpl)
-        pi = mypolicy[cpl[0]]
-        pi = pi[cpl[1]]
-        pi = pi[cpl[2]];          #pi est le poids (toujours positif) de la décision cpl[1] dans l'état cpl[0]
-        pi = (result + alpha*pi);             #mise à jour du poids
-        #if pi<epsilon/(1-alpha) : pi = epsilon/(1-alpha);         #on est à epsilon-greedy transition (sans oublier la normalisation)
-        mypolicy[cpl[0]][cpl[1]][cpl[2]] = pi			  #mise à jour de policy
-    
