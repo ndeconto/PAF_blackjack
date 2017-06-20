@@ -27,7 +27,7 @@ def manche2(bet): #bet est la mise
     bank_card = deck.piocher()
     ennemy_state = 0 # 1 = as, 2= deux .... 10 = 10 ou tete
     player_card = deck.piocher()
-    bank_hand = Main(b_card)
+    bank_hand = Main(bank_card)
     player_hand = Main(card)
     player_state = 0
     bank_state = 0
@@ -95,16 +95,41 @@ def manche2(bet): #bet est la mise
             player_statesActions.append([player_state,player_decision])
             player_decision = 0 #Une seule carte à piocher
     ###FIN DU WHILE###
+    
     ###A la banque de jouer###
-    
-    
+    bank_decision = bank_playing(bank_hand)
+    bank_state = 0
+    bool_bank_at_11 = False
+    if (isAs(bank_card) == True):
+        bank_state = 11
+        bool_bank_at_11 = True
+    else:
+        bank_state = bank_card.get_valeur()
+    while (bank_decision == 1 and bank_state < 22):
+        bank_card = paquet.piocher()
+        bank_hand.ajouter(carteb)
+        bank_decision = bank_playing(bank_hand)
+        if (isAs(bank_card) == False):
+            state_bank = state_bank + carteb.get_valeur()
+        else:
+            bool_bank_get_as
+            if (state_bank + 11 < 22):
+                state_bank = state_bank + 11
+                bool_bank_at_11 = True
+            else:
+                state_bank = state_bank + 1
+        if(state_bank > 21 and bool_bank_at_11 == True):
+            bank_state = bank_state - 10
+            bool_bank_at_11 = False
+            bank_decision = 1    
     ###La banque a fini de jouer###
+    
     if (bool_splited == False):
         result = win2(player_hand,bank_hand,bet)
     else:
         result = win_split(player_hand_1,player_hand_2,bank_hand,bet)
     updateValue(player_statesActions,bool_as,bool_pair,bank_hand.get_card_at(0),result,mypolicy) #banque state --> premiere carte
-    update_stat_gain(statesActions,resultat,state_bank,state)
+    update_stat_gain(player_statesActions,result,bank_state,player_state)
     return()
 
 
