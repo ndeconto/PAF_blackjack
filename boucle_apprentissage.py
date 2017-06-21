@@ -32,7 +32,7 @@ def apprentissage2(n,bet):
         victoire = manche2(bet)
 #    print("Stats victoires : ",stat_gain)
  #   print("Nb etat joué et nb etats ganés : ", nombre_etats_joue,nombre_etats_gagnes)
-  #  print("Pourcentage de victoire : ",100*nombre_etats_gagnes[0]/nombre_etats_joue[0])
+    #print("Pourcentage de victoire : ",100*nombre_etats_gagnes[0]/nombre_etats_joue[0])
 
     result = [[f(values) for values in i]for i in mypolicy]
    # print("     ↑ low enemy card   | high enemy card ↓")

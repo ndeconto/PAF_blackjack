@@ -60,7 +60,13 @@ def win_split(player_hand_1,player_hand_2,bank_hand,bet):
         return(0)
 
 
-def manche2(bet): #bet est la mise
+def manche2(bet, learning=True): #bet est la mise
+    global epsilon
+    
+    if not learning:
+        epsilon_copy = epsilon
+        epsilon = 0
+    
     deck = Deck()
     player_statesActions = []
     bool_as = False
@@ -155,22 +161,12 @@ def manche2(bet): #bet est la mise
     ###############################################FIN DU WHILE#################################################
     
     ########A la banque de jouer###########
-    while (bank_decision == 1 and bank_state < 22):
+    bank_decision = 1
+    while bank_decision == 1:
         bank_card = deck.piocher()
         bank_hand.ajouter(bank_card)
         bank_decision = bank_playing(bank_hand)
-        if (isAs(bank_card) == False):
-            bank_state = bank_state + bank_card.get_valeur()
-        else:
-            if (bank_state + 11 < 22):
-                bank_state = bank_state + 11
-                bool_bank_at_11 = True
-            else:
-                bank_state = bank_state + 1
-        if(bank_state > 21 and bool_bank_at_11 == True):
-            bank_state = bank_state - 10
-            bool_bank_at_11 = False
-            bank_decision = 1    
+        bank_state = bank_hand.get_m_valeur()
     ########La banque a fini de jouer########
     
     ########MAJ de my policy#################
@@ -180,11 +176,16 @@ def manche2(bet): #bet est la mise
     else:
         result = win_split(player_hand_1,player_hand_2,bank_hand,bet)
         #print("result winsplit",result)
-    updateValue(player_statesActions,bool_as,bool_pair,bank_hand.get_card_at(0)-1,result,mypolicy) #banque state --> premiere carte
-    #update_stat_gain(player_statesActions,result,bank_state,player_state)
+
+    if learning :
+        updateValue(player_statesActions,bool_as,bool_pair,bank_hand.get_card_at(0)-1,result,mypolicy) #banque state --> premiere carte
+        #update_stat_gain(player_statesActions,result,bank_state,player_state)
     ########Fin de la MAJ de mypolicy########
     
 
+    else:
+        epsilon = epsilon_copy
+        return result
 
 
 
