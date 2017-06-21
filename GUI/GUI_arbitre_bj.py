@@ -62,7 +62,7 @@ class Arbitre(GUIComponent):
         vide = Surface((int(tx / 2), ty), SRCALPHA, 32)
         vide.fill(Color(0, 0, 0, 0))
         
-        cache_comp = FlashingImageComponent(3,
+        cache_comp = FlashingImageComponent(.2,
                     (int(tx / 2) if cote_gagnant == self.VICTOIRE_GAUCHE else 0, 0),
                     [cache, vide], 0.15)
 
