@@ -1,9 +1,10 @@
+# -*- coding: utf-8 -*-
 from cartes import *
 from algo_monte_carlo import *
 from Bank_Playing import *
 import copy
 ############################################################################################################################
-nombre_etats_joue = [0 for i in range (12)] #Nombre de fois que chaque état sort : [<12,12,13,14,15,16,17,18,19,20,21,>21]
+nombre_etats_joue = [0 for i in range (12)] #Nombre de fois que chaque Ã©tat sort : [<12,12,13,14,15,16,17,18,19,20,21,>21]
 nombre_etats_gagnes = [0 for i in range (12)]
 stat_gain = [0 for i in range (12)] #Proba de gagner par etat [<12,12,13,...,21,>21]
 nb_partie_jouee = 0
@@ -139,7 +140,7 @@ def manche2(bet): #bet est la mise
             else:
                 player_state += player_card.get_valeur()
             player_statesActions.append([player_state,player_decision])
-            player_decision = 0 #Une seule carte à piocher
+            player_decision = 0 #Une seule carte Ã  piocher
         elif(player_decision == 3):
     #####################Ce que l'on fait si la decision c'est de splitter######################################    
             bool_splitted = True
@@ -150,7 +151,7 @@ def manche2(bet): #bet est la mise
             player_hand_1.ajouter(player_card_1)
             player_hand_2.ajouter(player_card_2)
             player_statesActions.append([player_state,player_decision])
-            player_decision = 0 #Une seule carte à piocher
+            player_decision = 0 #Une seule carte Ã  piocher
     ###############################################FIN DU WHILE#################################################
     
     ########A la banque de jouer###########
