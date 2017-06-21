@@ -39,8 +39,30 @@ def save_mypolicy(policy):
     pickle.dump(policy,file_handler)
 
 
+
 def presenter_resultats(mypolicy):
     matrice_simple = mypolicy[0]
     matrice_as = mypolicy[1]
     matrice_paire = [2]
+
+    
+def graphe_vitesse_apprentissage():
+
+    from matplotlib.pyplot import plot, show, xlabel, ylabel
+
+    pas = 2 * 10**5
+    a_max = 10**6
+
+    
+    lx = range(0, a_max, pas)
+    ly = [0] * len(lx)
+    
+    for i in range(len(lx)):
+        ly[i] = test_sans_apprendre(10**5)
+        apprentissage2(pas, 1)
+        
+    xlabel("nombre d'iterations d'apprentissage")
+    ylabel("gain moyen pour une mise de 1")
+    plot(lx, ly)
+    show()
 

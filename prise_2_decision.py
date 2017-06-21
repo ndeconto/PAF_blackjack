@@ -222,7 +222,6 @@ def test_sans_apprendre(n):
     s = sum(manche2(1, False) for i in range(n))
     return float(s) / n
   
-  
   ##      
 
 def isAs(carte):
