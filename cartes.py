@@ -155,7 +155,7 @@ class Main:
 class Deck:
     """
         represente un jeu (initalement) de 52 cartes
-        Au blackjack : cartes melangées entre chaque tours ? (Est-ce qu'on peut compter les cartes)
+        Au blackjack : cartes melangees entre chaque tours ? (Est-ce qu'on peut compter les cartes)
     """
     
     def __init__(self):

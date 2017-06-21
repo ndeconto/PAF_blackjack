@@ -8,8 +8,8 @@ def nb_action_dispo(k):
 
 actions = {"split":3,"double":2,"draw":1, "fold":0};        #Set d'actions disponibles
 states = range(12);           #Set de states disponibles {<12, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, >21}
-enemystate = {0,1,2,3,4,5,6,7,8,9} # 0 = as, 1= deux .... 9 = 10 ou tête
-alpha = 0.95;                 #Taux d'évaporation
+enemystate = {0,1,2,3,4,5,6,7,8,9} # 0 = as, 1= deux .... 9 = 10 ou tete
+alpha = 0.95;                 #Taux d'evaporation
 epsilon = 0.05;               #seuil de valeur minimal
 mypolicy = [[[[10.0]*nb_action_dispo(k) for i in range(len(states))] for j in range(len(enemystate))] for k in range(3)];    #valeurs initiales de chaques coups dans chaque situatio 
 
@@ -32,7 +32,7 @@ def makeDecision2(state,enemystate):       #renvoie la meilleure decision a epsi
 	else : mystate = ind(mystate)
 	coeff = mypolicy[level(gotas,cansplit)][enemystate][mystate]
 	x = random();
-	if x<epsilon:            #prise de décision non optimale avec proba epsilon
+	if x<epsilon:            #prise de decision non optimale avec proba epsilon
 		return(randint(0,len(coeff)-1))
 	s = 0
 	for i in range(len(coeff)):
@@ -57,7 +57,7 @@ def updateValue(statesActionsList,bool_as,bool_pair,bank_state,result,mypolicy):
 	for cpl in statesActionsList:
 		pi = mypolicy[level(bool_as,bool_pair)][bank_state]
 		pi = pi[ind(cpl[0])]
-		pi = pi[cpl[1]];          #pi est le poids (toujours positif) de la décision cpl[1] dans l'état cpl[0]
-		pi = (result + alpha*pi);             #mise à jour du poids
-		#if pi<epsilon/(1-alpha) : pi = epsilon/(1-alpha);         #on est à epsilon-greedy transition (sans oublier la normalisation)
-		mypolicy[level(bool_as,bool_pair)][bank_state][ind(cpl[0])][cpl[1]] = pi			  #mise à jour de policy
+		pi = pi[cpl[1]];          #pi est le poids (toujours positif) de la decision cpl[1] dans l'etat cpl[0]
+		pi = (result + alpha*pi);             #mise a jour du poids
+		#if pi<epsilon/(1-alpha) : pi = epsilon/(1-alpha);      #on est a epsilon-greedy transition (sans oublier la normalisation)
+		mypolicy[level(bool_as,bool_pair)][bank_state][ind(cpl[0])][cpl[1]] = pi	 #mise a jour de policy
