@@ -55,6 +55,7 @@ def makeBestDecision(state,enemystate):
 
 def updateValue(statesActionsList,bool_as,bool_pair,bank_state,result,mypolicy):
 	for cpl in statesActionsList:
+		#print("cpl ",cpl)
 		pi = mypolicy[level(bool_as,bool_pair)][bank_state]
 		pi = pi[ind(cpl[0])]
 		pi = pi[cpl[1]];          #pi est le poids (toujours positif) de la decision cpl[1] dans l'etat cpl[0]

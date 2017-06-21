@@ -97,13 +97,13 @@ def manche2(bet): #bet est la mise
     else:
         ennemy_state = bank_card.get_valeur()
       
-    print("etat initial", player_state)
-    print("boulasses", bool_as)
-    print("bool_can_split", bool_can_split)
-    print("bool_can_DOBLE", bool_can_doble)
-    print("bank_state", bank_state)    
+    #print("etat initial", player_state)
+    #print("boulasses", bool_as)
+    #print("bool_can_split", bool_can_split)
+    #print("bool_can_DOBLE", bool_can_doble)
+    #print("bank_state", bank_state)    
     player_decision = makeDecision2([player_state,bool_as,bool_can_split,bool_can_doble],(bank_state-1) % 10)
-    print("decision initiale", player_decision)
+    #print("decision initiale", player_decision)
     player_statesActions.append([player_state,player_decision])
     #####################Ce que l'on fait si la decision c'est de s'arreter#####################################
     while(player_decision != 0):
@@ -149,8 +149,6 @@ def manche2(bet): #bet est la mise
             player_hand_2 = copy.deepcopy(player_hand)
             player_hand_1.ajouter(player_card_1)
             player_hand_2.ajouter(player_card_2)
-            if(isAs(player_card_1) or isAs(player_card_2)):
-                bool_as = True
             player_statesActions.append([player_state,player_decision])
             player_decision = 0 #Une seule carte à piocher
     ###############################################FIN DU WHILE#################################################
@@ -177,10 +175,10 @@ def manche2(bet): #bet est la mise
     ########MAJ de my policy#################
     if (bool_splitted == False):
         result = win2(player_hand,bank_hand,bet)
-        print("result win2 : ", result)
+        #print("result win2 : ", result)
     else:
         result = win_split(player_hand_1,player_hand_2,bank_hand,bet)
-        print("result winsplit",result)
+        #print("result winsplit",result)
     updateValue(player_statesActions,bool_as,bool_pair,bank_hand.get_card_at(0)-1,result,mypolicy) #banque state --> premiere carte
     #update_stat_gain(player_statesActions,result,bank_state,player_state)
     ########Fin de la MAJ de mypolicy########
