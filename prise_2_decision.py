@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from cartes import *
-from algo_monte_carlo import *
 from Bank_Playing import *
+from algo_MC_2 import *
 import copy
 
 ##
@@ -75,6 +75,7 @@ def manche2(bet, learning=True): #bet est la mise
     
     deck = Deck()
     player_statesActions = []
+    position_as = 0
     bool_as = False
     bool_can_split = False
     bool_splitted = False
@@ -91,6 +92,7 @@ def manche2(bet, learning=True): #bet est la mise
     if (isAs(player_card)):                 #Si c'est un as
         player_state = 1
         bool_as = True
+        position_as = 1
     else:
         player_state = player_card.get_valeur()
         
@@ -99,6 +101,7 @@ def manche2(bet, learning=True): #bet est la mise
     if (isAs(player_card)):                 #Si c'est un as
         player_state += 1
         bool_as = True
+        position_as = 1
     else:
         player_state += player_card.get_valeur()
         
@@ -120,7 +123,7 @@ def manche2(bet, learning=True): #bet est la mise
         
       
     
-    player_decision = makeDecision2([player_state,bool_as,bool_can_split,bool_can_doble],(bank_state-1) % 10)   #decision du joueur
+    player_decision = makeDecision3([player_state,bool_as,bool_can_split,bool_can_doble],(bank_state-1) % 10)   #decision du joueur
     player_statesActions.append([player_state,player_decision])
     
     
@@ -135,12 +138,14 @@ def manche2(bet, learning=True): #bet est la mise
             player_hand.ajouter(player_card)
             if (isAs(player_card)):     #Si c'est un as
                 bool_as = True
+                if (position_as == 0):
+                    position_as = len(player_statesActions)
                 player_state += 1
             else:
                 player_state += player_card.get_valeur()
                 
             #Decision du joueur
-            player_decision = makeDecision2([player_state,bool_as,bool_can_split,bool_can_doble],(bank_state-1) % 10)
+            player_decision = makeDecision3([player_state,bool_as,bool_can_split,bool_can_doble],(bank_state-1) % 10)
             player_statesActions.append([player_state,player_decision])
         elif(player_decision == 2):
     #####################Ce que l'on fait si la decision c'est de doubler#######################################
@@ -193,8 +198,8 @@ def manche2(bet, learning=True): #bet est la mise
         #print("result winsplit",result)
 
     if learning :
-        updateValue(player_statesActions,bool_as,bool_pair,bank_hand.get_card_at(0)-1,result,mypolicy) #banque state --> premiere carte
-        victoire=update_stats_gains(player_statesActions,result,bank_state,player_state)
+        update_value3(player_statesActions,bool_as,bool_pair,bank_hand.get_card_at(0)-1,result,mypolicy) #banque state --> premiere carte
+        victoire=update_stats_gains(player_statesActions,result,bank_state,player_state,position_as)
         return victoire
     ########Fin de la MAJ de mypolicy########
     

@@ -64,7 +64,7 @@ def makeDecision3(state,enemystate):
     ####NE PAS OUBLIER D'AJOUTER BOOL_PAIR DANS LES DEUX VESTEURS STATE DE LA FX MANCHE()
     
     ###Cas ou on a ni as ni paire
-    if (bool_as == False and bool_can_split == False):
+    if ( (bool_as == False and bool_can_split == False) or (bool_as == True and player_state > 11) ):
         indice = ind_simple(player_state)
         coeff = policy_simple[enemystate][indice][:]
         if (not(bool_can_doble)):
@@ -86,7 +86,7 @@ def makeDecision3(state,enemystate):
         return(decision)
     
     ###Cas ou on a un as
-    if (bool_as == True):
+    if (bool_as == True and player_state < 12):
         indice = ind_as(player_state)
         coeff = policy_as[enemystate][indice][:]
         if (not(bool_can_doble)):
@@ -101,7 +101,7 @@ def makeDecision3(state,enemystate):
 
 
 ###Ecriture de la fonction pour maj des matrices de policy
-def update_value3(statesActionsList,bool_as,bool_pair,bank_state,result):
+def update_value3(statesActionsList,bool_as,bool_pair,bank_state,result,position_as):
     
     ###Cas ou la main initiale ne comportait ni as ni pair
     if (bool_as == False and bool_pair == False):
@@ -135,6 +135,13 @@ def update_value3(statesActionsList,bool_as,bool_pair,bank_state,result):
     ###Cas ou la main initiale comportait un as
     if (bool_as == True):
         k = 0
+        #Tant qu'on a pas encore tire l'as, on modifie le tableau simple
+        while k < position_as - 1 :
+            state,action = statesActionsList[k][0],statesActionsList[k][1]
+            pi = policy_simple[bank_state][state][action]
+            pi = result + alpha*pi
+            policy_simple[bank_state][state][action] = pi
+        #On a trouve un as plus un total <= 11, on modifie dans le tableau as               
         while (statesActionsList[k][0] < 12):
             #Revenir au tableau as
             state,action = statesActionsList[k][0],statesActionsList[k][1]
@@ -142,7 +149,7 @@ def update_value3(statesActionsList,bool_as,bool_pair,bank_state,result):
             pi = result + alpha*pi
             policy_as[bank_state][state][action] = pi
             k += 1
-        #revenir au tableau normal
+        #revenir au tableau normal lorsque le total depasse 11 : l'as vaut maintenant 1
         for couple in statesActionsList[k:]:
             state,action = couple[0],couple[1]
             pi = policy_simple[bank_state][state][action]
@@ -152,12 +159,4 @@ def update_value3(statesActionsList,bool_as,bool_pair,bank_state,result):
 
 
 
-
-
-
-
-
-
-
-
-    
+  
