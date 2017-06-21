@@ -3,12 +3,8 @@ from cartes import *
 from algo_monte_carlo import *
 from Bank_Playing import *
 import copy
-############################################################################################################################
-nombre_etats_joue = [0 for i in range (12)] #Nombre de fois que chaque Ã©tat sort : [<12,12,13,14,15,16,17,18,19,20,21,>21]
-nombre_etats_gagnes = [0 for i in range (12)]
-stat_gain = [0 for i in range (12)] #Proba de gagner par etat [<12,12,13,...,21,>21]
-nb_partie_jouee = 0
-nombre_partie_gagnee = 0
+
+##
 
 def win2(player_hand,bank_hand,bet): #bet est la mise 
     player_best_value = player_hand.valeur
@@ -26,6 +22,8 @@ def win2(player_hand,bank_hand,bet): #bet est la mise
     else:
         print("fatal error")
     
+
+##
 
 def win_split(player_hand_1,player_hand_2,bank_hand,bet):
     player_best_value_1 = player_hand_1.valeur
@@ -59,6 +57,7 @@ def win_split(player_hand_1,player_hand_2,bank_hand,bet):
     if (loose == 1 and vic == 1):
         return(0)
 
+##
 
 def manche2(bet, learning=True): #bet est la mise
     global epsilon
@@ -114,25 +113,16 @@ def manche2(bet, learning=True): #bet est la mise
         
       
     
-    #print("etat initial", player_state)
-    #print("boulasses", bool_as)
-    #print("bool_can_split", bool_can_split)
-    #print("bool_can_DOBLE", bool_can_doble)
-    #print("bank_state", bank_state)    
-    print("new game")
     player_decision = makeDecision2([player_state,bool_as,bool_can_split,bool_can_doble],(bank_state-1) % 10)   #decision du joueur
-    #print("decision initiale", player_decision)
     player_statesActions.append([player_state,player_decision])
-    #####################Ce que l'on fait si la decision c'est de s'arreter#####################################
-    while(player_decision != 0):
-        print("boucle while")
+    
+    
+    
+    #####################Entree de la boucle while#####################################
+    while(player_decision != 0 and player_state < 32):
         if (player_decision == 1):
     #####################Ce que l'on fait si la decision c'est de tirer#########################################
             player_card = deck.piocher()            #On pioche
-            #print("state", player_state)
-            #print("bank_state", (bank_state-1) % 10)
-            #print("split" , bool_can_split)
-            #print("double", bool_can_doble)
             number_card += 1
             bool_can_split,bool_can_doble = False,False
             player_hand.ajouter(player_card)
@@ -144,7 +134,6 @@ def manche2(bet, learning=True): #bet est la mise
                 
             #Decision du joueur
             player_decision = makeDecision2([player_state,bool_as,bool_can_split,bool_can_doble],(bank_state-1) % 10)
-            print("decision", player_decision)
             player_statesActions.append([player_state,player_decision])
         elif(player_decision == 2):
     #####################Ce que l'on fait si la decision c'est de doubler#######################################
@@ -225,29 +214,3 @@ def isAs(carte):
     else:
         return(True)
 
-def update_stat_gain(statesActions,resultat,bank_state,state):
-    global nb_partie_jouee
-    global nombre_partie_gagnee
-    nb_partie_jouee = 0
-    nombre_partie_gagnee = 0
-    indices_selection_etats_sortis = []
-    nb_partie_jouee += 1
-    for tab in range (len(statesActions)):
-        #print("probleme 1 dans la fx update_stat_gain")
-        #print(statesActions[tab][0])
-        indices_selection_etats_sortis.append(statesActions[tab][0])
-    for k in range(len(indices_selection_etats_sortis)):
-        ind = indices_selection_etats_sortis[k]
-        nombre_etats_joue[ind] = nombre_etats_joue[ind] + 1
-        if (resultat == 2 or resultat == 1):
-            nombre_etats_gagnes[ind] = nombre_etats_gagnes[ind] + 1
-            nombre_partie_gagnee += 1 
-#            if (ind == 11):
-#                print("stateActions : ",statesActions[k])
-#                print("statesActions : ", statesActions)
-#                print("Etats opposant : ", bank_state)
-#                print("etat de la main : ", state)  
-    for i in range (len(nombre_etats_joue)):
-        if (nombre_etats_joue[i] != 0):
-            stat_gain[i] = nombre_etats_gagnes[i] / nombre_etats_joue[i]
-    return(nombre_partie_gagnee / nb_partie_jouee)

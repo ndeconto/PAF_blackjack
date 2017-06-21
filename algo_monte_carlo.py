@@ -30,18 +30,14 @@ def makeDecision2(state,enemystate):       #renvoie la meilleure decision a epsi
 	elif gotas and not(cansplit) : mystate = ind(mystate)
 	elif cansplit : mystate = int(mystate/2) - 1
 	else : mystate = ind(mystate)
-	print("ind(state)", mystate)
-	print("gotas", gotas)
-	print("bank_state", enemystate)
-	coeff = mypolicy[level(gotas,cansplit)][enemystate][mystate]
-	print("coeff", coeff)
+	coeff = mypolicy[level(gotas,cansplit)][enemystate][mystate][:]
+	if level(gotas,cansplit)==0 and not candouble : coeff=coeff[0:2]
 	x = random();
 	if x<epsilon:            #prise de decision non optimale avec proba epsilon
 		return(randint(0,len(coeff)-1))
 	s = 0
 	for i in range(len(coeff)):
-		if coeff[i]>coeff[s]+0.1: s=i;
-	print("s ", s)
+		if coeff[i]>coeff[s]: s=i;
 	if s==2 and not candouble : s = 1
 	return(s)
 
