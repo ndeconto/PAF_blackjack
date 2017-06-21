@@ -35,5 +35,5 @@ def apprentissage2(n,bet):
 
 
 def save_mypolicy(policy):
-    file_handler = open("mypolicy", "w")
+    file_handler = open("mypolicy", "wb")
     pickle.dump(policy,file_handler)
