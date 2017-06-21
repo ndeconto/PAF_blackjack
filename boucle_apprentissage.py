@@ -37,3 +37,10 @@ def apprentissage2(n,bet):
 def save_mypolicy(policy):
     file_handler = open("mypolicy", "wb")
     pickle.dump(policy,file_handler)
+
+
+def presenter_resultats(mypolicy):
+    matrice_simple = mypolicy[0]
+    matrice_as = mypolicy[1]
+    matrice_paire = [2]
+
