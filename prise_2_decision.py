@@ -109,14 +109,20 @@ def manche2(bet, learning=True): #bet est la mise
     #print("bool_can_split", bool_can_split)
     #print("bool_can_DOBLE", bool_can_doble)
     #print("bank_state", bank_state)    
+    print("new game")
     player_decision = makeDecision2([player_state,bool_as,bool_can_split,bool_can_doble],(bank_state-1) % 10)
     #print("decision initiale", player_decision)
     player_statesActions.append([player_state,player_decision])
     #####################Ce que l'on fait si la decision c'est de s'arreter#####################################
     while(player_decision != 0):
+        print("boucle while")
         if (player_decision == 1):
     #####################Ce que l'on fait si la decision c'est de tirer#########################################
             player_card = deck.piocher()
+            #print("state", player_state)
+            #print("bank_state", (bank_state-1) % 10)
+            #print("split" , bool_can_split)
+            #print("double", bool_can_doble)
             number_card += 1
             if(number_card != 2):
                 bool_can_split,bool_can_doble = False,False
@@ -132,6 +138,7 @@ def manche2(bet, learning=True): #bet est la mise
                 if (player_hand.get_card_at(0)==player_hand.get_card_at(1)):
                     bool_can_split = True
             player_decision = makeDecision2([player_state,bool_as,bool_can_split,bool_can_doble],(bank_state-1) % 10)
+            print("decision", player_decision)
             player_statesActions.append([player_state,player_decision])
         elif(player_decision == 2):
     #####################Ce que l'on fait si la decision c'est de doubler#######################################
