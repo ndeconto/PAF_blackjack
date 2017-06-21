@@ -195,7 +195,17 @@ def manche2(bet, learning=True): #bet est la mise
         return result
 
 
+def test_sans_apprendre(n):
+    """
+        fonction qui n'a rien a faire dans un fichier nommee prise_2_decision
+        mais bref...
+        cette fonction joue n parties, et renvoie le gain moyen (sachant que la
+        mise est 1 de base)
+    """
 
+    s = sum(manche2(1, False) for i in range(n))
+    return float(s) / n
+        
 
 def isAs(carte):
     if (isinstance(carte.get_valeur(),int)):
