@@ -6,6 +6,13 @@ import copy
 
 ##
 
+mise_investie = 0
+mise_gagnee = 0
+nb_parties_gagnees = 0
+nb_parties_jouees = 0
+
+##
+
 def win2(player_hand,bank_hand,bet): #bet est la mise 
     player_best_value = player_hand.valeur
     bank_best_value = bank_hand.valeur
@@ -187,7 +194,8 @@ def manche2(bet, learning=True): #bet est la mise
 
     if learning :
         updateValue(player_statesActions,bool_as,bool_pair,bank_hand.get_card_at(0)-1,result,mypolicy) #banque state --> premiere carte
-        #update_stat_gain(player_statesActions,result,bank_state,player_state)
+        victoire=update_stats_gains(player_statesActions,result,bank_state,player_state)
+        return victoire
     ########Fin de la MAJ de mypolicy########
     
 
@@ -195,6 +203,8 @@ def manche2(bet, learning=True): #bet est la mise
         epsilon = epsilon_copy
         return result
 
+
+##
 
 def test_sans_apprendre(n):
     """
@@ -206,11 +216,32 @@ def test_sans_apprendre(n):
 
     s = sum(manche2(1, False) for i in range(n))
     return float(s) / n
-        
+  
+  
+  ##      
 
 def isAs(carte):
     if (isinstance(carte.get_valeur(),int)):
         return(False)
     else:
         return(True)
+ 
+ ##
+
+        
+        
+        
+def update_stats_gains(statesActions,result,bank_state,player_state):
+    global nb_parties_gagnees, nb_parties_jouees, mise_gagnee, mise_investie
+    
+    mise_investie+=1
+    nb_parties_jouees+=1
+    mise_gagnee+=result
+    if (result > 0):
+        nb_parties_gagnees+=1
+    
+    pourcentage_victoire = str((nb_parties_gagnees/nb_parties_jouees)*100) + "% de victoires"
+    gain = "Gain par partie : " + str(mise_gagnee/mise_investie) + " millions d'euros"
+    
+    return pourcentage_victoire, gain
 
