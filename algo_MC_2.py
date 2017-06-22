@@ -103,7 +103,7 @@ def makeDecision3(state,enemystate):
 ###Ecriture de la fonction pour maj des matrices de policy
 def update_value3(statesActionsList,bool_as_choice,bool_pair,bank_state,result,position_as):
     ###Cas ou la main initiale ne comportait ni as ni paire
-    print("liste des parametres en entree de update_value3 : sListe, boolaschoice,boolpair,bankstate,result,posAs",statesActionsList,bool_as_choice,bool_pair,bank_state,result,position_as)
+    #print("liste des parametres en entree de update_value3 : sListe, boolaschoice,boolpair,bankstate,result,posAs",statesActionsList,bool_as_choice,bool_pair,bank_state,result,position_as)
     if (bool_as_choice == False and bool_pair == False):
         for couple in statesActionsList:
             state,action = ind_simple(couple[0]),couple[1]
@@ -115,8 +115,8 @@ def update_value3(statesActionsList,bool_as_choice,bool_pair,bank_state,result,p
         state,action = ind_pair(statesActionsList[0][0]),statesActionsList[0][1]
         pi = policy_pair[bank_state][state][action]
         pi = result + alpha*pi
-        print("Cas ou la main initiale comportait une paire")
-        print("state,action : ",state,action)
+        #print("Cas ou la main initiale comportait une paire")
+        #print("state,action : ",state,action)
         policy_pair[bank_state][state][action] = pi  
         k = 1
         ## cas de la paire d'as : ignore pour le moment
@@ -150,12 +150,13 @@ def update_value3(statesActionsList,bool_as_choice,bool_pair,bank_state,result,p
             policy_simple[bank_state][state][action] = pi
             k += 1
         #On a trouve un as plus un total <= 11, on modifie dans le tableau as
-        print("k = " , k)
-        print("statetsAction... : ", len(statesActionsList),len(statesActionsList[0]))
-        state_to_compare = statesActionsList[k][0]              
-        while ( state_to_compare < 12 ): #while l'as est toujours soft, on modifie le tableau as soft
-            print("On a trouve un as plus un total <= 11, on modifie dans le tableau as")
-            print("STC : ",state_to_compare)
+        #print("k = " , k)
+        #print("statetsAction... : ", len(statesActionsList),len(statesActionsList[0]))
+        state_to_compare = statesActionsList[k][0]
+        test = as_is_soft(state_to_compare)
+        while ( test == True ): #while l'as est toujours soft, on modifie le tableau as soft
+            #print("On a trouve un as plus un total <= 11, on modifie dans le tableau as")
+            #print("STC : ",state_to_compare)
             #Revenir au tableau as
             state,action = ind_as(statesActionsList[k][0]),statesActionsList[k][1]
             pi = policy_as[bank_state][state][action]
@@ -164,8 +165,9 @@ def update_value3(statesActionsList,bool_as_choice,bool_pair,bank_state,result,p
             k += 1
             if (k < len(statesActionsList)):
                 state_to_compare = statesActionsList[k][0]
+                test = as_is_soft(state_to_compare)
             else:
-                state_to_compare = 12 #On force la sortie de la boucle si notre IA s'arretes de piocher avant d'arriver à 12
+                test = False #On force la sortie de la boucle si notre IA s'arretes de piocher alors que l'as est toujours soft
         #revenir au tableau normal lorsque le total depasse 11 : l'as vaut maintenant 1
         for couple in statesActionsList[k:]:
             state,action = ind_simple(couple[0]),couple[1]
@@ -175,7 +177,7 @@ def update_value3(statesActionsList,bool_as_choice,bool_pair,bank_state,result,p
 
 
 def as_is_soft(state):
-    if (state + 10 < 22) : return(True)
+    if (state + 10 < 22) : return(True) #Si on peut toujours compter l'AS comme un 1 ou un 11
     else : return(False)
     
 

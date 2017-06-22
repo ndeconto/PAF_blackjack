@@ -213,7 +213,7 @@ def manche2(bet, learning=True): #bet est la mise
         #print("result winsplit",result)
 
     if learning :
-        print("Main du joueur : ", player_hand)
+#        print("Main du joueur : ", player_hand)
         update_value3(player_statesActions,bool_as_choice,bool_pair,bank_hand.get_card_at(0)-1,result,position_as) #banque state --> premiere carte
         victoire=update_stats_gains(player_statesActions,result,bank_state,player_state)
         return victoire
