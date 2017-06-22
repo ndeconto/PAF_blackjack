@@ -76,7 +76,7 @@ def manche2(bet, learning=True): #bet est la mise
     deck = Deck()
     player_statesActions = []
     position_as = 0
-    bool_as = False
+    bool_as_choice = False
     bool_can_split = False
     bool_splitted = False
     bool_can_doble = True
@@ -91,7 +91,8 @@ def manche2(bet, learning=True): #bet est la mise
     player_state = 0
     if (isAs(player_card)):                 #Si c'est un as
         player_state = 1
-        bool_as = True
+#        bool_as = True
+        bool_as_choice = True
         position_as = 1
     else:
         player_state = player_card.get_valeur()
@@ -100,7 +101,7 @@ def manche2(bet, learning=True): #bet est la mise
     player_hand.ajouter(player_card)
     if (isAs(player_card)):                 #Si c'est un as
         player_state += 1
-        bool_as = True
+        bool_as_choice = True
         position_as = 1
     else:
         player_state += player_card.get_valeur()
@@ -123,30 +124,36 @@ def manche2(bet, learning=True): #bet est la mise
         
       
     
-    player_decision = makeDecision3([player_state,bool_as,bool_can_split,bool_can_doble],(bank_state-1) % 10)   #decision du joueur
+    player_decision = makeDecision3([player_state,bool_as_choice,bool_can_split,bool_can_doble],(bank_state-1) % 10)   #decision du joueur
     player_statesActions.append([player_state,player_decision])
     
     
     
     #####################Entree de la boucle while#####################################
     while(player_decision != 0 and player_state < 32):
+        
         if (player_decision == 1):
     #####################Ce que l'on fait si la decision c'est de tirer#########################################
             player_card = deck.piocher()            #On pioche
             number_card += 1
             bool_can_split,bool_can_doble = False,False
             player_hand.ajouter(player_card)
-            if (isAs(player_card)):     #Si c'est un as
-                bool_as = True
+            if (isAs(player_card) and player_state < 11 and bool_as_choice == False):     #Si c'est un as soft
+                bool_as_choice = True
                 if (position_as == 0):
-                    position_as = len(player_statesActions)
+                    position_as = len(player_statesActions) + 1
                 player_state += 1
-            else:
+            elif (isAs(player_card)): #Si c'est pas un as soft
+                player_state += 1
+                if (position_as == 0):
+                    position_as = len(player_statesActions) + 1
+            else :
                 player_state += player_card.get_valeur()
                 
             #Decision du joueur
-            player_decision = makeDecision3([player_state,bool_as,bool_can_split,bool_can_doble],(bank_state-1) % 10)
+            player_decision = makeDecision3([player_state,bool_as_choice,bool_can_split,bool_can_doble],(bank_state-1) % 10)
             player_statesActions.append([player_state,player_decision])
+            
         elif(player_decision == 2):
     #####################Ce que l'on fait si la decision c'est de doubler#######################################
             bet = 2*bet #mise doublee
@@ -154,12 +161,20 @@ def manche2(bet, learning=True): #bet est la mise
             player_card = deck.piocher()
             number_card += 1
             player_hand.ajouter(player_card)
-            if (isAs(player_card)):
-                bool_as = True
+            if (isAs(player_card) and player_state < 11 and bool_as_choice == False):     #Si c'est un as soft
+                bool_as_choice = True
+                if (position_as == 0):
+                    position_as = len(player_statesActions) + 1
                 player_state += 1
-            else:
+            elif (isAs(player_card)): #Si c'est pas un as soft
+                player_state += 1
+                if (position_as == 0):
+                    position_as = len(player_statesActions) + 1
+            else :
                 player_state += player_card.get_valeur()
-            player_decision = 0 #Une seule carte Ã  piocher
+            player_statesActions.append([player_state,0])
+            player_decision = 0 #Une seule carte a piocher
+            
         elif(player_decision == 3):
     #####################Ce que l'on fait si la decision c'est de splitter######################################    
             bool_splitted = True
@@ -198,8 +213,9 @@ def manche2(bet, learning=True): #bet est la mise
         #print("result winsplit",result)
 
     if learning :
-        update_value3(player_statesActions,bool_as,bool_pair,bank_hand.get_card_at(0)-1,result,mypolicy) #banque state --> premiere carte
-        victoire=update_stats_gains(player_statesActions,result,bank_state,player_state,position_as)
+        print("Main du joueur : ", player_hand)
+        update_value3(player_statesActions,bool_as_choice,bool_pair,bank_hand.get_card_at(0)-1,result,position_as) #banque state --> premiere carte
+        victoire=update_stats_gains(player_statesActions,result,bank_state,player_state)
         return victoire
     ########Fin de la MAJ de mypolicy########
     

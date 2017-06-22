@@ -6,7 +6,7 @@ Created on Sun Jun 18 18:23:29 2017
 @author: majdagoumi
 """
 from idee_automatisation_jeux import *
-from algo_monte_carlo import *
+from algo_MC_2 import *
 from prise_2_decision import *
 
 def f(values):

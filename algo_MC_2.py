@@ -34,20 +34,20 @@ policy_as = [[[10.0]*3 for i in range(9)] for j in range(len(enemystate))];
 
 
 policy_pair = [[[10.0]*4 for i in range(10)] for j in range(len(enemystate))]; 
-#matrice state = [AA,22,33,...,99] donc 10 etats
+#matrice state = [AA,22,33,...,99,1010)] donc 10 etats
 #matrice cas on pioche un as sans paire. Marche comme ca policy_simple[enemystate][state][action]
 #Les quatre actions sont possibles
 
 
 
-###On donne un etat (genre 16) et il renvoie ca place dans la matrice : [<12,12,13,14,15,16,17,18,19,20,21,>21]
+###On donne un etat (genre 16) et il renvoie ca place dans la matrice : [<9,9,10,11,12,13,14,15,16,17,18,19,20,21,>21]
 def ind_simple(state):
     if state<9 : return 0
     elif state>21 : return 14
     else: return state-8
 
 
-###On donne un etat (genre 17) et il renvoie ca place dans la matrice : [AA,22,...,99]
+###On donne un etat (genre 18) et il renvoie ca place dans la matrice : [AA,22,...,99]
 def ind_pair(state):
     return(int(state/2)-1)
 
@@ -60,7 +60,7 @@ def ind_as(state):
 
 ##Reecriture de la prise de decision donne un etat
 def makeDecision3(state,enemystate):
-    player_state,bool_as,bool_can_split,bool_can_doble,bool_pair = state[0],state[1],state[2],state[3],state[4]
+    player_state,bool_as,bool_can_split,bool_can_doble = state[0],state[1],state[2],state[3]
     ####NE PAS OUBLIER D'AJOUTER BOOL_PAIR DANS LES DEUX VESTEURS STATE DE LA FX MANCHE()
     
     ###Cas ou on a ni as ni paire
@@ -101,62 +101,82 @@ def makeDecision3(state,enemystate):
 
 
 ###Ecriture de la fonction pour maj des matrices de policy
-def update_value3(statesActionsList,bool_as,bool_pair,bank_state,result,position_as):
-    
-    ###Cas ou la main initiale ne comportait ni as ni pair
-    if (bool_as == False and bool_pair == False):
+def update_value3(statesActionsList,bool_as_choice,bool_pair,bank_state,result,position_as):
+    ###Cas ou la main initiale ne comportait ni as ni paire
+    print("liste des parametres en entree de update_value3 : sListe, boolaschoice,boolpair,bankstate,result,posAs",statesActionsList,bool_as_choice,bool_pair,bank_state,result,position_as)
+    if (bool_as_choice == False and bool_pair == False):
         for couple in statesActionsList:
-            state,action = couple[0],couple[1]
+            state,action = ind_simple(couple[0]),couple[1]
             pi = policy_simple[bank_state][state][action]
             pi = result + alpha*pi
             policy_simple[bank_state][state][action] = pi
-    ###Cas ou la main initiale comportait une pair
+    ###Cas ou la main initiale comportait une paire
     if (bool_pair == True):
-        state,action = statesActionsList[O][0],statesActionsList[0][1]
+        state,action = ind_pair(statesActionsList[0][0]),statesActionsList[0][1]
         pi = policy_pair[bank_state][state][action]
         pi = result + alpha*pi
-        policy_simple[bank_state][state][action] = pi  
+        print("Cas ou la main initiale comportait une paire")
+        print("state,action : ",state,action)
+        policy_pair[bank_state][state][action] = pi  
         k = 1
-        if (state == 2):
+        ## cas de la paire d'as : ignore pour le moment
+        """if (state == 2):
             while (statesActionsList[k][0] < 12):
                 #Revenir au tableau as
-                state,action = statesActionsList[k][0],statesActionsList[k][1]
+                state,action = ind_as(statesActionsList[k][0]),statesActionsList[k][1]
                 pi = policy_as[bank_state][state][action]
                 pi = result + alpha*pi
                 policy_as[bank_state][state][action] = pi
                 k += 1
-            #revenir au tableau normal
-        for couple in statesActionsList[k:]:
-            state,action = couple[0],couple[1]
+                if (k < len(statesActionsList)):
+                    state_to_compare = statesActionsList[k][0]
+                else:
+                    state_to_compare = 12 #On force la sortie de la boucle si notre IA s'arretes de piocher avant d'arriver à 12
+            #revenir au tableau normal"""
+        for couple in statesActionsList[k:]: #Apres avoir piocher la premiere carte, les etats suivant ne correspondent plus a des paires, on revient au tableau policy_simple
+            state,action = ind_simple(couple[0]),couple[1]
             pi = policy_simple[bank_state][state][action]
             pi = result + alpha*pi
             policy_simple[bank_state][state][action] = pi
     
-    ###Cas ou la main initiale comportait un as
-    if (bool_as == True):
+    ###Cas ou la main comportait un as soft
+    if (bool_as_choice == True and bool_pair == False):
         k = 0
         #Tant qu'on a pas encore tire l'as, on modifie le tableau simple
         while k < position_as - 1 :
-            state,action = statesActionsList[k][0],statesActionsList[k][1]
+            state,action = ind_simple(statesActionsList[k][0]),statesActionsList[k][1]
             pi = policy_simple[bank_state][state][action]
             pi = result + alpha*pi
             policy_simple[bank_state][state][action] = pi
-        #On a trouve un as plus un total <= 11, on modifie dans le tableau as               
-        while (statesActionsList[k][0] < 12):
+            k += 1
+        #On a trouve un as plus un total <= 11, on modifie dans le tableau as
+        print("k = " , k)
+        print("statetsAction... : ", len(statesActionsList),len(statesActionsList[0]))
+        state_to_compare = statesActionsList[k][0]              
+        while ( state_to_compare < 12 ): #while l'as est toujours soft, on modifie le tableau as soft
+            print("On a trouve un as plus un total <= 11, on modifie dans le tableau as")
+            print("STC : ",state_to_compare)
             #Revenir au tableau as
-            state,action = statesActionsList[k][0],statesActionsList[k][1]
+            state,action = ind_as(statesActionsList[k][0]),statesActionsList[k][1]
             pi = policy_as[bank_state][state][action]
             pi = result + alpha*pi
             policy_as[bank_state][state][action] = pi
             k += 1
+            if (k < len(statesActionsList)):
+                state_to_compare = statesActionsList[k][0]
+            else:
+                state_to_compare = 12 #On force la sortie de la boucle si notre IA s'arretes de piocher avant d'arriver à 12
         #revenir au tableau normal lorsque le total depasse 11 : l'as vaut maintenant 1
         for couple in statesActionsList[k:]:
-            state,action = couple[0],couple[1]
+            state,action = ind_simple(couple[0]),couple[1]
             pi = policy_simple[bank_state][state][action]
             pi = result + alpha*pi
             policy_simple[bank_state][state][action] = pi
 
 
-
+def as_is_soft(state):
+    if (state + 10 < 22) : return(True)
+    else : return(False)
+    
 
   
