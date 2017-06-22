@@ -1,19 +1,7 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Jun 21 13:39:31 2017
-
-@author: majdagoumi
-"""
-
 ### Algorithme de Monte-Carlo ###
 from random import *;
 
-def nb_action_dispo(k):
-	if k<2:
-		return 3
-	return 4
-
+##########################################################################################################################
 actions = {"split":3,"double":2,"draw":1, "fold":0};        #Set d'actions disponibles
 enemystate = {0,1,2,3,4,5,6,7,8,9} # 0 = as, 1= deux .... 9 = 10 ou tete
 alpha = 0.95;                 #Taux d'evaporation
@@ -115,11 +103,9 @@ def update_value3(statesActionsList,bool_as_choice,bool_pair,bank_state,result,p
         state,action = ind_pair(statesActionsList[0][0]),statesActionsList[0][1]
         pi = policy_pair[bank_state][state][action]
         pi = result + alpha*pi
-        #print("Cas ou la main initiale comportait une paire")
-        #print("state,action : ",state,action)
         policy_pair[bank_state][state][action] = pi  
         k = 1
-        ## cas de la paire d'as : ignore pour le moment
+        ## cas de la paire d'as : ignore pour le moment, parce que pas d'actions particulieres à mener...
         """if (state == 2):
             while (statesActionsList[k][0] < 12):
                 #Revenir au tableau as
