@@ -150,6 +150,9 @@ class Main:
 
     def __repr__(self):
         return str(self)
+    
+    def __len__(self):
+        return(len(self.contenu))
 
 
 class Deck:

@@ -18,6 +18,11 @@ def win2(player_hand,bank_hand,bet): #bet est la mise
     bank_best_value = bank_hand.valeur
     if(player_best_value > 21):
         return(-bet)
+    elif(player_best_value == 21 and len(player_hand) == 2):
+        if (bank_best_value == 21 and len(bank_hand) == 2):
+            return(0)
+        else:
+            return(1.5*bet)
     elif(player_best_value > bank_best_value):
         return(bet)
     elif(bank_best_value > 21):
