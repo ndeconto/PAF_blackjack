@@ -10,35 +10,6 @@ from GUI_cards_img import *
 
 
 
-class Banque(MainGraphique):
-    """
-        objet graphique representant la banque
-    """
-
-    def __init__(self, position, pioche):
-        """
-            position : couple (x, y) qui est le coin haut gauche de l'image qui
-                va etre affichee
-
-            pioche : DeckGraphique (ou juste deck ???) dans lequel on va piocher
-
-        """
-
-        ## ----------------- TODO ----------------------------------##
-        # reflechir si on a besoin en argument d'un DeckGraphique ou
-        # seulement d'un Deck...
-        ## ----------------------------------------------------------##
-
-        MainGraphique.__init__(self, [pioche.piocher(), pioche.piocher()],
-                               position, face_cachee = [0])
-
-
-    def jouer(self):
-        pass #TODO : a implementer
-
-
-
-
 class Joueur(MainGraphique):
     """
         objet graphique representant un joueur, ie sa main et ses actions de jeu
@@ -51,26 +22,45 @@ class Joueur(MainGraphique):
         """
 
         MainGraphique.__init__(self, [pioche.piocher(), pioche.piocher()],
-                               position, sens=sens, identifier=identifier)
+                               position, sens=sens, identifier=identifier,
+                               face_cachee=[0] if identifier=="IA" else [])
 
 
         self.pioche = pioche
 
-        #cf methode a_fini pour la signification de cet attribut
+        #si le joueur a commence son tour
+        self.playing = False
+
+        #si le joueur a fini de joueur
         self.finish = False
+
+
+    def commencer_tour(self):
+        self.playing = True
 
 
     def piocher(self):
         """
             pioche une carte dans la pioche et la rajoute dans la main
         """
-        self.ajouter(self.pioche.piocher())
+        if not self.finish:
+            self.ajouter(self.pioche.piocher())
+
+
+    def splitter(self):
+        #TODO a implementer !
+        return
+
+    def doubler(self):
+        #TODO a implementer !
+        return
 
 
     def sarreter(self):
         """
             pour terminer son tour
         """
+        self.playing = False
         self.finish = True
 
 
@@ -100,16 +90,25 @@ class JoueurHumain(Joueur):
 class JoueurOrdi(Joueur):
 
 
-    def __init__(self, position, pioche, identifier=""):
+    def __init__(self, position, pioche, identifier="", fct_decision=None):
+        """
+            fct_decision : fonction qui est appelee pour decider quoi jouer
+            cette fonction doit prendre en parametre la main du joueur ordi,
+            la carte de l'adversaire et la liste des cartes deja tombees
+            et renvoyer l'une des constantes pdd.CONTINUER, ...
+
+            pour les autres parametres, c'est comme pour le reste...
+        """
 
         Joueur.__init__(self, position, pioche, VERTICAL, identifier)
-
-        #boolean indiquant si l'ordi est en train de jouer ou non
-        self.playing = False
 
         #temps entre deux decisions en secondes
         self.period = 1
         self.derniere_action = clock()
+
+        #
+        if fct_decision == None: self.fct_decision = pdd.decision_banque
+        else : self.fct_decision = fct_decision
 
 
 
@@ -135,21 +134,6 @@ class JoueurOrdi(Joueur):
 
         return r
 
-
-    def commencer_tour(self):
-        """
-            demarre le tour de jeu du joueur ordinateur
-            ie apres l'appel de cette methode, le joueurOrdi va prendre des
-            decisions de maniere periodique, jusqu'a s'arreter
-        """
-
-        self.playing = True
-
-
-    def arreter_tour(self):
-        self.playing = False
-        self.sarreter()
-
         
 
     def jouer(self, carte_adversaire, l_cartes_passees):
@@ -168,18 +152,16 @@ class JoueurOrdi(Joueur):
         """
 
 
-        #TODO : aller chercher le code intelligent ici !!!
-        #voir s'il ne vaut mieux pas lancer un thread pour prevenir d'un temps
-        # de reflexion... ne serait-ce que pour faire plaisir au prof qui va
-        #lire ce code...
+        #normalement, la prise de decision est tres rapide, donc pas besoin
+        # de faire un thread pour ca
 
-        decision = pdd.decision_banque(self, carte_adversaire, l_cartes_passees)
+        decision = self.fct_decision(self, carte_adversaire, l_cartes_passees)
 
 
         if decision == pdd.CONTINUER:
             self.piocher()
         elif decision == pdd.ARRETER:
-            self.arreter_tour()
+            self.sarreter()
         elif decision == pdd.SPLITTER:
             self.splitter()
         elif decision == pdd.DOUBLER:
@@ -187,3 +169,28 @@ class JoueurOrdi(Joueur):
         else:
             raise (ValueError("la decision " + str(decision)
                               + " n'est pas reconnue"))
+
+
+
+class Banque(JoueurOrdi):
+    """
+        objet graphique representant la banque
+    """
+
+    def __init__(self, position, pioche):
+        """
+            position : couple (x, y) qui est le coin haut gauche de l'image qui
+                va etre affichee
+
+            pioche : DeckGraphique (ou juste deck ???) dans lequel on va piocher
+
+        """
+
+        ## ----------------- TODO ----------------------------------##
+        # reflechir si on a besoin en argument d'un DeckGraphique ou
+        # seulement d'un Deck...
+        ## ----------------------------------------------------------##
+
+        JoueurOrdi.__init__(self, position, pioche, identifier="banque",
+                            fct_decision=pdd.decision_banque)
+

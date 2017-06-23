@@ -15,22 +15,25 @@ class Arbitre(GUIComponent):
         qui donne l'historique des cartes passees, ...
     """
 
-    VICTOIRE_GAUCHE =   1
-    VICTOIRE_DROITE =   0
-    MATCH_NUL =         -1
-
-
-    def __init__(self):
+    def __init__(self, ordre_joueur):
+        """
+            ordre joueur doit etre la liste des joueurs dans l'ordre
+            dans lequel ils doivent jouer
+        """
 
         GUIComponent.__init__(self, 0, (0, 0), (0, 0),
                               [], [], background=None, identifier="arbitre")
 
 
         self.jeu_fini = False
+        self.liste_joueur = ordre_joueur
+
+        for j in self.liste_joueur:
+            print j.playing, j.finish
         
 
 
-    def terminer_partie(self, cote_gagnant, other_components):
+    def terminer_partie(self, couple_gagnant_perdant, other_components):
         """
             tue tous les autres composants, ie fait le menage,
             et termine la partie
@@ -52,39 +55,65 @@ class Arbitre(GUIComponent):
 
 
             if isinstance(c, JoueurOrdi):
-                c.arreter_tour()
+                c.sarreter()
 
-
-        tx, ty = display.get_surface().get_size()
-        cache = Surface((int(tx / 2), ty), SRCALPHA, 32)
-        cache.fill(Color(255, 0, 0, 120))
-
-        vide = Surface((int(tx / 2), ty), SRCALPHA, 32)
-        vide.fill(Color(0, 0, 0, 0))
-        
-        cache_comp = FlashingImageComponent(.2,
-                    (int(tx / 2) if cote_gagnant == self.VICTOIRE_GAUCHE else 0, 0),
-                    [cache, vide], 0.15)
 
 
         pause = PauseComponent(K_RETURN, EXIT_GAME_LOOP)
+
+
+        if couple_gagnant_perdant == None:
+            #TODO tester le match nul !!!
+            img_draw = ImageComponent(4, (400, 300), "img/draw.png")
+            return [self, img_draw, pause]
+
+        gagnant, perdant = couple_gagnant_perdant
+        e_bord = 10
+
+        tx, ty = gagnant.background.get_size()
+        contour_g = Surface((tx + e_bord, ty + e_bord), SRCALPHA, 32)
+        contour_g.fill(Color(90, 230, 255, 255))
         
-        return [self, cache_comp, pause]
+        tx, ty = perdant.background.get_size()
+        contour_p = Surface((tx + e_bord, ty + e_bord), SRCALPHA, 32)
+        contour_p.fill(Color(255, 40, 50, 255))
+
+        vide = Surface((0, 0), SRCALPHA, 32)
+
+        pos_cont_g = (gagnant.position[0] - e_bord / 2,
+                     gagnant.position[1] - e_bord / 2)
+
+        pos_cont_p = (perdant.position[0] - e_bord / 2,
+                      perdant.position[1] - e_bord / 2) 
+        
+        cache_comp = FlashingImageComponent(.2, pos_cont_g, [contour_g, vide],
+                                            0.15)
+        cache_comp2 = FlashingImageComponent(.2, pos_cont_p, [contour_p, vide],
+                                            0.15)
 
 
-    def trouver_gagnant(self, joueur_gauche, joueur_droit):
-        #quand cette fonction est appelee, aucun joueur n'a strictement plus de
-        # 21 ; enfin normalement... faire le check serait moins paresseux et
-        # plus fiable
-        g = joueur_gauche.get_m_valeur()
-        d = joueur_droit.get_m_valeur()
+        
+        
+        return [self, cache_comp, cache_comp2, pause]
+
+
+    def trouver_gagnant(self):
+        """
+            renvoie le couple (gagnant, perdant)
+            renvoie None en cas de match nul
+            quand cette fonction est appelee, aucun joueur n'a strictement plus de
+            21 ; enfin normalement... faire le check serait moins paresseux et
+            plus fiable
+        """
+        g = self.liste_joueur[0].get_m_valeur()
+        d = self.liste_joueur[1].get_m_valeur()
 
         if g > d:
-            return self.VICTOIRE_GAUCHE
+            return (self.liste_joueur[0], self.liste_joueur[1])
         elif d > g:
-            return self.VICTOIRE_DROITE
+            return (self.liste_joueur[0], self.liste_joueur[1])
         else: #d == g
-            return self.MATCH_NUL
+            return None
 
 
     def update(self, other_components):
@@ -93,35 +122,31 @@ class Arbitre(GUIComponent):
 
         tout_le_monde_a_fini = True
 
-        for c in other_components:
 
-            if isinstance(c, Joueur):
+        for i, j in enumerate(self.liste_joueur):
+            if j.playing:
+                break
+            
+            if not j.playing and not j.a_fini():
+                j.commencer_tour()
+                break
 
-                w, h = display.get_surface().get_size()
+        for i, j in enumerate(self.liste_joueur):
 
-                #joueur gauche ?
-                if c.position[0] < w / 2:
-                    j_gauche = c
-                else :
-                    j_droit = c #joueur droit
+            if not j.a_fini():
+                tout_le_monde_a_fini = False
 
-                if not c.a_fini():
-                    tout_le_monde_a_fini = False
+            x = j.get_m_valeur()
 
-                x = c.get_m_valeur()
-
-
-                #on verifie qu'aucun joueur n'aie perdu
-                if x > 21:
-
-                    w, h = display.get_surface().get_size()
-
-                    return self.terminer_partie(int(2 * c.position[0] / w),
+            #on verifie qu'aucun joueur n'aie perdu
+            if x > 21:
+                # ----------- NB : ne marche qu'avec deux joueurs ! -----------
+                return self.terminer_partie((self.liste_joueur[1 - i], j),
                                                 other_components)
 
 
         if tout_le_monde_a_fini:
-            return self.terminer_partie(self.trouver_gagnant(j_gauche, j_droit),
+            return self.terminer_partie(self.trouver_gagnant(),
                                  other_components)
 
 
