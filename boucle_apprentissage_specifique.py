@@ -17,11 +17,9 @@ def apprentissage_specifique(player_hands_list,bet,ent_by_hand):
 
 ###On donne une liste comportant la main qu'on souhaite entrainer, et il entraine avec un etat de la banque aleatoire### 
 def manche_apprentissage_specifique(player_cards_list,bet, learning = True):
-    deck = DeckTruque(player_cards_list)
-    player_hand = Main(player_cards_list)
-
     
-    
+    deck = DeckTruque(player_cards_list[:])
+    player_hand = Main(player_cards_list[:])
     
     ##########
     
@@ -51,7 +49,7 @@ def manche_apprentissage_specifique(player_cards_list,bet, learning = True):
         bool_as_choice = True
         position_as = 1
     else:
-        player_state += player_hand.get_card_at(1).get_valeur()
+        player_state += player_hand.get_card_at(1)
         
     if (player_hand.get_card_at_high(0) == player_hand.get_card_at_high(1)):    #Si on a une paire
         bool_can_split = True
@@ -73,12 +71,9 @@ def manche_apprentissage_specifique(player_cards_list,bet, learning = True):
     
     player_decision = makeDecision3([player_state,bool_as_choice,bool_can_split,bool_can_doble],(bank_state-1) % 10)   #decision du joueur
     player_statesActions.append([player_state,player_decision])
-    print(player_decision)
-    
     
     #####################Entree de la boucle while#####################################
     while(player_decision != 0 and player_state < 32):
-        
         if (player_decision == 1):
     #####################Ce que l'on fait si la decision c'est de tirer#########################################
             player_card = deck.piocher()            #On pioche
@@ -96,11 +91,9 @@ def manche_apprentissage_specifique(player_cards_list,bet, learning = True):
                     position_as = len(player_statesActions) + 1
             else :
                 player_state += player_card.get_valeur()
-                
             #Decision du joueur
             player_decision = makeDecision3([player_state,bool_as_choice,bool_can_split,bool_can_doble],(bank_state-1) % 10)
             player_statesActions.append([player_state,player_decision])
-            
         elif(player_decision == 2):
     #####################Ce que l'on fait si la decision c'est de doubler#######################################
             bet = 2*bet #mise doublee
@@ -131,9 +124,8 @@ def manche_apprentissage_specifique(player_cards_list,bet, learning = True):
             player_hand_2 = copy.deepcopy(player_hand)
             player_hand_1.ajouter(player_card_1)
             player_hand_2.ajouter(player_card_2)
-            player_decision = 0 #Une seule carte Ã  piocher
+            player_decision = 0 #Une seule carte a  piocher
     ###############################################FIN DU WHILE#################################################
-    
     
     
     
