@@ -9,6 +9,11 @@ from idee_automatisation_jeux import *
 from algo_MC_2 import *
 from prise_2_decision import *
 import numpy as np
+import csv
+import collections
+from openpyxl import Workbook
+from load_object import *
+
 
 def f(values):
 	return values.index(max(values))
@@ -49,6 +54,21 @@ def save_mypolicy(p1,p2,p3): #Le fichier sauvegarde est un vecteur comportant le
     policy = [p1,p2,p3]
     file_handler = open("mypolicy", "wb")
     pickle.dump(policy,file_handler)
+    
+
+def save_to_xlsx():
+    wb = Workbook()
+    
+    # grab the active worksheet
+    ws = wb.active
+    
+    ws['A1']="Simple :"
+    for row in getPolicy()[0] :
+        ws.append(row)
+    
+    
+    # Save the file
+    wb.save("policy_simple.xlsx")
 
 
 
