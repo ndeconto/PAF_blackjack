@@ -1,84 +1,30 @@
-# -*- coding: utf-8 -*-
-from cartes import *
-from Bank_Playing import *
 from algo_MC_2 import *
-import copy
+from boucle_apprentissage import *
+from cartes import *
+###############################################################################
 
-##
 
-mise_investie = 0
-mise_gagnee = 0
-nb_parties_gagnees = 0
-nb_parties_jouees = 0
+###On donne les mains que l'on souhaite entrainer###
 
-##
+def apprentissage_specifique(player_hands_list,bet,ent_by_hand):
+    for hand in player_hands_list:
+        for k in range (ent_by_hand):
+            manche_apprentissage_specifique(hand,1)
+        
 
-def win2(player_hand,bank_hand,bet): #bet est la mise 
-    player_best_value = player_hand.valeur
-    bank_best_value = bank_hand.valeur
-    if(player_best_value > 21):
-        return(-bet)
-    elif(player_best_value == 21 and len(player_hand) == 2):
-        if (bank_best_value == 21 and len(bank_hand) == 2):
-            return(0)
-        else:
-            return(1.5*bet)
-    elif(player_best_value > bank_best_value):
-        return(bet)
-    elif(bank_best_value > 21):
-        return(bet)
-    elif(player_best_value == bank_best_value):
-        return(0)
-    elif(player_best_value < bank_best_value):
-        return(- bet)
-    else:
-        print("fatal error")
+
+
+
+###On donne une liste comportant la main qu'on souhaite entrainer, et il entraine avec un etat de la banque aleatoire### 
+def manche_apprentissage_specifique(player_cards_list,bet, learning = True):
+    deck = DeckTruque(player_cards_list)
+    player_hand = Main(player_cards_list)
+
     
-
-##
-
-def win_split(player_hand_1,player_hand_2,bank_hand,bet):
-    player_best_value_1 = player_hand_1.valeur
-    player_best_value_2 = player_hand_2.valeur
-    bank_best_value = bank_hand.valeur
-    vic = 0
-    draw = 0
-    loose = 0
-    if (win2(player_hand_1,bank_hand,bet) == bet):
-        vic += 1
-    if (win2(player_hand_2, bank_hand,bet) == bet):
-        vic += 1
-    if (win2(player_hand_1,bank_hand,bet) == - bet):
-        loose += 1
-    if (win2(player_hand_2,bank_hand,bet) == - bet):
-        loose += 1
-    if (win2(player_hand_1,bank_hand,bet) == 0):
-        draw += 1
-    if (win2(player_hand_2,bank_hand,bet) == 0):
-        draw += 1
-    if (vic == 2):
-        return(2*bet)
-    if (draw == 2):
-        return(0)
-    if (loose == 2):
-        return(-2*bet)
-    if (vic == 1 and draw == 1):
-        return(1*bet)
-    if (draw == 1 and loose == 1):
-        return(-1*bet)
-    if (loose == 1 and vic == 1):
-        return(0)
-
-##
-
-def manche2(bet, learning=True): #bet est la mise
-    global epsilon
     
-    if not learning:
-        epsilon_copy = epsilon
-        epsilon = 0
     
-    deck = Deck()
+    ##########
+    
     player_statesActions = []
     position_as = 0
     bool_as_choice = False
@@ -91,27 +37,23 @@ def manche2(bet, learning=True): #bet est la mise
     result = 0
     
     ##Tirage des cartes du joueur
-    player_card = deck.piocher()            #Premiere carte
-    player_hand = Main([player_card])
     player_state = 0
-    if (isAs(player_card)):                 #Si c'est un as
+    if (player_hand.get_card_at_high(0) == 1):   #Si la premiere carte est un as
         player_state = 1
-#        bool_as = True
         bool_as_choice = True
         position_as = 1
     else:
-        player_state = player_card.get_valeur()
+        player_state = player_hand.get_card_at(0).get_valeur()
         
-    player_card = deck.piocher()            #2e carte
-    player_hand.ajouter(player_card)
-    if (isAs(player_card)):                 #Si c'est un as
+
+    if (player_hand.get_card_at_high(1) == 1):                 #Si la deuxieme carte est un as
         player_state += 1
         bool_as_choice = True
         position_as = 1
     else:
-        player_state += player_card.get_valeur()
+        player_state += player_hand.get_card_at(1).get_valeur()
         
-    if (player_hand.get_card_at_high(0)==player_hand.get_card_at_high(1)):    #Si on a une paire
+    if (player_hand.get_card_at_high(0) == player_hand.get_card_at_high(1)):    #Si on a une paire
         bool_can_split = True
         bool_pair = True
         
@@ -131,7 +73,7 @@ def manche2(bet, learning=True): #bet est la mise
     
     player_decision = makeDecision3([player_state,bool_as_choice,bool_can_split,bool_can_doble],(bank_state-1) % 10)   #decision du joueur
     player_statesActions.append([player_state,player_decision])
-    
+    print(player_decision)
     
     
     #####################Entree de la boucle while#####################################
@@ -220,53 +162,14 @@ def manche2(bet, learning=True): #bet est la mise
     if learning :
 #        print("Main du joueur : ", player_hand)
         update_value3(player_statesActions,bool_as_choice,bool_pair,bank_hand.get_card_at(0)-1,result,position_as) #banque state --> premiere carte
-        victoire=update_stats_gains(player_statesActions,result,bank_state,player_state)
+        victoire = update_stats_gains(player_statesActions,result,bank_state,player_state)
         return victoire
     ########Fin de la MAJ de mypolicy########
     
-
-    else:
-        epsilon = epsilon_copy
-        return result
-
-
-##
-
-def test_sans_apprendre(n):
-    """
-        fonction qui n'a rien a faire dans un fichier nommee prise_2_decision
-        mais bref...
-        cette fonction joue n parties, et renvoie le gain moyen (sachant que la
-        mise est 1 de base)
-    """
-
-    s = sum(manche2(1, False) for i in range(n))
-    return float(s) / n
-  
-  ##      
-
+    
 def isAs(carte):
     if (isinstance(carte.get_valeur(),int)):
         return(False)
     else:
         return(True)
- 
- ##
-
-        
-        
-        
-def update_stats_gains(statesActions,result,bank_state,player_state):
-    global nb_parties_gagnees, nb_parties_jouees, mise_gagnee, mise_investie
     
-    mise_investie+=1
-    nb_parties_jouees+=1
-    mise_gagnee+=result
-    if (result > 0):
-        nb_parties_gagnees+=1
-    
-    pourcentage_victoire = str((nb_parties_gagnees/nb_parties_jouees)*100) + "% de victoires"
-    gain = "Gain par partie : " + str(mise_gagnee/mise_investie) + " millions d'euros"
-    
-    return pourcentage_victoire, gain
-

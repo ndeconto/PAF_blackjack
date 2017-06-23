@@ -112,6 +112,9 @@ class Main:
             return(self.contenu[indice].valeur)
         else: 
             return(1)
+    
+    def get_card_at_high(self,indice):
+        return(self.contenu[indice].hauteur)
         
     def ajouter(self, nouvelle_carte):
         """
@@ -171,6 +174,15 @@ class Deck:
         return self.pile.pop()
     
     
-        
+class DeckTruque (Deck):
+    """
+    Permet de creer un deck ou il manque des cartes pour l'apprentissage spécifique    
+    """
+    
+    def __init__(self,liste_carte):
+        self.pile = [Carte(i, j) for i in range(AS, ROI + 1)
+                     for j in [COEUR, PIQUE, CARREAU, TREFLE]
+                     if not (Carte(i,j) in liste_carte)]
+        random.shuffle(self.pile)
 
         
