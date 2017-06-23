@@ -4,24 +4,24 @@ from random import *;
 ##########################################################################################################################
 actions = {"split":3,"double":2,"draw":1, "fold":0};        #Set d'actions disponibles
 enemystate = {0,1,2,3,4,5,6,7,8,9} # 0 = as, 1= deux .... 9 = 10 ou tete
-alpha = 0.95;                 #Taux d'evaporation
+alpha = 0.99;                 #Taux d'evaporation
 epsilon = 0.05;               #seuil de valeur minimal
 
 ##On separe en trois matrices distinctes
 
-policy_simple = [[[10.0]*3 for i in range(15)] for j in range(len(enemystate))]; 
+policy_simple = [[[0.0]*3 for i in range(15)] for j in range(len(enemystate))]; 
 #matrice state = [<9,9,....,21,>21]   
 #matrice cas simple (sans As ni paire). Marche comme ca policy_simple[enemystate][state][action]
 #trois actions disponibles ici : draw(1), fold(0), doble(2)
 
 
-policy_as = [[[10.0]*3 for i in range(9)] for j in range(len(enemystate))];
+policy_as = [[[0.0]*3 for i in range(9)] for j in range(len(enemystate))];
 #matrice state = [A2,A3,A4,..,A9,A(figure ou 10)]
 #matrice cas on pioche un as sans paire. Marche comme ca policy_simple[enemystate][state][action]
 #trois actions disponibles ici : draw(1), fold(0), doble(2). On Dois choisir : as initiaux ou n'importe ou dans la partie. PLutot initialement, donc maj du booleen a modifier
 
 
-policy_pair = [[[10.0]*4 for i in range(10)] for j in range(len(enemystate))]; 
+policy_pair = [[[0.0]*4 for i in range(10)] for j in range(len(enemystate))]; 
 #matrice state = [AA,22,33,...,99,1010)] donc 10 etats
 #matrice cas on pioche un as sans paire. Marche comme ca policy_simple[enemystate][state][action]
 #Les quatre actions sont possibles
@@ -46,7 +46,7 @@ def ind_as(state):
 
 
 
-##Reecriture de la prise de decision donne un etat
+###Reecriture de la prise de decision donne un etat
 def makeDecision3(state,enemystate):
     player_state,bool_as,bool_can_split,bool_can_doble = state[0],state[1],state[2],state[3]
     ####NE PAS OUBLIER D'AJOUTER BOOL_PAIR DANS LES DEUX VESTEURS STATE DE LA FX MANCHE()
@@ -96,13 +96,13 @@ def update_value3(statesActionsList,bool_as_choice,bool_pair,bank_state,result,p
         for couple in statesActionsList:
             state,action = ind_simple(couple[0]),couple[1]
             pi = policy_simple[bank_state][state][action]
-            pi = result + alpha*pi
+            pi = (1-alpha)*result + alpha*pi
             policy_simple[bank_state][state][action] = pi
     ###Cas ou la main initiale comportait une paire
     if (bool_pair == True):
         state,action = ind_pair(statesActionsList[0][0]),statesActionsList[0][1]
         pi = policy_pair[bank_state][state][action]
-        pi = result + alpha*pi
+        pi = (1-alpha)*result + alpha*pi
         policy_pair[bank_state][state][action] = pi  
         k = 1
         ## cas de la paire d'as : ignore pour le moment, parce que pas d'actions particulieres à mener...
@@ -122,7 +122,7 @@ def update_value3(statesActionsList,bool_as_choice,bool_pair,bank_state,result,p
         for couple in statesActionsList[k:]: #Apres avoir piocher la premiere carte, les etats suivant ne correspondent plus a des paires, on revient au tableau policy_simple
             state,action = ind_simple(couple[0]),couple[1]
             pi = policy_simple[bank_state][state][action]
-            pi = result + alpha*pi
+            pi = (1-alpha)*result + alpha*pi
             policy_simple[bank_state][state][action] = pi
     
     ###Cas ou la main comportait un as soft
@@ -132,7 +132,7 @@ def update_value3(statesActionsList,bool_as_choice,bool_pair,bank_state,result,p
         while k < position_as - 1 :
             state,action = ind_simple(statesActionsList[k][0]),statesActionsList[k][1]
             pi = policy_simple[bank_state][state][action]
-            pi = result + alpha*pi
+            pi = (1-alpha)*result + alpha*pi
             policy_simple[bank_state][state][action] = pi
             k += 1
         #On a trouve un as plus un total <= 11, on modifie dans le tableau as
@@ -146,7 +146,7 @@ def update_value3(statesActionsList,bool_as_choice,bool_pair,bank_state,result,p
             #Revenir au tableau as
             state,action = ind_as(statesActionsList[k][0]),statesActionsList[k][1]
             pi = policy_as[bank_state][state][action]
-            pi = result + alpha*pi
+            pi = (1-alpha)*result + alpha*pi
             policy_as[bank_state][state][action] = pi
             k += 1
             if (k < len(statesActionsList)):
@@ -158,7 +158,7 @@ def update_value3(statesActionsList,bool_as_choice,bool_pair,bank_state,result,p
         for couple in statesActionsList[k:]:
             state,action = ind_simple(couple[0]),couple[1]
             pi = policy_simple[bank_state][state][action]
-            pi = result + alpha*pi
+            pi = (1-alpha)*result + alpha*pi
             policy_simple[bank_state][state][action] = pi
 
 

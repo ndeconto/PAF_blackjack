@@ -52,15 +52,15 @@ def win_split(player_hand_1,player_hand_2,bank_hand,bet):
     if (win2(player_hand_2,bank_hand,bet) == 0):
         draw += 1
     if (vic == 2):
-        return(2)
+        return(2*bet)
     if (draw == 2):
         return(0)
     if (loose == 2):
-        return(-2)
+        return(-2*bet)
     if (vic == 1 and draw == 1):
-        return(1)
+        return(1*bet)
     if (draw == 1 and loose == 1):
-        return(-1)
+        return(-1*bet)
     if (loose == 1 and vic == 1):
         return(0)
 

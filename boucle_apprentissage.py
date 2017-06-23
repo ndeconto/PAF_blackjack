@@ -8,6 +8,7 @@ Created on Sun Jun 18 18:23:29 2017
 from idee_automatisation_jeux import *
 from algo_MC_2 import *
 from prise_2_decision import *
+import numpy as np
 
 def f(values):
 	return values.index(max(values))
@@ -26,12 +27,18 @@ def apprentissage(n):
 #    print("     <- low value hand  |  high value hand ->")
 #    print('\n'.join([''.join(['{:4}'.format(item) for item in row]) for row in result]))
 
-def apprentissage2(n,bet):
+def apprentissage2(n,bet,f):
     victoire = 0
-    for k in range(n):
+    global epsilon
+    for k in range(int(n/2)):
+        epsilon = f(k)
         victoire = manche2(bet)
     print("Statistiques :\n")
     print(victoire)
+    print("Epsilon final, alpha : ",epsilon,", ",alpha)
+
+def f(k):
+        return(0.05)
 
 
 def save_mypolicy(p1,p2,p3): #Le fichier sauvegarde est un vecteur comportant les trois tableaux
