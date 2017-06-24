@@ -185,8 +185,8 @@ def manche2(bet, learning=True): #bet est la mise
             bool_splitted = True
             player_card_1 = deck.piocher()
             player_card_2 = deck.piocher()
-            player_hand_1 = copy.deepcopy(player_hand)
-            player_hand_2 = copy.deepcopy(player_hand)
+            player_hand_1 = Main([Carte(player_hand.get_card_at_high(0))])
+            player_hand_2 = Main([Carte(player_hand.get_card_at_high(1))])
             player_hand_1.ajouter(player_card_1)
             player_hand_2.ajouter(player_card_2)
             player_decision = 0 #Une seule carte Ã  piocher
