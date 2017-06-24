@@ -49,7 +49,7 @@ def f(k):
 def save_mypolicy(p1,p2,p3): #Le fichier sauvegarde est un vecteur comportant les trois tableaux
 #from load_object import *
 #IND : Pour sauvegarder : ecrire save_mypolicy(policy_simple,policy_as,policy_pair)
-#      Pour charger ecrire : policy_simple,policy_as,policy_pair = getPolicy()[0],getPolicy()[1],getPolicy[2]
+#      Pour charger ecrire : policy_simple,policy_as,policy_pair = getPolicy()[0],getPolicy()[1],getPolicy()[2]
 
     policy = [p1,p2,p3]
     file_handler = open("mypolicy", "wb")
