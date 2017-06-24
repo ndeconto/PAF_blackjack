@@ -110,9 +110,7 @@ class Main:
         #valeur optimale de la main
         self.valeur = 0
         self.calcul_valeur()
-    def get_card_object(self,indice):
-        return (self.contenu[indice])
-        
+
     def get_card_at(self,indice):
         if (isinstance(self.contenu[indice].valeur,int)): 
             return(self.contenu[indice].valeur)
@@ -247,6 +245,7 @@ class Sabot(Deck):
 
         self.trash = []
         self.on_table = []
+        self.counter = 0
         self.warning_enable = warning_enable
         self.carte_min = int(len(self.pile) * (1 - self.TAUX_PENETRATION / 100.))
         assert(self.carte_min >= 0)
@@ -267,6 +266,7 @@ class Sabot(Deck):
 
         self.trash.extend(self.on_table)
         self.on_table = []
+        
             
 
     def piocher(self):
@@ -277,9 +277,15 @@ class Sabot(Deck):
             self.pile.extend(self.trash)
             self.trash = []
             random.shuffle(self.pile)
+
+            #et on met a jour le compte
+            self.counter = 0
+            for c in self.on_table:
+                self.counter += self.delta_counter(c)
             
         carte = self.pile.pop()
         self.on_table.append(carte)
+        self.counter += self.delta_counter(carte)
 
         if self.warning_enable == len(self.on_table) > self.NB_MAX_CARTE_PAR_MANCHE:
             warn(UserWarning("Il y a actuellement " + str(len(self.on_table))
@@ -287,6 +293,37 @@ class Sabot(Deck):
                              + "bien normal ?"))
 
         return carte
+
+    def get_counter(self):
+        """
+            on compte les cartes selon la technique HI-LOW
+            on renvoie le compteur en cours, pas le vrai compteur
+            (vrai compteur = compteur en cours / nb de deck utilises)
+            cela permet d'avoir des entiers, ce qui est pratique pour indexer
+            directement avec le compteur en cours
+            RAPPEL : en python, on peut indexer des tableaux avec des entiers
+            negatifs
+        """
+
+        return self.counter
+    
+
+    def delta_counter(self, carte):
+        """
+            renvoie la variation du compteur obtenue quand on tire la carte
+            'carte' (technique HI-LOW)
+        """
+
+        if (2 <= carte.hauteur <= 6):
+            return 1
+
+        if (7 <= carte.hauteur <= 9):
+            return 0
+
+        #cas 10, J, Q, K, A
+        return -1
+
+        
 
         
 
