@@ -102,17 +102,7 @@ def save_to_xlsx():
         ws.append([i]+row)
         i+=1
     
-    ws.conditional_formatting.add('B4:P13',
-    ColorScaleRule(start_type='percentile', start_value=10, start_color='FF6666',
-                        mid_type='percentile', mid_value=50, mid_color='FFC966',
-                        end_type='percentile', end_value=90, end_color='6DC066')
-                  )
-    
-    ws.conditional_formatting.add('B18:J27',
-    ColorScaleRule(start_type='percentile', start_value=10, start_color='FF6666',
-                        mid_type='percentile', mid_value=50, mid_color='FFC966',
-                        end_type='percentile', end_value=90, end_color='6DC066')
-                  )
+
     
     redFill = PatternFill(start_color='FF6666',
                    end_color='FF6666',
@@ -153,6 +143,14 @@ def save_to_xlsx():
             border.top = side
             border.bottom = side
 
+            if (cell.value==0 and pos_x!=0) :
+                cell.fill=redFill
+            if (cell.value==1 and pos_x!=0) :
+                cell.fill=orangeFill
+            if (cell.value==2 and pos_x!=0) :
+                cell.fill=greenFill
+            if (cell.value==3 and pos_x!=0) : 
+                cell.style='Accent4'
             cell.border = border
             cell.alignment=alignment
     
@@ -175,6 +173,14 @@ def save_to_xlsx():
             border.top = side
             border.bottom = side
 
+            if (cell.value==0 and pos_x!=0) :
+                cell.fill=redFill
+            if (cell.value==1 and pos_x!=0) :
+                cell.fill=orangeFill
+            if (cell.value==2 and pos_x!=0) :
+                cell.fill=greenFill
+            if (cell.value==3 and pos_x!=0) : 
+                cell.style='Accent4'
             cell.border = border
             cell.alignment=alignment
     
