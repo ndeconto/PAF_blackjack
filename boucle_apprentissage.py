@@ -13,7 +13,7 @@ from openpyxl.styles import Color, PatternFill, Font, Border, Side, Alignment
 from openpyxl.styles.differential import DifferentialStyle
 from openpyxl.formatting.rule import ColorScaleRule, CellIsRule, FormulaRule
 from load_object import *
-
+###
 
 def f(values):
 	return values.index(max(values))
@@ -45,7 +45,7 @@ def apprentissage2(n,bet,f):
 def f(k):
         return(0.05)
 
-
+   
 def save_mypolicy(p1,p2,p3): #Le fichier sauvegarde est un vecteur comportant les trois tableaux
 #from load_object import *
 #IND : Pour sauvegarder : ecrire save_mypolicy(policy_simple,policy_as,policy_pair)

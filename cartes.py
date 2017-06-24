@@ -45,7 +45,9 @@ class Carte:
         #valeur de la carte : 1, 2, ... 10, 11.
         self.valeur = self.get_valeur()
 
-
+    def get_card_object(self,indice):
+        return (self.contenu[indice])
+    
     def get_valeur(self):
         """
             renvoie la valeur de la carte au blackjack

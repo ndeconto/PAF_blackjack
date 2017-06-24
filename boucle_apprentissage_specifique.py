@@ -4,7 +4,6 @@ from boucle_apprentissage import *
 from cartes import *
 ###############################################################################
 
-
 ###On donne les mains que l'on souhaite entrainer###
 
 def apprentissage_specifique(player_hands_list,bet,ent_by_hand):

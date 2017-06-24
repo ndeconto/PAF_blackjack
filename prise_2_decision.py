@@ -6,6 +6,7 @@ import copy
 
 ##
 
+
 mise_investie = 0
 mise_gagnee = 0
 nb_parties_gagnees = 0
