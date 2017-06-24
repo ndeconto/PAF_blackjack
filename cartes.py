@@ -51,13 +51,12 @@ class Carte:
             NB : POUR UN AS, CETTE METHODE RENVOIE UNE LISTE !!
         """
 
-        if 1 <= self.hauteur <= 13: return min(self.hauteur,10)
+        if 1 < self.hauteur <= 13: return min(self.hauteur,10)
 
         if self.hauteur == AS: return [1, 11]
-        if self.hauteur == ASONZE: return(11)
+        #if self.hauteur == ASONZE: return(11)
         return 10
-
-
+        
     def __str__(self):
         return  REPR[self.hauteur] + " de " + REPR[self.couleur]
 
@@ -108,7 +107,15 @@ class Main:
         self.valeur = 0
         self.calcul_valeur()
 
-
+    def get_card_at(self,indice):
+        if (isinstance(self.contenu[indice].valeur,int)): 
+            return(self.contenu[indice].valeur)
+        else: 
+            return(1)
+    
+    def get_card_at_high(self,indice):
+        return(self.contenu[indice].hauteur)
+        
     def ajouter(self, nouvelle_carte):
         """
             rajoute 'carte' a la main
@@ -124,6 +131,7 @@ class Main:
     def calcul_valeur(self):
         """
             calcule en place la liste des valeurs possibles de la main
+            NON --> calcul la meilleur main possible 
         """
 
         v = 0
@@ -145,6 +153,9 @@ class Main:
 
     def __repr__(self):
         return str(self)
+    
+    def __len__(self):
+        return(len(self.contenu))
 
 
 class Deck:
@@ -163,6 +174,15 @@ class Deck:
         return self.pile.pop()
     
     
-        
+class DeckTruque (Deck):
+    """
+    Permet de creer un deck ou il manque des cartes pour l'apprentissage spécifique    
+    """
+    
+    def __init__(self,liste_carte):
+        self.pile = [Carte(i, j) for i in range(AS, ROI + 1)
+                     for j in [COEUR, PIQUE, CARREAU, TREFLE]
+                     if not (Carte(i,j) in liste_carte)]
+        random.shuffle(self.pile)
 
         
