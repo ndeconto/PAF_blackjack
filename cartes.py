@@ -106,7 +106,9 @@ class Main:
         #valeur optimale de la main
         self.valeur = 0
         self.calcul_valeur()
-
+    def get_card_object(self,indice):
+        return (self.contenu[indice])
+        
     def get_card_at(self,indice):
         if (isinstance(self.contenu[indice].valeur,int)): 
             return(self.contenu[indice].valeur)
