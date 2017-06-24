@@ -120,8 +120,8 @@ def manche_apprentissage_specifique(player_cards_list,bet, learning = True):
             bool_splitted = True
             player_card_1 = deck.piocher()
             player_card_2 = deck.piocher()
-            player_hand_1 = Main([player_hand.get_card_object(0)])
-            player_hand_2 = Main([player_hand.get_card_object(1)])
+            player_hand_1 = Main([player_hand.contenu[0]])
+            player_hand_2 = Main([player_hand.contenu[0]])
             player_hand_1.ajouter(player_card_1)
             player_hand_2.ajouter(player_card_2)
             player_decision = 0 #Une seule carte a  piocher
