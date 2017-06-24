@@ -53,3 +53,5 @@ class Client():
                                         l.append(Carte(int(data[i]),int(data[i+1])))
                         return l
                 else : return[False]
+
+Client(5000,"192.168.0.33")
