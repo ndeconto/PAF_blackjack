@@ -237,11 +237,12 @@ class Sabot(Deck):
     NB_MAX_CARTE_PAR_MANCHE = 52
 
 
-    def __init__(self, warning_enable=True):
+    def __init__(self, counter_bound=5, warning_enable=True):
         """
             le parametre warning_enable permet d'activer/desactiver les warnings
             quand il y a "trop" de cartes utilisees dans une main pour etre
             honnete
+            le compteur renvoye par get_counter est borne par coutner_bound
         """
         self.pile = [Carte(i, j) for i in range(AS, ROI + 1)
                      for j in [COEUR, PIQUE, CARREAU, TREFLE]
@@ -250,6 +251,7 @@ class Sabot(Deck):
         self.trash = []
         self.on_table = []
         self.counter = 0
+        self.counter_bound = counter_bound
         self.warning_enable = warning_enable
         self.carte_min = int(len(self.pile) * (1 - self.TAUX_PENETRATION / 100.))
         assert(self.carte_min >= 0)
@@ -309,6 +311,11 @@ class Sabot(Deck):
             negatifs
         """
 
+        if self.counter >= self.counter_bound:
+            return self.counter_bound
+        if self.counter <= self.counter_bound:
+            return - self.couunter_bound
+        
         return self.counter
     
 
