@@ -41,7 +41,7 @@ def manche_apprentissage_specifique(player_cards_list,bet, learning = True):
         bool_as_choice = True
         position_as = 1
     else:
-        player_state = player_hand.get_card_at(0).get_valeur()
+        player_state = player_hand.get_card_at(0)
         
 
     if (player_hand.get_card_at_high(1) == 1):                 #Si la deuxieme carte est un as
