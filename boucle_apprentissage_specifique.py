@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from algo_MC_2 import *
 from boucle_apprentissage import *
 from cartes import *
@@ -56,7 +57,7 @@ def manche_apprentissage_specifique(player_cards_list,bet, learning = True):
         bool_pair = True
         
         
-    ##Tirage de la première carte de la banque
+    ##Tirage de la premiÃ¨re carte de la banque
     bank_state = 0
     bank_card = deck.piocher()
     bank_hand = Main([bank_card])

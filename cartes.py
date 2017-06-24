@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import random
 from warnings import warn
 
@@ -180,7 +182,7 @@ class Deck:
     
 class DeckTruque (Deck):
     """
-    Permet de creer un deck ou il manque des cartes pour l'apprentissage spécifique    
+    Permet de creer un deck ou il manque des cartes pour l'apprentissage spÃ©cifique    
     """
     
     def __init__(self,liste_carte):

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 ### Algorithme de Monte-Carlo ###
 from random import *;
 
@@ -105,7 +107,7 @@ def update_value3(statesActionsList,bool_as_choice,bool_pair,bank_state,result,p
         pi = (1-alpha)*result + alpha*pi
         policy_pair[bank_state][state][action] = pi  
         k = 1
-        ## cas de la paire d'as : ignore pour le moment, parce que pas d'actions particulieres à mener...
+        ## cas de la paire d'as : ignore pour le moment, parce que pas d'actions particulieres Ã  mener...
         """if (state == 2):
             while (statesActionsList[k][0] < 12):
                 #Revenir au tableau as
@@ -117,7 +119,7 @@ def update_value3(statesActionsList,bool_as_choice,bool_pair,bank_state,result,p
                 if (k < len(statesActionsList)):
                     state_to_compare = statesActionsList[k][0]
                 else:
-                    state_to_compare = 12 #On force la sortie de la boucle si notre IA s'arretes de piocher avant d'arriver à 12
+                    state_to_compare = 12 #On force la sortie de la boucle si notre IA s'arretes de piocher avant d'arriver Ã  12
             #revenir au tableau normal"""
         for couple in statesActionsList[k:]: #Apres avoir piocher la premiere carte, les etats suivant ne correspondent plus a des paires, on revient au tableau policy_simple
             state,action = ind_simple(couple[0]),couple[1]
