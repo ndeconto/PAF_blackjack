@@ -13,7 +13,7 @@ from openpyxl.styles import Color, PatternFill, Font, Border, Side, Alignment
 from openpyxl.styles.differential import DifferentialStyle
 from openpyxl.formatting.rule import ColorScaleRule, CellIsRule, FormulaRule
 from load_object import *
-
+###
 
 def f(values):
 	return values.index(max(values))
@@ -45,11 +45,11 @@ def apprentissage2(n,bet,f):
 def f(k):
         return(0.05)
 
-
+   
 def save_mypolicy(p1,p2,p3): #Le fichier sauvegarde est un vecteur comportant les trois tableaux
 #from load_object import *
 #IND : Pour sauvegarder : ecrire save_mypolicy(policy_simple,policy_as,policy_pair)
-#      Pour charger ecrire : policy_simple,policy_as,policy_pair = getPolicy()[0],getPolicy()[1],getPolicy[2]
+#      Pour charger ecrire : policy_simple,policy_as,policy_pair = getPolicy()[0],getPolicy()[1],getPolicy()[2]
 
     policy = [p1,p2,p3]
     file_handler = open("mypolicy", "wb")
@@ -75,7 +75,10 @@ def save_to_xlsx():
     for row in policy[0] :
         for k in range(len(row)):
             row[k] = row[k].index(max(row[k]))
-        ws.append([i]+row)
+        if (i==1):
+            ws.append(['A']+row)
+        else :
+            ws.append([i]+row)
         i+=1
     
     ws['A14'] = ""
@@ -87,7 +90,10 @@ def save_to_xlsx():
     for row in policy[1] :
         for k in range(len(row)):
             row[k] = row[k].index(max(row[k]))
-        ws.append([i]+row)
+        if (i==1):
+            ws.append(['A']+row)
+        else :
+            ws.append([i]+row)
         i+=1
     
     ws['A28'] = ""
@@ -99,20 +105,13 @@ def save_to_xlsx():
     for row in policy[2] :
         for k in range(len(row)):
             row[k] = row[k].index(max(row[k]))
-        ws.append([i]+row)
+        if (i==1):
+            ws.append(['A']+row)
+        else :
+            ws.append([i]+row)
         i+=1
     
-    ws.conditional_formatting.add('B4:P13',
-    ColorScaleRule(start_type='percentile', start_value=10, start_color='FF6666',
-                        mid_type='percentile', mid_value=50, mid_color='FFC966',
-                        end_type='percentile', end_value=90, end_color='6DC066')
-                  )
-    
-    ws.conditional_formatting.add('B18:J27',
-    ColorScaleRule(start_type='percentile', start_value=10, start_color='FF6666',
-                        mid_type='percentile', mid_value=50, mid_color='FFC966',
-                        end_type='percentile', end_value=90, end_color='6DC066')
-                  )
+
     
     redFill = PatternFill(start_color='FF6666',
                    end_color='FF6666',
@@ -124,6 +123,10 @@ def save_to_xlsx():
     
     greenFill = PatternFill(start_color='6DC066',
                         end_color='6DC066',
+                        fill_type='solid')
+                        
+    purpleFill = PatternFill(start_color='8067A2',
+                        end_color='8067A2',
                         fill_type='solid')
     
     alignment=Alignment(horizontal='center',
@@ -153,6 +156,14 @@ def save_to_xlsx():
             border.top = side
             border.bottom = side
 
+            if (cell.value==0 and pos_x!=0) :
+                cell.fill=redFill
+            if (cell.value==1 and pos_x!=0) :
+                cell.fill=orangeFill
+            if (cell.value==2 and pos_x!=0) :
+                cell.fill=greenFill
+            if (cell.value==3 and pos_x!=0) : 
+                cell.style='Accent4'
             cell.border = border
             cell.alignment=alignment
     
@@ -175,6 +186,14 @@ def save_to_xlsx():
             border.top = side
             border.bottom = side
 
+            if (cell.value==0 and pos_x!=0) :
+                cell.fill=redFill
+            if (cell.value==1 and pos_x!=0) :
+                cell.fill=orangeFill
+            if (cell.value==2 and pos_x!=0) :
+                cell.fill=greenFill
+            if (cell.value==3 and pos_x!=0) : 
+                cell.style='Accent4'
             cell.border = border
             cell.alignment=alignment
     
@@ -203,12 +222,12 @@ def save_to_xlsx():
             if (cell.value==2 and pos_x!=0) :
                 cell.fill=greenFill
             if (cell.value==3 and pos_x!=0) : 
-                cell.style='Accent4'
+                cell.fill=purpleFill
             cell.border = border
             cell.alignment=alignment
     
     # Save the file
-    wb.save("policy_test_apprentissage_spe.xlsx")
+    wb.save("policy_test_apprentissage_corrected.xlsx")
 
 
 
@@ -218,21 +237,36 @@ def presenter_resultats(mypolicy):
     matrice_paire = [2]
 
     
-def graphe_vitesse_apprentissage():
+def graphe_vitesse_apprentissage(a_min=0, pas=2 * 10**5,a_max = 10**7, log=False,
+                                 nb_test=2*10**5):
 
-    from matplotlib.pyplot import plot, show, xlabel, ylabel
-
-    pas = 2 * 10**5
-    a_max = 10**6
+    from matplotlib.pyplot import plot, show, xlabel, ylabel, figure
 
     
-    lx = range(0, a_max, pas)
-    ly = [0] * len(lx)
+    lx = [1]
+    ly = [test_sans_apprendre(nb_test)]
+
+    apprentissage2(a_min, 1, lambda k: 0.05)
+    x = a_min
     
-    for i in range(len(lx)):
-        ly[i] = test_sans_apprendre(10**5)
-        apprentissage2(pas, 1)
+    while x < a_max :
+        print ("iteration ", x, "sur ", a_max)
+        ly.append(test_sans_apprendre(nb_test))
+        lx.append(x)
         
+        if log:
+            apprentissage2(x * (pas - 1), 1, lambda k: 0.05)
+            x *= pas
+        else :
+            apprentissage2(pas, 1, lambda k: 0.05)
+            x += pas
+                
+        
+
+    print (lx, ly)
+    fig = figure()
+    ax = fig.add_subplot(2, 1, 1)
+    ax.set_xscale('log')
     xlabel("nombre d'iterations d'apprentissage")
     ylabel("gain moyen pour une mise de 1")
     plot(lx, ly)

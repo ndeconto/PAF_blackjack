@@ -1,8 +1,8 @@
+# -*- coding: utf-8 -*-
 from algo_MC_2 import *
 from boucle_apprentissage import *
 from cartes import *
 ###############################################################################
-
 
 ###On donne les mains que l'on souhaite entrainer###
 
@@ -41,7 +41,7 @@ def manche_apprentissage_specifique(player_cards_list,bet, learning = True):
         bool_as_choice = True
         position_as = 1
     else:
-        player_state = player_hand.get_card_at(0).get_valeur()
+        player_state = player_hand.get_card_at(0)
         
 
     if (player_hand.get_card_at_high(1) == 1):                 #Si la deuxieme carte est un as
@@ -56,7 +56,7 @@ def manche_apprentissage_specifique(player_cards_list,bet, learning = True):
         bool_pair = True
         
         
-    ##Tirage de la première carte de la banque
+    ##Tirage de la premiÃ¨re carte de la banque
     bank_state = 0
     bank_card = deck.piocher()
     bank_hand = Main([bank_card])
@@ -120,8 +120,8 @@ def manche_apprentissage_specifique(player_cards_list,bet, learning = True):
             bool_splitted = True
             player_card_1 = deck.piocher()
             player_card_2 = deck.piocher()
-            player_hand_1 = Main([Carte(player_hand.get_card_at_high(0))])
-            player_hand_2 = Main([Carte(player_hand.get_card_at_high(1))])
+            player_hand_1 = Main([player_hand.contenu[0]])
+            player_hand_2 = Main([player_hand.contenu[0]])
             player_hand_1.ajouter(player_card_1)
             player_hand_2.ajouter(player_card_2)
             player_decision = 0 #Une seule carte a  piocher

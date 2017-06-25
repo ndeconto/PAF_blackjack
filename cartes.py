@@ -1,4 +1,10 @@
+# -*- coding: utf-8 -*-
+
 import random
+from warnings import warn
+
+
+
 #definition des constantes bien pratiques 
 
 
@@ -39,7 +45,9 @@ class Carte:
         #valeur de la carte : 1, 2, ... 10, 11.
         self.valeur = self.get_valeur()
 
-
+    def get_card_object(self,indice):
+        return (self.contenu[indice])
+    
     def get_valeur(self):
         """
             renvoie la valeur de la carte au blackjack
@@ -176,7 +184,7 @@ class Deck:
     
 class DeckTruque (Deck):
     """
-    Permet de creer un deck ou il manque des cartes pour l'apprentissage spécifique    
+    Permet de creer un deck ou il manque des cartes pour l'apprentissage spÃ©cifique    
     """
     
     def __init__(self,liste_carte):
@@ -185,4 +193,149 @@ class DeckTruque (Deck):
                      if not (Carte(i,j) in liste_carte)]
         random.shuffle(self.pile)
 
+
+
+class Sabot(Deck):
+    """
+        dans les casinos, NB_PAQUET de 52 cartes sont melanges ensemble, cela
+        forme un sabot. Ensuite, le croupier joue plusieurs manches en utilisant
+        ces NB_PAQUET * 52 cartes, sans remelanger.
+        On peut donc avoir 3 dame de coeur, c'est normal, car il y a plusieurs
+        jeux de cartes
+        Au fil des manches, le sabot s'epuise. Apres avoir pioche
+        TAUX_PENETRATION pourcents des cartes du sabots, le croupier remelange
+        le sabot, en laissant bien sur sur la table les cartes utilisees pour
+        la manche en cours. Un taux de penetration eleve avantage les joueurs
+        qui comptent les cartes.
+
+        cette classe s'utilise de la maniere suivante :
+            - creer le sabot : mon_sabot = Sabot()
+            - quand une nouvelle manche commence, ne pas creer de nouveau sabot
+                mais simplement faire : mon_sabot.nouvelle_manche()
+            - quand on veut tirer une carte, faire : mon_sabot.piocher()
+            - quand on veut connaitre la valeur du compteur (pour le comptage
+                des cartes), faire : mon_sabot.get_counter()
+            - et c'est tout ! la classe s'occupe toute seule de remelanger quand
+                il le faut. Les cartes de la manche en cours ne sont pas
+                remelangees. (c'est pour pouvoir faire ca qu'il y a une methode
+                nouvelle_manche() a appeler)
+
+        NB : avec un sabot, il y aura beaucoup plus d'erreur du style
+        "pop from empty list", erreur que l'on peut avoir avec un Deck.
+        Cette erreur arrivera si la fonction nouvelle_manche n'est pas appelee
+        Cependant, si la classe s'apercoit que plus de NB_MAX_CARTE_PAR_MANCHE
+        cartes ont ete piochees dans une meme manche, un warning sera lance
+        Donc la console sera inondee de warning avec d'avoir le pop from empty
+        list
+
+    """
+
+    #valable en europe et aux US, au canada c'est 8...
+    NB_PAQUET           =   6
+    TAUX_PENETRATION    =   75  #pourcents
+
+    NB_MAX_CARTE_PAR_MANCHE = 52
+
+
+    def __init__(self, counter_bound=5, warning_enable=True):
+        """
+            le parametre warning_enable permet d'activer/desactiver les warnings
+            quand il y a "trop" de cartes utilisees dans une main pour etre
+            honnete
+            le compteur renvoye par get_counter est borne par coutner_bound
+        """
+        self.pile = [Carte(i, j) for i in range(AS, ROI + 1)
+                     for j in [COEUR, PIQUE, CARREAU, TREFLE]
+                     for k in range(self.NB_PAQUET)]
+
+        self.trash = []
+        self.on_table = []
+        self.counter = 0
+        self.counter_bound = counter_bound
+        self.warning_enable = warning_enable
+        self.carte_min = int(len(self.pile) * (1 - self.TAUX_PENETRATION / 100.))
+        assert(self.carte_min >= 0)
+
+        random.shuffle(self.pile)
+
+    def nouvelle_manche(self):
+        """
+            quand le sabot est remelange, on ne remelange pas les cartes qui
+            sont sur la table et utilisees dans la manche en cours
+            il faut donc que le sabot sache quand les manches commencent pour
+            savoir quelles cartes il peut remelanger.
+            La fonction nouvelle_manche doit donc etre appelee au debut de
+            chaque manche (cf ci-dessus)
+            NB : il ne faut pas creer un nouveau sabot a chaque debut de manche,
+            sinon on ne peut pas compter les cartes !
+        """
+
+        self.trash.extend(self.on_table)
+        self.on_table = []
         
+            
+
+    def piocher(self):
+
+        #s'il faut remelange
+        if len(self.pile) <= self.carte_min:
+            #et bien on remelange, dingue n'est ce pas ?
+            self.pile.extend(self.trash)
+            self.trash = []
+            random.shuffle(self.pile)
+
+            #et on met a jour le compte
+            self.counter = 0
+            for c in self.on_table:
+                self.counter += self.delta_counter(c)
+            
+        carte = self.pile.pop()
+        self.on_table.append(carte)
+        self.counter += self.delta_counter(carte)
+
+        if self.warning_enable == len(self.on_table) > self.NB_MAX_CARTE_PAR_MANCHE:
+            warn(UserWarning("Il y a actuellement " + str(len(self.on_table))
+                             + " cartes utilisees dans cette manche ; est ce "
+                             + "bien normal ?"))
+
+        return carte
+
+    def get_counter(self):
+        """
+            on compte les cartes selon la technique HI-LOW
+            on renvoie le compteur en cours, pas le vrai compteur
+            (vrai compteur = compteur en cours / nb de deck utilises)
+            cela permet d'avoir des entiers, ce qui est pratique pour indexer
+            directement avec le compteur en cours
+            RAPPEL : en python, on peut indexer des tableaux avec des entiers
+            negatifs
+        """
+
+        if self.counter >= self.counter_bound:
+            return self.counter_bound
+        if self.counter <= self.counter_bound:
+            return - self.couunter_bound
+        
+        return self.counter
+    
+
+    def delta_counter(self, carte):
+        """
+            renvoie la variation du compteur obtenue quand on tire la carte
+            'carte' (technique HI-LOW)
+        """
+
+        if (2 <= carte.hauteur <= 6):
+            return 1
+
+        if (7 <= carte.hauteur <= 9):
+            return 0
+
+        #cas 10, J, Q, K, A
+        return -1
+
+        
+
+        
+
+    
