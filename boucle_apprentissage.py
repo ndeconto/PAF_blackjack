@@ -237,21 +237,36 @@ def presenter_resultats(mypolicy):
     matrice_paire = [2]
 
     
-def graphe_vitesse_apprentissage():
+def graphe_vitesse_apprentissage(a_min=0, pas=2 * 10**5,a_max = 10**7, log=False,
+                                 nb_test=2*10**5):
 
-    from matplotlib.pyplot import plot, show, xlabel, ylabel
-
-    pas = 2 * 10**5
-    a_max = 10**6
+    from matplotlib.pyplot import plot, show, xlabel, ylabel, figure
 
     
-    lx = range(0, a_max, pas)
-    ly = [0] * len(lx)
+    lx = [1]
+    ly = [test_sans_apprendre(nb_test)]
+
+    apprentissage2(a_min, 1, lambda k: 0.05)
+    x = a_min
     
-    for i in range(len(lx)):
-        ly[i] = test_sans_apprendre(10**5)
-        apprentissage2(pas, 1)
+    while x < a_max :
+        print ("iteration ", x, "sur ", a_max)
+        ly.append(test_sans_apprendre(nb_test))
+        lx.append(x)
         
+        if log:
+            apprentissage2(x * (pas - 1), 1, lambda k: 0.05)
+            x *= pas
+        else :
+            apprentissage2(pas, 1, lambda k: 0.05)
+            x += pas
+                
+        
+
+    print (lx, ly)
+    fig = figure()
+    ax = fig.add_subplot(2, 1, 1)
+    ax.set_xscale('log')
     xlabel("nombre d'iterations d'apprentissage")
     ylabel("gain moyen pour une mise de 1")
     plot(lx, ly)
