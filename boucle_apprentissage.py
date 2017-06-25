@@ -75,7 +75,10 @@ def save_to_xlsx():
     for row in policy[0] :
         for k in range(len(row)):
             row[k] = row[k].index(max(row[k]))
-        ws.append([i]+row)
+        if (i==1):
+            ws.append(['A']+row)
+        else :
+            ws.append([i]+row)
         i+=1
     
     ws['A14'] = ""
@@ -87,7 +90,10 @@ def save_to_xlsx():
     for row in policy[1] :
         for k in range(len(row)):
             row[k] = row[k].index(max(row[k]))
-        ws.append([i]+row)
+        if (i==1):
+            ws.append(['A']+row)
+        else :
+            ws.append([i]+row)
         i+=1
     
     ws['A28'] = ""
@@ -99,7 +105,10 @@ def save_to_xlsx():
     for row in policy[2] :
         for k in range(len(row)):
             row[k] = row[k].index(max(row[k]))
-        ws.append([i]+row)
+        if (i==1):
+            ws.append(['A']+row)
+        else :
+            ws.append([i]+row)
         i+=1
     
 
@@ -114,6 +123,10 @@ def save_to_xlsx():
     
     greenFill = PatternFill(start_color='6DC066',
                         end_color='6DC066',
+                        fill_type='solid')
+                        
+    purpleFill = PatternFill(start_color='8067A2',
+                        end_color='8067A2',
                         fill_type='solid')
     
     alignment=Alignment(horizontal='center',
@@ -209,7 +222,7 @@ def save_to_xlsx():
             if (cell.value==2 and pos_x!=0) :
                 cell.fill=greenFill
             if (cell.value==3 and pos_x!=0) : 
-                cell.style='Accent4'
+                cell.fill=purpleFill
             cell.border = border
             cell.alignment=alignment
     
