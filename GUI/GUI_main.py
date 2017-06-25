@@ -24,9 +24,21 @@ def init_GUI():
     #TODO mettre une icone
 
 
-def stop_button_action(joueur_humain):
+def stop_button_action(joueur_humain, button_list):
     def f():
         joueur_humain.sarreter()
+        for b in button_list:
+            b.desactiver()
+    return f
+
+
+def double_button_action(mise, joueur, button_list):
+    def f():
+        mise.doubler()
+        joueur.do_in_x_seconds(1, joueur.piocher)
+        joueur.do_in_x_seconds(2, joueur.sarreter)
+        for b in button_list:
+            b.desactiver()
     return f
 
 
@@ -47,6 +59,8 @@ def jeu(type_jeu):
     tapis = ImageComponent(0, (0, 0), "img/tapis_bj_new.png")
 
     pioche = DeckGraphique((422, 330))
+
+    mise = Mise(1, (0, 0), 35, font_color=(219, 201, 101))
 
     if type_jeu == JEU_CLASSIQUE:
         
@@ -71,6 +85,8 @@ def jeu(type_jeu):
 
 
     if type_jeu == JEU_CLASSIQUE or type_jeu == JEU_SYMETRIQUE:
+
+        button_list = []
         
         #TODO : mettre les boutons en anglais !
         bouton_piocher = Bouton(2, (X_PREMIER_BOUTON, Y_BOUTON),
@@ -79,7 +95,7 @@ def jeu(type_jeu):
 
         bouton_stop = Bouton(2, (X_PREMIER_BOUTON + D_X_BOUTON, Y_BOUTON),
                          "img/bouton_stop.png",
-                         stop_button_action(joueur_1))
+                         stop_button_action(joueur_1, button_list))
 
         bouton_split = Bouton(2, (X_PREMIER_BOUTON + 2 * D_X_BOUTON, Y_BOUTON),
                           "img/bouton_split.png",
@@ -87,15 +103,17 @@ def jeu(type_jeu):
 
         bouton_double = Bouton(2, (X_PREMIER_BOUTON + 3 * D_X_BOUTON, Y_BOUTON),
                            "img/bouton_double.png",
-                           lambda : None)
+                           double_button_action(mise, joueur_1, button_list))
 
-    
+        button_list.extend([bouton_piocher, bouton_stop, bouton_split,
+                            bouton_double])
+
     
 
 
     # ---------- on donne tous les composants a un manager ------------ #
     # le manager se debrouille avec tout ca et fait sa cuisine
-    liste_comp = [tapis, joueur_1, joueur_2, pioche, arbitre]
+    liste_comp = [tapis, mise, joueur_1, joueur_2, pioche, arbitre]
     
     if type_jeu == JEU_CLASSIQUE or type_jeu == JEU_SYMETRIQUE:
         liste_comp += [bouton_piocher, bouton_stop, bouton_split, bouton_double]

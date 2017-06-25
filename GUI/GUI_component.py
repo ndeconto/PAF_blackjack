@@ -54,6 +54,18 @@ class GUIComponent:
 
         self.alive              =   True
 
+        self.todo               =   []
+
+
+    def do_in_x_seconds(self, x, function):
+        """
+            x seconds after calling this method, function() will be called
+
+            NB : if the component is killed, the function won't be called
+        """
+
+        self.todo.append((clock(), x, function))
+
 
     def update(self, other_components):
         """
@@ -68,6 +80,15 @@ class GUIComponent:
         """
 
         if self.alive:
+
+            t = clock()
+            l = []
+            for t2, x, f in self.todo:
+                if t - t2 > x:
+                    f()
+                else: l.append((t2, x, f))
+            self.todo = l
+            
             return [self]
 
         return []
@@ -253,7 +274,8 @@ class Bouton(ImageComponent):
 
                 if Rect(self.position, self.size).collidepoint(mouse.get_pos()):
 
-                    if self.click_in and self.enable: self.on_click()
+                    if self.click_in and self.enable:
+                        self.on_click()
 
                 else :
                     self.click_in = False
@@ -287,5 +309,58 @@ class PauseComponent(GUIComponent):
                 return self.signal
 
         return CONTINUE
-            
+
+
+
+
+class Mise(GUIComponent):
+    """
+        objet graphique de la mise
+    """
+
+    DISPLAY_LEVEL = 4
+    FONT = "font/321impact.ttf"
+    X_FACTOR = 1.2
+    Y_FACTOR = 1.2
+
+    #decalage relatif du txt
+    OFFSET_TXT_X = 0.05
+    OFFSET_TXT_Y = 0.1
+
+    def __init__(self, x, position, font_size, font_color=(255, 255, 255),
+                 background_color=(0, 0, 0)):
+        
+        self.x = x
+        self.font = font.Font(self.FONT, font_size)
+
+        self.background_color = background_color
+        self.font_color = font_color
+
+        self.render_txt()
+
+        x, y = self.txt.get_size()
+        bg = Surface((x * self.X_FACTOR, y * self.Y_FACTOR))
+        bg.fill(self.background_color)
+        GUIComponent.__init__(self, self.DISPLAY_LEVEL, position, bg.get_size(),
+                              [], [], background=bg)
+
+    def render_txt(self):
+        self.txt = self.font.render("Mise : " + str(self.x), 1, self.font_color)
+
+    def display(self):
+
+        s = display.get_surface()
+        #s.blit(self.background, self.position)
+        self.render_txt()
+        s.blit(self.txt, (self.position[0] + self.size[0] * self. OFFSET_TXT_X,
+                          self.position[1] + self.size[1] * self. OFFSET_TXT_Y))
+
+        return Rect(self.position, self.size)
+
+    def doubler(self):
+        self.x *= 2
+
+        
+
+    
         
