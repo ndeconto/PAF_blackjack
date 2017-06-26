@@ -34,10 +34,10 @@ def apprentissage(n):
 
 def apprentissage2(n,bet):
     victoire = 0
-    global epsilon
-    for k in range(int(n/2)):
-        epsilon = f(k)
+    for k in range(n):
         victoire = manche2(bet)
+        if(k%100000 == 0):
+            print("progres : ", (k/n)*100 ,"%")
     print("Statistiques :\n")
     print(victoire)
     print("Epsilon final, alpha : ",epsilon,", ",alpha)

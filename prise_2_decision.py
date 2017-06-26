@@ -93,7 +93,7 @@ def win_split(player_hand_1,player_hand_2,bank_hand,bet):
 
 def manche2(bet, learning=True): #bet est la mise
     global epsilon
-    
+    deck.nouvelle_manche()
     if not learning:
         epsilon_copy = epsilon
         epsilon = 0
@@ -200,8 +200,8 @@ def manche2(bet, learning=True): #bet est la mise
             else :
                 player_state += player_card.get_valeur()
             
-            #counter = deck.get_counter()
-            #player_statesActions.append([player_state,0, counter])
+            counter = deck.get_counter()
+            player_statesActions.append([player_state,0, counter])
             player_decision = 0 #Une seule carte a piocher
             
         elif(player_decision == 3):
