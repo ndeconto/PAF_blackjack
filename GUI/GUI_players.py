@@ -101,6 +101,9 @@ class Joueur(MainGraphique, Arbitrable):
     def update(self, other_comp):
 
         self.encircling_enable = self.playing
+
+        if self.a_perdu():
+            self.sarreter()
         
         r = MainGraphique.update(self, other_comp)
 
