@@ -207,11 +207,11 @@ class MainGraphique(GUIComponent, Main):
         
             
             
-class DeckGraphique(MainGraphique, Deck):
+class DeckGraphique(MainGraphique, Sabot):
 
     def __init__(self, position):
         
-        Deck.__init__(self)
+        Sabot.__init__(self)
         MainGraphique.__init__(self, self.pile, position, HORIZONTAL, "",
                                list(range(52)), d_x=0.001)
     
