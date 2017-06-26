@@ -313,8 +313,8 @@ class Sabot(Deck):
 
         if self.counter >= self.counter_bound:
             return self.counter_bound
-        if self.counter <= self.counter_bound:
-            return - self.couunter_bound
+        if self.counter <= - self.counter_bound:
+            return - self.counter_bound
         
         return self.counter
     

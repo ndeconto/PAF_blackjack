@@ -11,6 +11,7 @@ mise_investie = 0
 mise_gagnee = 0
 nb_parties_gagnees = 0
 nb_parties_jouees = 0
+deck = Sabot()
 
 ##
 
@@ -97,7 +98,6 @@ def manche2(bet, learning=True): #bet est la mise
         epsilon_copy = epsilon
         epsilon = 0
     
-    deck = Deck()
     player_statesActions = []
     position_as = 0
     bool_as_choice = False
@@ -113,6 +113,7 @@ def manche2(bet, learning=True): #bet est la mise
     player_card = deck.piocher()            #Premiere carte
     player_hand = Main([player_card])
     player_state = 0
+    counter = 0
     if (isAs(player_card)):                 #Si c'est un as
         player_state = 1
 #        bool_as = True
@@ -147,9 +148,9 @@ def manche2(bet, learning=True): #bet est la mise
         bank_state = bank_card.get_valeur()
         
       
-    
-    player_decision = makeDecision3([player_state,bool_as_choice,bool_can_split,bool_can_doble],(bank_state-1) % 10)   #decision du joueur
-    player_statesActions.append([player_state,player_decision])
+    counter = deck.get_counter()
+    player_decision = makeDecision3([player_state,bool_as_choice,bool_can_split,bool_can_doble, counter],(bank_state-1) % 10)   #decision du joueur
+    player_statesActions.append([player_state,player_decision, counter])
     
     
     
@@ -173,10 +174,12 @@ def manche2(bet, learning=True): #bet est la mise
                     position_as = len(player_statesActions) + 1
             else :
                 player_state += player_card.get_valeur()
+            
+            counter = deck.get_counter()
                 
             #Decision du joueur
-            player_decision = makeDecision3([player_state,bool_as_choice,bool_can_split,bool_can_doble],(bank_state-1) % 10)
-            player_statesActions.append([player_state,player_decision])
+            player_decision = makeDecision3([player_state,bool_as_choice,bool_can_split,bool_can_doble, counter],(bank_state-1) % 10)
+            player_statesActions.append([player_state,player_decision, counter])
             
         elif(player_decision == 2):
     #####################Ce que l'on fait si la decision c'est de doubler#######################################
@@ -196,7 +199,9 @@ def manche2(bet, learning=True): #bet est la mise
                     position_as = len(player_statesActions) + 1
             else :
                 player_state += player_card.get_valeur()
-            player_statesActions.append([player_state,0])
+            
+            #counter = deck.get_counter()
+            #player_statesActions.append([player_state,0, counter])
             player_decision = 0 #Une seule carte a piocher
             
         elif(player_decision == 3):
