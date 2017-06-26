@@ -165,6 +165,9 @@ class Main:
     def __len__(self):
         return(len(self.contenu))
 
+    def __getitem__(self, i):
+        return self.contenu[i]
+
 
 class Deck:
     """

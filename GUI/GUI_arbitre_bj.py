@@ -4,6 +4,15 @@ from GUI_component import *
 from GUI_players import *
 from GUI_component_manager import EXIT_GAME_LOOP
 
+from sys import path
+path.append('..')
+from prise_2_decision import win2, win_split
+
+
+JEU_CLASSIQUE   =   0   #un joueur humain joue contre la banque
+IA_VS_BANQUE    =   1   #l'IA joue contre la banque (l'humain n'est que spectateur)
+JEU_SYMETRIQUE  =   2   #notre jeu special, avec les regles symetrisees
+
 
 class Arbitre(GUIComponent):
 
@@ -15,10 +24,15 @@ class Arbitre(GUIComponent):
         qui donne l'historique des cartes passees, ...
     """
 
-    def __init__(self, ordre_joueur):
+    def __init__(self, ordre_joueur, type_jeu, mise):
         """
             ordre joueur doit etre la liste des joueurs dans l'ordre
             dans lequel ils doivent jouer
+
+            type_jeu doit imperativement etre l'une des constantes definies
+            plus haut (JEU_CLASSIQUE, ...)
+
+            mise doit etre une instance de la classe Mise !
         """
 
         GUIComponent.__init__(self, 0, (0, 0), (0, 0),
@@ -28,8 +42,15 @@ class Arbitre(GUIComponent):
         self.jeu_fini = False
         self.liste_joueur = ordre_joueur
 
-        for j in self.liste_joueur:
-            print j.playing, j.finish
+        self.type_jeu = type_jeu
+        self.mise = mise
+
+
+
+    def update_total_des_gains(self, nouveau_gain):
+        #TODO une fonction qui ouvre un fichier et qui met a jour la somme des
+        #gains realises sur l'ensemble des parties
+        return
         
 
 
@@ -63,57 +84,118 @@ class Arbitre(GUIComponent):
 
 
         if couple_gagnant_perdant == None:
-            #TODO tester le match nul !!!
-            img_draw = ImageComponent(4, (400, 300), "img/draw.png")
+            #TODO c'est pas hyper beau...
+            img_draw = ImageComponent(4, (350, 300), "img/draw.png")
             return [self, img_draw, pause]
 
-        gagnant, perdant = couple_gagnant_perdant
+        l_gagnant, l_perdant = couple_gagnant_perdant
         e_bord = 10
-
-        tx, ty = gagnant.background.get_size()
-        contour_g = Surface((tx + e_bord, ty + e_bord), SRCALPHA, 32)
-        contour_g.fill(Color(90, 230, 255, 255))
-        
-        tx, ty = perdant.background.get_size()
-        contour_p = Surface((tx + e_bord, ty + e_bord), SRCALPHA, 32)
-        contour_p.fill(Color(255, 40, 50, 255))
-
         vide = Surface((0, 0), SRCALPHA, 32)
 
-        pos_cont_g = (gagnant.position[0] - e_bord / 2,
-                     gagnant.position[1] - e_bord / 2)
-
-        pos_cont_p = (perdant.position[0] - e_bord / 2,
-                      perdant.position[1] - e_bord / 2) 
-        
-        cache_comp = FlashingImageComponent(.2, pos_cont_g, [contour_g, vide],
-                                            0.15)
-        cache_comp2 = FlashingImageComponent(.2, pos_cont_p, [contour_p, vide],
-                                            0.15)
-
+        comp_finaux = [self, pause]
 
         
+
+        for gagnant in l_gagnant :
+
+            tx, ty = gagnant.background.get_size()
+
+            contour_g = Surface((tx + e_bord, ty + e_bord), SRCALPHA, 32)
+            contour_g.fill(Color(90, 230, 255, 255))
+            
+
+            pos_cont_g = (gagnant.position[0] - e_bord / 2,
+                         gagnant.position[1] - e_bord / 2)
+
+            comp_finaux.append(FlashingImageComponent(.2, pos_cont_g, [contour_g, vide],
+                                            0.15))
+
+            
+
+        for perdant in l_perdant:
+            tx, ty = perdant.background.get_size()
+            contour_p = Surface((tx + e_bord, ty + e_bord), SRCALPHA, 32)
+            contour_p.fill(Color(255, 40, 50, 255))
+
+            pos_cont_p = (perdant.position[0] - e_bord / 2,
+                          perdant.position[1] - e_bord / 2) 
         
-        return [self, cache_comp, cache_comp2, pause]
+            comp_finaux.append(FlashingImageComponent(.2, pos_cont_p, [contour_p, vide],
+                                            0.15))
+
+
+        
+        
+        return comp_finaux
 
 
     def trouver_gagnant(self):
         """
-            renvoie le couple (gagnant, perdant)
+            renvoie le couple (liste_des_gagnants, liste_des_perdants)
             renvoie None en cas de match nul
-            quand cette fonction est appelee, aucun joueur n'a strictement plus de
-            21 ; enfin normalement... faire le check serait moins paresseux et
-            plus fiable
         """
-        g = self.liste_joueur[0].get_m_valeur()
-        d = self.liste_joueur[1].get_m_valeur()
 
-        if g > d:
-            return (self.liste_joueur[0], self.liste_joueur[1])
-        elif d > g:
-            return (self.liste_joueur[0], self.liste_joueur[1])
-        else: #d == g
-            return None
+        #liste des joueurs qui ont splitte
+        l_split = [j for j in self.liste_joueur if isinstance(j, JoueurSplitte)]
+        #liste des joueurs qui n'ont pas splitte
+        l_n_split = [j for j in self.liste_joueur
+                     if not isinstance(j, JoueurSplitte)]
+                
+        if self.type_jeu == JEU_CLASSIQUE or self.type_jeu == IA_VS_BANQUE:
+
+            #si personne n'a splitte
+            if len(l_split) == 0:
+
+                #NB : joueur 2 a l'avantage de l'asymetrie (c'est la banque)
+                r = win2(self.liste_joueur[0], self.liste_joueur[1],
+                         self.mise.get_value())
+
+                lj_1  = [self.liste_joueur[0]]
+                lj_2 = [self.liste_joueur[1]]
+
+            else:
+                #la banque ne pouvant pas splitter, on doit etre dans le cas
+                # nb_split == 1
+                assert(len(l_split) == 1)
+
+                r = win_split(l_split[0].jeu_1, l_split[0].jeu_2, l_n_split[0], 1)
+
+                lj_1 = [l_split[0].jeu_1, l_split[0].jeu_2]
+                lj_2 = [l_n_split[0]]
+
+
+            self.update_total_des_gains(r)
+            draw = (r == 0)
+
+            lg = []
+            lp = []
+
+            for j1 in lj_1:
+                for j2 in lj_2:
+
+                    r = win2(j1, j2, 1)
+
+                    if r > 0:
+                        lg.append(j1)
+                        lp.append(j2)
+
+                    elif r < 0:
+                        lg.append(j2)
+                        lp.append(j1)
+
+            if draw:
+                return None
+
+            return (lg, lp)
+                
+
+        elif self.type_jeu == JEU_SYMETRIQUE:
+            #TODO : a implementer !
+            raise (Exception("not implemented"))
+
+        else:
+            raise (ValueError("le type de jeu " + str(self.type_jeu) +
+                              "n'est pas reconnu par la fonction de gain"))
 
 
     def update(self, other_components):
@@ -124,6 +206,11 @@ class Arbitre(GUIComponent):
 
 
         for i, j in enumerate(self.liste_joueur):
+
+            if j.a_splite:
+                self.liste_joueur[i] = j.joueur_split
+                break
+            
             if j.playing:
                 break
             
@@ -136,13 +223,14 @@ class Arbitre(GUIComponent):
             if not j.a_fini():
                 tout_le_monde_a_fini = False
 
-            x = j.get_m_valeur()
-
-            #on verifie qu'aucun joueur n'aie perdu
-            if x > 21:
+            #oquand on joue contre la banque, celle ci s'arrete quand un joueur perd
+            if ((self.type_jeu == JEU_CLASSIQUE
+                or self.type_jeu == IA_VS_BANQUE) and j.a_perdu()):
                 # ----------- NB : ne marche qu'avec deux joueurs ! -----------
-                return self.terminer_partie((self.liste_joueur[1 - i], j),
-                                                other_components)
+
+                self.liste_joueur[-1].sarreter()
+                #return self.terminer_partie(([self.liste_joueur[1 - i]], [j]),
+                #                                other_components)
 
 
         if tout_le_monde_a_fini:

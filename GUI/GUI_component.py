@@ -360,6 +360,9 @@ class Mise(GUIComponent):
     def doubler(self):
         self.x *= 2
 
+    def get_value(self):
+        return self.x
+
         
 
     

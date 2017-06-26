@@ -9,10 +9,11 @@ from GUI_arbitre_bj import *
 
 from GUI_slidemenu import slidemenu
 
-JEU_CLASSIQUE   =   0   #un joueur humain joue contre la banque
-IA_VS_BANQUE    =   1   #l'IA joue contre la banque (l'humain n'est que spectateur)
-JEU_SYMETRIQUE  =   2   #notre jeu special, avec les regles symetrisees
 
+BOUTON_PIOCHE   = 0
+BOUTON_STOP     = 1
+BOUTON_SPLIT    = 2
+BOUTON_DOUBLE   = 3
 
 
 def init_GUI():
@@ -40,6 +41,20 @@ def double_button_action(mise, joueur, button_list):
         for b in button_list:
             b.desactiver()
     return f
+
+
+def split_button_action(button_list, joueur):
+
+    def f():
+        j = joueur.splitter()
+        j.bouton_stop = button_list[BOUTON_STOP]
+        j.bouton_pioche = button_list[BOUTON_PIOCHE]
+
+        button_list[BOUTON_DOUBLE].desactiver()
+        button_list[BOUTON_SPLIT].desactiver()
+
+    return f
+    
 
 
 
@@ -81,7 +96,7 @@ def jeu(type_jeu):
         joueur_1.commencer_tour()
         
 
-    arbitre = Arbitre([joueur_1, joueur_2])
+    arbitre = Arbitre([joueur_1, joueur_2], type_jeu, mise)
 
 
     if type_jeu == JEU_CLASSIQUE or type_jeu == JEU_SYMETRIQUE:
@@ -99,7 +114,7 @@ def jeu(type_jeu):
 
         bouton_split = Bouton(2, (X_PREMIER_BOUTON + 2 * D_X_BOUTON, Y_BOUTON),
                           "img/bouton_split.png",
-                          lambda : None)
+                              split_button_action(button_list, joueur_1))
 
         bouton_double = Bouton(2, (X_PREMIER_BOUTON + 3 * D_X_BOUTON, Y_BOUTON),
                            "img/bouton_double.png",

@@ -10,58 +10,18 @@ from GUI_cards_img import *
 
 
 
-class Joueur(MainGraphique):
-    """
-        objet graphique representant un joueur, ie sa main et ses actions de jeu
-    """
+class Arbitrable:
 
-
-    def __init__(self, position, pioche, sens, identifier=""):
-        """
-            cf Banque pour les parametres...
-        """
-
-        MainGraphique.__init__(self, [pioche.piocher(), pioche.piocher()],
-                               position, sens=sens, identifier=identifier,
-                               face_cachee=[0] if identifier=="IA" else [])
-
-
-        self.pioche = pioche
-
+    def __init__(self):
+        
         #si le joueur a commence son tour
         self.playing = False
 
         #si le joueur a fini de joueur
         self.finish = False
 
-
-    def commencer_tour(self):
-        self.playing = True
-
-
-    def piocher(self):
-        """
-            pioche une carte dans la pioche et la rajoute dans la main
-        """
-        if not self.finish:
-            self.ajouter(self.pioche.piocher())
-
-
-    def splitter(self):
-        #TODO a implementer !
-        return
-
-    def doubler(self):
-        #TODO a implementer !
-        return
-
-
-    def sarreter(self):
-        """
-            pour terminer son tour
-        """
-        self.playing = False
-        self.finish = True
+        #si le joueur a splitte
+        self.a_splite = False
 
 
     def a_fini(self):
@@ -72,9 +32,156 @@ class Joueur(MainGraphique):
 
         return self.finish
 
+
+    def commencer_tour(self):
+        self.playing = True
+
+    
+
+class Joueur(MainGraphique, Arbitrable):
+    """
+        objet graphique representant un joueur, ie sa main et ses actions de jeu
+    """
+
+
+    def __init__(self, position, pioche, sens, mise, identifier="",
+                 carte_ini=[]):
+        """
+            cf Banque pour les parametres...
+            carte_ini represente la main initiale du joueur : [] pour piocher
+            automatiquement 2 cartes, preciser les cartes sinon
+        """
+
+        MainGraphique.__init__(self,
+                               [pioche.piocher(), pioche.piocher()] if carte_ini == []
+                               else carte_ini,
+                               position, sens=sens, identifier=identifier,
+                               face_cachee=[0] if identifier=="IA" else [])
+
+        Arbitrable.__init__(self)
+
+
+        self.pioche = pioche
+        self.mise = mise
+        
+        self.joueur_split = None
+
+
+    def a_perdu(self):
+        return self.get_m_valeur() > 21
+
+
+    def piocher(self):
+        """
+            pioche une carte dans la pioche et la rajoute dans la main
+        """
+        if not self.finish:
+            self.ajouter(self.pioche.piocher())
+
+
+    def doubler(self):
+        self.mise.doubler()
+
+
+    def sarreter(self):
+        """
+            pour terminer son tour
+        """
+        self.playing = False
+        self.finish = True
+
+    def splitter(self):
+        self.a_splite = True
+        self.joueur_split = JoueurSplitte(self)
+        return self.joueur_split
+
     
 
 
+    def update(self, other_comp):
+
+        r = MainGraphique.update(self, other_comp)
+
+        if not self.a_splite: return r
+
+        #si on doit splitter
+        return [self.joueur_split]
+
+    
+
+class JoueurSplitte(GUIComponent, Arbitrable):
+
+    DX = TX / 1.7 #ou TX est la taille des cartes en X
+    DY = 0
+
+    def __init__(self, joueur_a_splitter):
+
+        GUIComponent.__init__(self, joueur_a_splitter.display_level, (0, 0),
+                              (0, 0), [], [])
+        Arbitrable.__init__(self)
+
+        x, y = joueur_a_splitter.position
+        
+
+        self.jeu_1 = Joueur((x - self.DX, y + self.DY), joueur_a_splitter.pioche,
+                            VERTICAL, joueur_a_splitter.mise,
+                            identifier=joueur_a_splitter.id+"split_1",
+                            carte_ini=[joueur_a_splitter[0]])
+
+        self.jeu_2 = Joueur((x + self.DX, y + self.DY), joueur_a_splitter.pioche,
+                            VERTICAL, joueur_a_splitter.mise,
+                            identifier=joueur_a_splitter.id+"split_2",
+                            carte_ini=[joueur_a_splitter[1]])
+        
+
+        self.bouton_pioche = None
+        self.bouton_stop = None
+        
+
+    def update(self, other_comp):
+        GUIComponent.update(self, other_comp)
+        self.jeu_1.update(other_comp)
+        self.jeu_2.update(other_comp)
+
+        if self.bouton_pioche != None and self.bouton_stop != None:
+            
+            if not self.jeu_1.finish:
+                self.bouton_pioche.on_click = self.jeu_1.piocher
+                self.bouton_stop.on_click = self.jeu_1.sarreter
+            elif not self.jeu_2.finish:
+                self.bouton_pioche.on_click = self.jeu_2.piocher
+                self.bouton_stop.on_click = self.jeu_2.sarreter
+            else:
+                self.bouton_pioche.desactiver()
+                self.bouton_stop.desactiver()
+
+                self.bouton_pioche = None
+                self.bouton_stop = None
+
+        self.playing = self.jeu_1.playing or self.jeu_2.playing
+        self.finish = self.jeu_1.finish and self.jeu_2.finish
+
+        return [self]
+
+    def manage_event(self, ev_list):
+        self.jeu_1.manage_event(ev_list)
+        self.jeu_2.manage_event(ev_list)
+        return CONTINUE
+
+
+    def a_perdu(self):
+
+        return self.jeu_1.a_perdu() and self.jeu_2.a_perdu()
+
+
+    def display(self):
+
+        r1 = self.jeu_1.display()
+        r2 = self.jeu_2.display()
+
+        #retour douteux ? 
+        return [r1, r2]
+        
 
 
 class JoueurHumain(Joueur):
