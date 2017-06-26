@@ -13,7 +13,7 @@ epsilon = 0.05;               #seuil de valeur minimal
 
 ##On separe en trois matrices distinctes
 
-valeur_possible_compteur = 11 #11 valeurs de compteur autorisees
+valeur_possible_compteur = 1 #11 valeurs de compteur autorisees
 
 policy_simple = [[[[0.0]*3 for i in range(15)] for j in range(len(enemystate))] for k in range(valeur_possible_compteur)]; 
 #matrice state = [<9,9,....,21,>21]   
@@ -38,18 +38,15 @@ def initialize_policy():
     for k in range (len(p_as)):
         for i in range(len(p_as[k])):
             for j in range (len(p_as[k][i])):
-                for l in range (len(p_as[k][i][j])):
-                    policy_as[k][i][j][l] = p_as[k][i][j][l]
+                policy_as[k][i][j] = p_as[k][i][j]
     for k in range (len(p_simple)):
         for i in range(len(p_simple[k])):
             for j in range (len(p_simple[k][i])):
-                for l in range (len(p_simple[k][i][j])):
-                    policy_simple[k][i][j][l] = p_simple[k][i][j][l]
+                policy_simple[k][i][j] = p_simple[k][i][j]
     for k in range (len(p_pair)):
         for i in range(len(p_pair[k])):
             for j in range (len(p_pair[k][i])):
-                for l in range (len(p_pair[k][i][j])):
-                    policy_as[k][i][j][l] = p_pair[k][i][j][l]
+                policy_as[k][i][j] = p_pair[k][i][j]
     
 
 ###
@@ -64,7 +61,7 @@ def ind_simple(state):
 
 ###On donne un etat (genre 18) et il renvoie ca place dans la matrice : [AA,22,...,99]
 def ind_pair(state):
-    return(int(state/2)-1)
+    return(int(state/2.0)-1)
 
 
 ###On donne un etat (genre 17) et il renvoie ca place dans la matrice state

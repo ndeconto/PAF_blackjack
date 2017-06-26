@@ -33,13 +33,12 @@ def apprentissage(n):
 #    print('\n'.join([''.join(['{:4}'.format(item) for item in row]) for row in result]))
 
 def apprentissage2(n,bet):
-    victoire = 0
     for k in range(n):
-        victoire = manche2(bet)
+        per_vic,gain = manche2(bet)
         if(k%100000 == 0):
-            print("progres : ", (k/n)*100 ,"%")
+            print("progress stage 1 : ", (k/n)*100 ,"%")
     print("Statistiques :\n")
-    print(victoire)
+    print(per_vic, gain)
     print("Epsilon final, alpha : ",epsilon,", ",alpha)
 
 def f(k):
@@ -49,6 +48,7 @@ def f(k):
 def save_mypolicy(p1,p2,p3): #Le fichier sauvegarde est un vecteur comportant les trois tableaux
 #from load_object import *
 #IND : Pour sauvegarder : ecrire save_mypolicy(policy_simple,policy_as,policy_pair)
+#POUR LA VERSION SANS COMPTEUR : save_mypolicy(policy_simple[0],policy_as[0],policy_pair[0])
 #      Pour charger ecrire : policy_simple,policy_as,policy_pair = getPolicy()[0],getPolicy()[1],getPolicy()[2]
 
     policy = [p1,p2,p3]
