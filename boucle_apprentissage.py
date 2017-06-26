@@ -32,12 +32,12 @@ def apprentissage(n):
 #    print("     <- low value hand  |  high value hand ->")
 #    print('\n'.join([''.join(['{:4}'.format(item) for item in row]) for row in result]))
 
-def apprentissage2(n,bet,f):
+def apprentissage2(n,bet):
     victoire = 0
-    global epsilon
-    for k in range(int(n/2)):
-        epsilon = f(k)
+    for k in range(n):
         victoire = manche2(bet)
+        if(k%100000 == 0):
+            print("progres : ", (k/n)*100 ,"%")
     print("Statistiques :\n")
     print(victoire)
     print("Epsilon final, alpha : ",epsilon,", ",alpha)
@@ -72,7 +72,7 @@ def save_to_xlsx():
     
     policy = getPolicy()[:]
     i=1
-    for row in policy[0] :
+    for row in policy[0][0] :
         for k in range(len(row)):
             row[k] = row[k].index(max(row[k]))
         if (i==1):
@@ -87,7 +87,7 @@ def save_to_xlsx():
     ws.append([""]+["A,"+str(k) for k in range (2,11)])
     
     i=1
-    for row in policy[1] :
+    for row in policy[1][0] :
         for k in range(len(row)):
             row[k] = row[k].index(max(row[k]))
         if (i==1):
@@ -102,7 +102,7 @@ def save_to_xlsx():
     ws.append([""]+["A,A"]+[str(k)+","+str(k) for k in range (2,11)])
     
     i=1
-    for row in policy[2] :
+    for row in policy[2][0] :
         for k in range(len(row)):
             row[k] = row[k].index(max(row[k]))
         if (i==1):
@@ -227,7 +227,7 @@ def save_to_xlsx():
             cell.alignment=alignment
     
     # Save the file
-    wb.save("policy_test_apprentissage_corrected.xlsx")
+    wb.save("policy_compteur.xlsx")
 
 
 

@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from cartes import *
-from Bank_Playing import *
 from algo_MC_2 import *
 import copy
 
@@ -13,87 +12,143 @@ nb_parties_gagnees = 0
 nb_parties_jouees = 0
 deck = Sabot()
 
-##
+###Fonction englobant tout
+def symetricGame():
+    bet = 1
+    card1,card2 = initialise()        #On initialise les données communes aux 2 joueurs
+    player_hand, bool_dobled, bool_splitted = manche_sym(card_1,card_2)       #Manche de l'IA
+    enemy_hand, enemy_bool_dobled, enemy_bool_splitted = manche_sym_enemy(card_1,card_2) #Manche de l'adversaire
+    if bool_dobled: bet*=2
+    if enemy_bool_dobled: bet*=2                #On double la mise du joueur qu'il double
+    if bool_splitted:
+        if enemy_bool_splitted:
+            result = win_sym_split_split(player_hand[0],player_hand[1],
+                                                    enemy_hand[0],enemy_hand[1],
+                                                    bet)          #Si les 2 ont split on appelle la fonction win associée
+        else:
+            result = win_sym_split(player_hand[0], player_hand[1], enemy_hand,bet)    #Si un a splitté on appelle win_sym_split
+    elif enemy_bool_splitted:
+        result = win_sym_split(enemy_hand[0], enemy_hand[1], player_hand, bet)  #Si l'autre a splitté on appelle win_sym_split "a l'envers"
+    return result
+    
+    
+###Fonction initialisant les données communes (2 cartes face visible)    
+def initialise():
+    global deck
+    deck.nouvelle_manche()
+    
+    card1 = deck.piocher()
+    card2 = deck.piocher()
+    
+    return (card1,card2)
+    
+    
 
-def win2(player_hand,bank_hand,bet): #bet est la mise 
+###Fonctions de détermination du vainqueur et des gains ou pertes de chacun
+
+##Cas ou personne ne split
+def win_sym(player_hand,enemy_hand,bet): #bet est la mise 
     player_best_value = player_hand.valeur #La valeur est a tout instant la meilleur valeur possible de la main par construction
-    bank_best_value = bank_hand.valeur
-    if(player_best_value > 21):
-        return(-bet)
+    enemy_best_value = enemy_hand.valeur
+    if(player_best_value > 21 and enemy_best_value>21):
+        return(0)
+    elif (player_best_value>21):
+        return (-bet)
     elif(player_best_value == 21 and len(player_hand) == 2):
-        if (bank_best_value == 21 and len(bank_hand) == 2):
+        if (enemy_best_value == 21 and len(enemy_hand) == 2):
             return(0)
         else:
             return(1.5*bet)
-    elif(player_best_value > bank_best_value):
+    elif (enemy_best_value == 21 and len(enemy_hand) == 2):
+        return(-1.5*bet)
+    elif(player_best_value > enemy_best_value):
         return(bet)
-    elif(bank_best_value > 21):
+    elif(enemy_best_value > 21):
         return(bet)
-    elif(player_best_value == bank_best_value):
+    elif(player_best_value == enemy_best_value):
         return(0)
-    elif(player_best_value < bank_best_value):
+    elif(player_best_value < enemy_best_value):
         return(- bet)
     else:
         print("fatal error")
     
 
-##
-
-def win_split(player_hand_1,player_hand_2,bank_hand,bet):
+##Cas ou l'un des deux split
+def win_sym_split(player_hand_1,player_hand_2,enemy_hand, bet):
     player_best_value_1 = player_hand_1.valeur
     player_best_value_2 = player_hand_2.valeur
-    bank_best_value = bank_hand.valeur
-    bank_blackJack = False
-    if (bank_best_value == 21 and len(bank_hand) == 2):
-        bank_blackJack = True
+    enemy_best_value = enemy_hand.valeur
+    enemy_blackJack = False
+    if (enemy_best_value == 21 and len(enemy_hand) == 2):
+        enemy_blackJack = True
     vic = 0
     draw = 0
     loose = 0
-    blackJack = 0
-    if (bank_blackJack == True): ##Si la banque a un BJ, de toute façon elle gagne les deux mains
+    if (enemy_blackJack == True): ##Si la banque a un BJ, de toute façon elle gagne les deux mains
         return(-2*bet)
-    if (win2(player_hand_1,bank_hand,bet) == 1.5*bet):
-        blackJack += 1
-    if (win2(player_hand_2, bank_hand,bet) == 1.5*bet):
-        blackJack += 1
-    if (win2(player_hand_1,bank_hand,bet) == bet):
+    if (win_sym(player_hand_1,enemy_hand,bet) == bet):
         vic += 1
-    if (win2(player_hand_2, bank_hand,bet) == bet):
+    if (win_sym(player_hand_2, enemy_hand,bet) == bet):
         vic += 1
-    if (win2(player_hand_1,bank_hand,bet) == - bet):
+    if (win_sym(player_hand_1,enemy_hand,bet) == - bet):
         loose += 1
-    if (win2(player_hand_2,bank_hand,bet) == - bet):
+    if (win_sym(player_hand_2,enemy_hand,bet) == - bet):
         loose += 1
-    if (win2(player_hand_1,bank_hand,bet) == 0):
+    if (win_sym(player_hand_1,enemy_hand,bet) == 0):
         draw += 1
-    if (win2(player_hand_2,bank_hand,bet) == 0):
+    if (win_sym(player_hand_2,enemy_hand,bet) == 0):
         draw += 1
-    if (vic == 2):
-        return(2*bet)
-    if (draw == 2):
-        return(0)
-    if (loose == 2):
-        return(-2*bet)
-    if (vic == 1 and draw == 1):
-        return(1*bet)
-    if (draw == 1 and loose == 1):
-        return(-1*bet)
-    if (loose == 1 and vic == 1):
-        return(0)
-    if (blackJack == 2):
-        return(2*bet)
-    if (blackJack == 1 and vic == 1):
-        return(2*bet)
-    if (blackJack == 1 and draw == 1):
-        return(1*bet)
-    if (blackJack == 1 and loose == 1):
-        return(0*bet)
+    return (vic-loose)
+        
 
-##
+##Cas ou les deux split
+def win_sym_split_split(player_hand_1,player_hand_2,enemy_hand_1, enemy_hand_2, bet):
+    player_best_value_1 = player_hand_1.valeur
+    player_best_value_2 = player_hand_2.valeur
+    enemy_best_value_1 = enemy_hand_1.valeur
+    enemy_best_value_2 = enemy_hand_2.valeur
+    vic = 0
+    draw = 0
+    loose = 0
+    #On compare a la main 1 de l'adversaire
+    if (win_sym(player_hand_1,enemy_hand_1,bet) == bet):
+        vic += 1
+    if (win_sym(player_hand_2, enemy_hand_1,bet) == bet):
+        vic += 1
+    if (win_sym(player_hand_1,enemy_hand_1,bet) == - bet):
+        loose += 1
+    if (win_sym(player_hand_2,enemy_hand_1,bet) == - bet):
+        loose += 1
+    if (win_sym(player_hand_1,enemy_hand_1,bet) == 0):
+        draw += 1
+    if (win_sym(player_hand_2,enemy_hand_1,bet) == 0):
+        draw += 1
+    #On compare a la main 2 de l'adversaire 
+    if (win_sym(player_hand_1,enemy_hand_2,bet) == bet):
+        vic += 1
+    if (win_sym(player_hand_2, enemy_hand_2,bet) == bet):
+        vic += 1
+    if (win_sym(player_hand_1,enemy_hand_2,bet) == - bet):
+        loose += 1
+    if (win_sym(player_hand_2,enemy_hand_2,bet) == - bet):
+        loose += 1
+    if (win_sym(player_hand_1,enemy_hand_2,bet) == 0):
+        draw += 1
+    if (win_sym(player_hand_2,enemy_hand_2,bet) == 0):
+        draw += 1
+    return (vic-loose)
+    
 
-def manche2(bet, learning=True): #bet est la mise
+###Fin des fonctions win
+
+
+
+
+
+
+###Fonction manche, cad jeu de l'IA
+def manche_sym(card1,card2,learning=True): #bet est la mise
     global epsilon
-    deck.nouvelle_manche()
     if not learning:
         epsilon_copy = epsilon
         epsilon = 0
@@ -108,20 +163,11 @@ def manche2(bet, learning=True): #bet est la mise
     bool_pair = False
     number_card = 2
     result = 0
+    enemy_state = card2.get_valeur()
     
-    ##Tirage des cartes du joueur
-    player_card = deck.piocher()            #Premiere carte
-    player_hand = Main([player_card])
-    player_state = 0
-    counter = 0
-    if (isAs(player_card)):                 #Si c'est un as
-        player_state = 1
-#        bool_as = True
-        bool_as_choice = True
-        position_as = 1
-    else:
-        player_state = player_card.get_valeur()
-        
+    player_hand = Main([card1])
+    
+    ##Tirage de la carte du joueur
     player_card = deck.piocher()            #2e carte
     player_hand.ajouter(player_card)
     if (isAs(player_card)):                 #Si c'est un as
@@ -135,21 +181,8 @@ def manche2(bet, learning=True): #bet est la mise
         bool_can_split = True
         bool_pair = True
         
-        
-    ##Tirage de la première carte de la banque
-    bank_state = 0
-    bank_card = deck.piocher()
-    bank_hand = Main([bank_card])
-    bool_bank_at_11 = False
-    if (isAs(bank_card) == True):       #Si c'est un as
-        bank_state = 11
-        bool_bank_at_11 = True
-    else:
-        bank_state = bank_card.get_valeur()
-        
-      
     counter = deck.get_counter()
-    player_decision = makeDecision3([player_state,bool_as_choice,bool_can_split,bool_can_doble, counter],(bank_state-1) % 10)   #decision du joueur
+    player_decision = makeDecision3([player_state,bool_as_choice,bool_can_split,bool_can_doble, counter],(enemy_state-1) % 10)   #decision du joueur
     player_statesActions.append([player_state,player_decision, counter])
     
     
@@ -178,7 +211,7 @@ def manche2(bet, learning=True): #bet est la mise
             counter = deck.get_counter()
                 
             #Decision du joueur
-            player_decision = makeDecision3([player_state,bool_as_choice,bool_can_split,bool_can_doble, counter],(bank_state-1) % 10)
+            player_decision = makeDecision3([player_state,bool_as_choice,bool_can_split,bool_can_doble, counter],(enemy_state-1) % 10)
             player_statesActions.append([player_state,player_decision, counter])
             
         elif(player_decision == 2):
@@ -215,43 +248,24 @@ def manche2(bet, learning=True): #bet est la mise
             player_hand_2.ajouter(player_card_2)
             player_decision = 0 #Une seule carte a piocher
     ###############################################FIN DU WHILE#################################################
-    
-    
-    
-    
-    
-    ########A la banque de jouer###########
-    bank_decision = 1
-    while bank_decision == 1:
-        bank_card = deck.piocher()
-        bank_hand.ajouter(bank_card)
-        bank_decision = bank_playing(bank_hand)
-        bank_state = bank_hand.get_m_valeur()
-    ########La banque a fini de jouer########
+
     
     
     
     
     
     ########MAJ de my policy#################
-    if (bool_splitted == False):
-        result = win2(player_hand,bank_hand,bet)
-        #print("result win2 : ", result)
-    else:
-        result = win_split(player_hand_1,player_hand_2,bank_hand,bet)
-        #print("result winsplit",result)
-
     if learning :
 #        print("Main du joueur : ", player_hand)
-        update_value3(player_statesActions,bool_as_choice,bool_pair,bank_hand.get_card_at(0)-1,result,position_as) #banque state --> premiere carte
-        victoire=update_stats_gains(player_statesActions,result,bank_state,player_state)
-        return victoire
+        update_value3(player_statesActions,bool_as_choice,bool_pair,enemy_hand.get_card_at(0)-1,result,position_as) #banque state --> premiere carte
+        victoire=update_stats_gains(player_statesActions,result,enemy_state,player_state)
     ########Fin de la MAJ de mypolicy########
     
 
     else:
         epsilon = epsilon_copy
-        return result
+    
+    return (player_hand, bool_dobled, bool_splitted)
 
 
 ##
@@ -280,7 +294,7 @@ def isAs(carte):
         
         
         
-def update_stats_gains(statesActions,result,bank_state,player_state):
+def update_stats_gains(statesActions,result,enemy_state,player_state):
     global nb_parties_gagnees, nb_parties_jouees, mise_gagnee, mise_investie
     
     mise_investie+=1
