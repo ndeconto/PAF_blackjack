@@ -32,7 +32,7 @@ def apprentissage(n):
 #    print("     <- low value hand  |  high value hand ->")
 #    print('\n'.join([''.join(['{:4}'.format(item) for item in row]) for row in result]))
 
-def apprentissage2(n,bet,f):
+def apprentissage2(n,bet):
     victoire = 0
     global epsilon
     for k in range(int(n/2)):
