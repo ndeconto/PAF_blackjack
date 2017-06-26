@@ -72,7 +72,7 @@ def save_to_xlsx():
     
     policy = getPolicy()[:]
     i=1
-    for row in policy[0] :
+    for row in policy[0][0] :
         for k in range(len(row)):
             row[k] = row[k].index(max(row[k]))
         if (i==1):
@@ -87,7 +87,7 @@ def save_to_xlsx():
     ws.append([""]+["A,"+str(k) for k in range (2,11)])
     
     i=1
-    for row in policy[1] :
+    for row in policy[1][0] :
         for k in range(len(row)):
             row[k] = row[k].index(max(row[k]))
         if (i==1):
@@ -102,7 +102,7 @@ def save_to_xlsx():
     ws.append([""]+["A,A"]+[str(k)+","+str(k) for k in range (2,11)])
     
     i=1
-    for row in policy[2] :
+    for row in policy[2][0] :
         for k in range(len(row)):
             row[k] = row[k].index(max(row[k]))
         if (i==1):
@@ -227,7 +227,7 @@ def save_to_xlsx():
             cell.alignment=alignment
     
     # Save the file
-    wb.save("policy_test_apprentissage_corrected.xlsx")
+    wb.save("policy_compteur.xlsx")
 
 
 
