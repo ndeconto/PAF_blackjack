@@ -100,7 +100,11 @@ class Joueur(MainGraphique, Arbitrable):
 
     def update(self, other_comp):
 
+        self.encircling_enable = self.playing
+        
         r = MainGraphique.update(self, other_comp)
+
+        
 
         if not self.a_splite: return r
 
@@ -140,8 +144,12 @@ class JoueurSplitte(GUIComponent, Arbitrable):
 
     def update(self, other_comp):
         GUIComponent.update(self, other_comp)
+        
         self.jeu_1.update(other_comp)
         self.jeu_2.update(other_comp)
+
+        self.jeu_1.playing = not self.jeu_1.finish
+        self.jeu_2.playing = self.jeu_1.finish and (not self.jeu_2.finish)
 
         if self.bouton_pioche != None and self.bouton_stop != None:
             

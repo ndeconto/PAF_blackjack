@@ -143,7 +143,9 @@ class MainGraphique(GUIComponent, Main):
         img = get_img(self, sens, face_cachee, d_x, d_y)
         self.sens = sens
         GUIComponent.__init__(self, 1, position, img.get_size(), [], [], img,
-                              identifier)
+                              identifier, e_bord=5)
+
+        self.set_encircling_color((219, 201, 101))
 
         #attention, il ne faut pas que face_cachee contienne deux fois le meme
         #element (du genre face_cachee = [2, 2]) sinon les autres methodes ne

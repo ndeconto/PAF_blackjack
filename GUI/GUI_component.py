@@ -9,7 +9,7 @@ class GUIComponent:
 
     def __init__(self, display_level, position, size,
                  events_to_handle, events_actions,
-                 background=None, identifier=""):
+                 background=None, identifier="", e_bord=10):
 
         """
             parameters description :
@@ -42,6 +42,9 @@ class GUIComponent:
 
             identifier (optionnal):
                 just to reconize the component easily
+
+            e_bord (optionnal):
+                for encircling the component
         """
 
 
@@ -55,6 +58,23 @@ class GUIComponent:
         self.alive              =   True
 
         self.todo               =   []
+
+
+        #encircling
+        self.encircling_color   = (0, 0, 0)
+        self.e_bord             = e_bord
+        self.tx, self.ty                  = size
+        self.contour = Surface((self.tx + e_bord, self.ty + e_bord), SRCALPHA, 32)
+        self.contour.fill(self.encircling_color)
+
+        self.pos_cont = (position[0] - e_bord / 2, position[1] - e_bord / 2)
+
+        self.encircling_enable = False
+
+
+    def set_encircling_color(self, color):
+        self.encircling_color   = color
+        self.contour.fill(self.encircling_color)
 
 
     def do_in_x_seconds(self, x, function):
@@ -80,6 +100,16 @@ class GUIComponent:
         """
 
         if self.alive:
+
+
+            if (self.tx, self.ty) !=  self.size:
+                
+                self.tx, self.ty = self.size
+                self.contour = Surface((self.tx + self.e_bord,
+                                        self.ty + self.e_bord),
+                                       SRCALPHA, 32)
+                self.contour.fill(self.encircling_color)
+        
 
             t = clock()
             l = []
@@ -112,6 +142,11 @@ class GUIComponent:
         """
 
         if self.background == None: return
+
+        if (self.encircling_enable):
+            self.pos_cont = (self.position[0] - self.e_bord / 2,
+                             self.position[1] - self.e_bord / 2)
+            display.get_surface().blit(self.contour, self.pos_cont)
 
         r = Rect(self.position, self.size)
         display.get_surface().blit(self.background, r)
@@ -309,7 +344,6 @@ class PauseComponent(GUIComponent):
                 return self.signal
 
         return CONTINUE
-
 
 
 
