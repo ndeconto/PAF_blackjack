@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import socket
+from cartes import *
 from threading import *
 
 class Serveur(Thread):
@@ -29,15 +30,15 @@ class Serveur(Thread):
             print("received : "+instr+" from client")
             if instr == 'draw':
                 if self.client_has_drawn : 
-                    clientsock.send(('True;'+client_card_drawn).encode())
+                    clientsock.send(('True;'+ self.client_card_drawn).encode())
                     self.client_has_drawn = False
                 else : clientsock.send('False'.encode())
             elif instr == 'op_card' :
-                clientsock.send(opponent_showing_card.encode())
+                clientsock.send(self.opponent_showing_card.encode())
             elif instr == 'decision' :
-                client_wants_to_draw = (clientsock.recv(1024).decode()=='True')
-                client_mise = int(clientsock.recv(1024).decode())
-                client_has_split = (clientsock.recv(1024).decode()=='True')
+                self.client_wants_to_draw = (clientsock.recv(1024).decode()=='True')
+                self.client_mise = int(clientsock.recv(1024).decode())
+                self.client_has_split = (clientsock.recv(1024).decode()=='True')
             elif instr == 'state':
                 if fin_manche : clientsock.send((self.main).encode())
                 else : clientsock.send('False'.encode())
@@ -45,7 +46,7 @@ class Serveur(Thread):
             self.sock.close()
             print("end of instruction and closed socket")
 
-    def client_has_drawn(self,card):
+    def has_client_drawn(self,card):
         self.client_card_drawn = str(card.hauteur)+';'+str(card.couleur)
         self.client_has_drawn = True
 
@@ -62,3 +63,5 @@ class Serveur(Thread):
         self.server_up = False
 
 s = Serveur(5000,"137.194.57.193")
+c=Carte(8,14)
+s.has_client_drawn(c)
