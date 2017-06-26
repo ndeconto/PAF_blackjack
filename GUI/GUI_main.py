@@ -9,6 +9,8 @@ from GUI_arbitre_bj import *
 
 from GUI_slidemenu import slidemenu
 
+from serveurchaussette import *
+
 
 BOUTON_PIOCHE   = 0
 BOUTON_STOP     = 1
@@ -23,6 +25,12 @@ def init_GUI():
     pygame.display.set_caption("Blackjack")
 
     #TODO mettre une icone
+
+
+def lauch_server(pioche):
+
+    Serveur(5000, "localhost", pioche)
+    
 
 
 def stop_button_action(joueur_humain, button_list):
@@ -75,6 +83,8 @@ def jeu(type_jeu):
 
     pioche = DeckGraphique((422, 330))
 
+    lauch_server(pioche)
+
     mise = Mise(1, (0, 0), 35, font_color=(219, 201, 101))
 
     if type_jeu == JEU_CLASSIQUE:
@@ -86,7 +96,7 @@ def jeu(type_jeu):
     elif type_jeu == JEU_SYMETRIQUE:
 
         joueur_1 = JoueurHumain((125, 250), pioche, "humain")
-        joueur_2 = None #TODO definir cette variable !!
+        joueur_2 = JoueurDistant(POS_J_GAUCHE)
         
         
     elif type_jeu == IA_VS_BANQUE:

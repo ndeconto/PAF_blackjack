@@ -50,5 +50,18 @@ class Client():
                         return l
                 else : return[False]
 
-c = Client(5000,"137.194.57.193")
-print(c.has_drawn())
+
+def piocher_bloquant(client):
+
+        c = client.has_drawn()
+
+        while not c[0]:
+
+             c = client.has_drawn()
+
+        return c[1]
+
+
+if __name__ == "__main__":
+        c = Client(5000,"localhost")
+        print(c.has_drawn())

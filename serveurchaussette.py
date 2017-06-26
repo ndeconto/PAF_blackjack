@@ -3,11 +3,18 @@ import socket
 from cartes import *
 from threading import *
 
+
+IP_SERVEUR  = "localhost"
+PORT        = 5000
+
+
 class Serveur(Thread):
-    def __init__(self, myport, myaddress):
+    def __init__(self, myport, myaddress, pioche):
         Thread.__init__(self)
         self.host = myaddress
         self.port = myport
+
+        self.pioche = pioche
 
         self.server_up = True
         self.client_mise = 0
@@ -29,10 +36,15 @@ class Serveur(Thread):
             instr = clientsock.recv(1024).decode()
             print("received : "+instr+" from client")
             if instr == 'draw':
+                
+                #le client a toujours le droit de piocher !
+                self.has_client_drawn(self.pioche.piocher())
                 if self.client_has_drawn : 
                     clientsock.send(('True;'+ self.client_card_drawn).encode())
                     self.client_has_drawn = False
                 else : clientsock.send('False'.encode())
+
+                
             elif instr == 'op_card' :
                 clientsock.send(self.opponent_showing_card.encode())
             elif instr == 'decision' :
@@ -62,6 +74,8 @@ class Serveur(Thread):
     def close_server(self):
         self.server_up = False
 
-s = Serveur(5000,"137.194.57.193")
-c=Carte(8,14)
-s.has_client_drawn(c)
+if __name__ == "__main__":
+    s = Serveur(5000,"localhost", Deck())
+    #c=Carte(8,14)
+    #s.has_client_drawn(c)
+    print( "c'est fini pour le serveur")

@@ -8,6 +8,8 @@ from time import clock
 
 from GUI_cards_img import *
 
+from serveurchaussette import IP_SERVEUR, PORT
+from clientchaussette import Client, piocher_bloquant
 
 
 class Arbitrable:
@@ -208,8 +210,15 @@ class JoueurHumain(Joueur):
 class JoueurOrdi(Joueur):
 
 
-    def __init__(self, position, pioche, identifier="", fct_decision=None):
+    def __init__(self, position, pioche, mise, identifier="",
+                 fct_decision=None):
         """
+            pioche:
+                soit un Deck soit None
+                None signifie que la pioche est distance, ie la classe va
+                demander les a un serveur. cf serveurchaussette pour l'adresse
+                ip et le port associes a la communication
+                
             fct_decision : fonction qui est appelee pour decider quoi jouer
             cette fonction doit prendre en parametre la main du joueur ordi,
             la carte de l'adversaire et la liste des cartes deja tombees
@@ -218,7 +227,22 @@ class JoueurOrdi(Joueur):
             pour les autres parametres, c'est comme pour le reste...
         """
 
-        Joueur.__init__(self, position, pioche, VERTICAL, identifier)
+        #c'est mal d'instancier Joueur avec une pioche None
+        #car Joueur ne gere pas la pioche distante
+        #pour faire les choses vraiment bien, il faudrait en effet gerer
+        #la pioche distante dans Joueur
+        #mais cela complique, et nous n'en avons pas besoin...
+        if pioche == None:
+            self.client = Client(PORT, IP_SERVEUR)
+            c1 = piocher_bloquant(self.client)
+            c2 = piocher_bloquant(self.client)
+        
+        Joueur.__init__(self, position, pioche, VERTICAL, identifier,
+                        carte_ini= [] if pioche != None else [c1, c2] )
+
+        self.pioche_valide = (pioche != None)
+            
+        
 
         #temps entre deux decisions en secondes
         self.period = 1
@@ -230,11 +254,35 @@ class JoueurOrdi(Joueur):
 
 
 
+    def piocher(self):
+        if self.pioche != None:
+            Joueur.piocher(self)
+            self.pioche_valide = True
+
+        else :
+
+            c = self.client.has_drawn()
+            if c[0]:
+                self.ajouter(c[1])
+                self.pioche_valide = True
+            else:
+                self.pioche_valide = False
+
+
+
 
     def update(self, other_components):
         r = Joueur.update(self, other_components)
 
-        if self.playing and (clock() - self.derniere_action > self.period):
+
+        #tant qu'on n'a pas encore reussi a piocher la carte qu'on devait piocher
+        #on reessaie.
+        if not self.pioche_valide:
+            self.piocher()
+
+            
+        #sinon on peut se permettre de faire d'autres choses
+        elif self.playing and (clock() - self.derniere_action > self.period):
 
             #TODO : demander les infos sur les cartes de l'adversaires, et sur les
             #cartes passees ici !!
@@ -311,4 +359,49 @@ class Banque(JoueurOrdi):
 
         JoueurOrdi.__init__(self, position, pioche, identifier="banque",
                             fct_decision=pdd.decision_banque)
+
+
+
+
+class JoueurDistant(Joueur):
+
+    def __init__(self, position):
+
+        self.client = Client(PORT, IP_SERVEUR)
+
+        c1 = piocher_bloquant(self.client)
+        c2 = piocher_bloquant(self.client)
+
+        Joueur.__init__(self, position, None, VERTICAL, None, carte_ini=[c1, c2])
+
+        self.doit_piocher = 0
+
+
+    def piocher(self, nouv=True):
+
+        if nouv:
+            self.doit_piocher += 1
+
+        c = self.client.has_drawn()
+
+        if c[0]:
+            self.doit_piocher -= 1
+            self.ajouter(c[1])
+
+
+    def update(self, other_comp):
+
+        r = Joueur.update(self, other_comp)
+
+        if self.doit_piocher > 0:
+            self.piocher()
+
+        return r
+            
+
+        
+
+    
+
+        
 
