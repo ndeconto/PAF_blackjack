@@ -69,8 +69,9 @@ def save_to_xlsx():
     ws['A1']="Simple :"
     ws['A2']=""
     ws.append(["","< 9"]+list(range(9,22))+["> 21"])
-    
+#########    
     policy = getPolicy()[:]
+#########    
     i=1
     for row in policy[0][0] :
         for k in range(len(row)):
@@ -272,3 +273,24 @@ def graphe_vitesse_apprentissage(a_min=0, pas=2 * 10**5,a_max = 10**7, log=False
     plot(lx, ly)
     show()
 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    

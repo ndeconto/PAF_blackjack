@@ -39,21 +39,18 @@ for i in range (len(policy_pair[0])):
 def initialize_policy():
     global policy_as,policy_pair,policy_simple
     p_simple,p_as,p_pair = getPolicy()[0],getPolicy()[1],getPolicy()[2]
-    for k in range (len(p_as)):
-        for i in range(len(p_as[k])):
-            for j in range (len(p_as[k][i])):
-                for l in range (len(p_as[k][i][j])):
-                    policy_as[k][i][j][l] = p_as[k][i][j][l]
-    for k in range (len(p_simple)):
-        for i in range(len(p_simple[k])):
-            for j in range (len(p_simple[k][i])):
-                for l in range (len(p_simple[k][i][j])):
-                    policy_simple[k][i][j][l] = p_simple[k][i][j][l]
-    for k in range (len(p_pair)):
-        for i in range(len(p_pair[k])):
-            for j in range (len(p_pair[k][i])):
-                for l in range (len(p_pair[k][i][j])):
-                    policy_as[k][i][j][l] = p_pair[k][i][j][l]
+    for k in range (len(p_as[0])):
+        for i in range(len(p_as[0][0])):
+            for j in range (len(p_as[0][0][0])):
+                policy_as[0][k][i][j] = p_as[0][k][i][j]
+    for k in range (len(p_simple[0])):
+        for i in range(len(p_simple[0][k])):
+            for j in range (len(p_simple[0][k][i])):
+                policy_simple[0][k][i][j] = p_simple[0][k][i][j]
+    for k in range (len(p_pair[0])):
+        for i in range(len(p_pair[0][k])):
+            for j in range (len(p_pair[0][k][i])):
+                policy_pair[0][k][i][j] = p_pair[0][k][i][j]
     
 
 ###
