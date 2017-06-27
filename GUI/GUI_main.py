@@ -30,7 +30,6 @@ def init_GUI():
 def lauch_server(pioche):
 
     return Serveur(5000, "localhost", pioche)
-    
 
 
 def stop_button_action(joueur_humain, button_list):
@@ -68,6 +67,8 @@ def split_button_action(button_list, joueur):
 
 def jeu(type_jeu):
 
+    global serveur
+
     X_PREMIER_BOUTON = 150
     D_X_BOUTON = 200
     Y_BOUTON = 670
@@ -84,6 +85,9 @@ def jeu(type_jeu):
     pioche = DeckGraphique((422, 330))
 
     serveur = lauch_server(pioche)
+
+    sleep(3)
+    print "OK serveur"
 
     mise = Mise(1, (0, 0), 35, font_color=(219, 201, 101))
 
@@ -190,6 +194,7 @@ def main():
 
 if __name__ == "__main__" :
     main()
+    serveur.close_server()
 
 
 

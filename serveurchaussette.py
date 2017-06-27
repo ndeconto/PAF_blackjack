@@ -9,8 +9,8 @@ PORT        = 5000
 
 
 class Serveur(Thread):
-
     def __init__(self, myport, myaddress, pioche):
+        print "serveur init"
         Thread.__init__(self)
         self._stop_event = Event()
         self.host = myaddress
@@ -19,8 +19,6 @@ class Serveur(Thread):
         self.pioche = pioche
 
         self.server_up = True
-
-
         self.client_mise = 0
         self.client_has_split = False
         self.client_has_drawn = False
@@ -62,7 +60,6 @@ class Serveur(Thread):
                 self.cartes_donnees.append(c)
                 print "carte ", c, " donnee"
                 self.has_client_drawn(c)
-                
                 if self.client_has_drawn : 
                     clientsock.send(('True;'+ self.client_card_drawn).encode())
                     self.client_has_drawn = False
