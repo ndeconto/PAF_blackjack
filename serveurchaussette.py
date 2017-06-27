@@ -28,8 +28,8 @@ class Serveur(Thread):
         self.fin_manche = False
         self.main = 'True'
 
-        self.cartes_donnees = []
-        self.cartes_du_serveur = []
+        self.cartes_donnees = []    #cartes pour l'ordi
+        self.cartes_du_serveur = [] #cartes de l'humain
         
        
         try :
@@ -73,8 +73,10 @@ class Serveur(Thread):
                 self.client_mise = int(clientsock.recv(1024).decode())
                 self.client_has_split = (clientsock.recv(1024).decode()=='True')
             elif instr == 'state':
-                if fin_manche : clientsock.send((self.main).encode())
+                if self.fin_manche : clientsock.send((self.main).encode())
                 else : clientsock.send('False'.encode())
+            elif instr == 'stop':
+                self.fin_manche = True
             else : print('unknown instruction')
             self.sock.close()
             print("end of instruction and closed socket")

@@ -85,6 +85,10 @@ class Carte:
         if isinstance(other, Carte):
             return other.hauteur == self.hauteur and other.couleur == self.couleur
 
+
+        if other == None:
+            return False
+
         raise (TypeError("L'operation de type Carte == " + str(type(other))
                          + " n'est pas definie"))
 

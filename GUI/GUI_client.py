@@ -40,7 +40,9 @@ def jeu():
 
 
     joueur_1 = JoueurDistant(POS_J_GAUCHE)
-    joueur_2 = JoueurOrdi(POS_J_DROITE, None, mise)
+    joueur_2 = JoueurOrdi(POS_J_DROITE, None, mise, face_cachee=[])
+
+    arbitre = Arbitre([joueur_2, joueur_1], JEU_SYMETRIQUE, mise)
     
 
 
@@ -48,7 +50,7 @@ def jeu():
     # le manager se debrouille avec tout ca et fait sa cuisine
 
     #TODO rajouter un arbitre special
-    liste_comp = [tapis, mise, joueur_1, joueur_2, pioche]
+    liste_comp = [tapis, mise, joueur_1, joueur_2, pioche, arbitre]
     
     game_manager = GUIComponentManager(liste_comp, 20)
 

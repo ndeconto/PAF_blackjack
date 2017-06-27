@@ -86,9 +86,6 @@ def jeu(type_jeu):
 
     serveur = lauch_server(pioche)
 
-    sleep(3)
-    print "OK serveur"
-
     mise = Mise(1, (0, 0), 35, font_color=(219, 201, 101))
 
     if type_jeu == JEU_CLASSIQUE:
@@ -102,6 +99,7 @@ def jeu(type_jeu):
         joueur_1 = JoueurHumain(POS_J_GAUCHE, pioche, identifier="humain")
 
         serveur.cartes_du_serveur = joueur_1.contenu #meme reference
+        serveur.set_opponent_card(joueur_1.contenu[1])
         
         joueur_2 = JoueurDistant(POS_J_DROITE, serveur_local=serveur)
         

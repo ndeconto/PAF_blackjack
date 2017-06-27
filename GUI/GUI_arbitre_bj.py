@@ -143,6 +143,8 @@ class Arbitre(GUIComponent):
                 
         if self.type_jeu == JEU_CLASSIQUE or self.type_jeu == IA_VS_BANQUE:
 
+            print type_jeu
+
             #si personne n'a splitte
             if len(l_split) == 0:
 
@@ -190,6 +192,11 @@ class Arbitre(GUIComponent):
                 
 
         elif self.type_jeu == JEU_SYMETRIQUE:
+
+            assert self.liste_joueur[0].a_fini
+            if not self.liste_joueur[0].a_fini:
+                return
+                
             #TODO : a implementer !
             raise (Exception("not implemented"))
 
@@ -231,6 +238,9 @@ class Arbitre(GUIComponent):
                 self.liste_joueur[-1].sarreter()
                 #return self.terminer_partie(([self.liste_joueur[1 - i]], [j]),
                 #                                other_components)
+
+
+            
 
 
         if tout_le_monde_a_fini:
