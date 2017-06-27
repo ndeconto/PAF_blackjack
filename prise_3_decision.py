@@ -34,13 +34,10 @@ def symetricLearning():
     return result, player_statesActions,bool_as_choice,bool_pair, enemy_state,position_as, enemy_statesActions,enemy_bool_as_choice, enemy_bool_pair, player_state, enemy_position_as
 
 
-###Fonction englobant tout
-def symetricGame():
-    bet = 1
-    result = 0
-    card1, enemy_card1, enemy_card2 = initialise()        #On initialise les données communes aux 2 joueurs
-    player_hand, bool_dobled, bool_splitted = manche_sym(card1, enemy_card1)       #Manche de l'IA
-    enemy_hand, enemy_bool_dobled, enemy_bool_splitted = manche_sym(enemy_card1,enemy_card2) #Manche de l'adversaire
+def compute_result(player_hand, bool_dobled, bool_splitted,
+                   enemy_hand, enemy_bool_dobled, enemy_bool_splitted,
+                   bet):
+
     if bool_dobled: bet*=2
     if enemy_bool_dobled: bet*=2                #On double la mise du joueur qu'il double
     if bool_splitted:
@@ -53,6 +50,21 @@ def symetricGame():
     elif enemy_bool_splitted:
         result = win_sym_split(enemy_hand[0], enemy_hand[1], player_hand, bet)  #Si l'autre a splitté on appelle win_sym_split "a l'envers"
     return result
+
+
+    
+
+###Fonction englobant tout
+def symetricGame():
+    bet = 1
+    result = 0
+    card1, enemy_card1, enemy_card2 = initialise()        #On initialise les données communes aux 2 joueurs
+    player_hand, bool_dobled, bool_splitted = manche_sym(card1, enemy_card1)       #Manche de l'IA
+    enemy_hand, enemy_bool_dobled, enemy_bool_splitted = manche_sym(enemy_card1,enemy_card2) #Manche de l'adversaire
+    return compute_result(player_hand, bool_dobled, bool_splitted,
+                          enemy_hand, enemy_bool_dobled, enemy_bool_splitted,
+                          bet)
+    
     
     
 ###Fonction initialisant les données communes (2 cartes face visible)    
