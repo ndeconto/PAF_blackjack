@@ -18,12 +18,14 @@ class Client():
         def get_data(self,instr):
                 self.connect_chaussette()
                 self.s.send(instr.encode())
+                print instr + " send"
                 st=self.s.recv(1024).decode()
                 self.disconnect_chaussette()
                 return st.split(';')
 
         def has_drawn(self):   #returns a list containing a boolean True=we have drawn then the card drawn if we have drawn 
                 data = self.get_data('draw')
+                
                 if data[0]=='True':
                         return [True,Carte(int(data[1]),int(data[2]))]
                 else: return [False]

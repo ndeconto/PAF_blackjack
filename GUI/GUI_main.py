@@ -29,7 +29,7 @@ def init_GUI():
 
 def lauch_server(pioche):
 
-    Serveur(5000, "localhost", pioche)
+    return Serveur(5000, "localhost", pioche)
     
 
 
@@ -83,7 +83,7 @@ def jeu(type_jeu):
 
     pioche = DeckGraphique((422, 330))
 
-    lauch_server(pioche)
+    serveur = lauch_server(pioche)
 
     mise = Mise(1, (0, 0), 35, font_color=(219, 201, 101))
 
@@ -95,8 +95,11 @@ def jeu(type_jeu):
 
     elif type_jeu == JEU_SYMETRIQUE:
 
-        joueur_1 = JoueurHumain((125, 250), pioche, identifier="humain")
-        joueur_2 = JoueurDistant(POS_J_GAUCHE)
+        joueur_1 = JoueurHumain(POS_J_GAUCHE, pioche, identifier="humain")
+
+        serveur.cartes_du_serveur = joueur_1.contenu #meme reference
+        
+        joueur_2 = JoueurDistant(POS_J_DROITE, serveur_local=serveur)
         
         
     elif type_jeu == IA_VS_BANQUE:
@@ -145,7 +148,9 @@ def jeu(type_jeu):
     
     game_manager = GUIComponentManager(liste_comp, 20)
 
-    return game_manager.run()
+    r = game_manager.run()
+    serveur.close_server()
+    return r
 
 
 def main():

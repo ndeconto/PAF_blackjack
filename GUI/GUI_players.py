@@ -4,7 +4,7 @@ from sys import path
 path.append("..")
 import Prise_De_Decision as pdd
 
-from time import clock
+from time import clock, sleep
 
 from GUI_cards_img import *
 
@@ -47,7 +47,7 @@ class Joueur(MainGraphique, Arbitrable):
 
 
     def __init__(self, position, pioche, sens, mise, identifier="",
-                 carte_ini=[]):
+                 carte_ini=[], face_cachee=[]):
         """
             cf Banque pour les parametres...
             carte_ini represente la main initiale du joueur : [] pour piocher
@@ -58,7 +58,7 @@ class Joueur(MainGraphique, Arbitrable):
                                [pioche.piocher(), pioche.piocher()] if carte_ini == []
                                else carte_ini,
                                position, sens=sens, identifier=identifier,
-                               face_cachee=[0] if identifier=="IA" else [])
+                               face_cachee=face_cachee)
 
         Arbitrable.__init__(self)
 
@@ -238,7 +238,8 @@ class JoueurOrdi(Joueur):
             c2 = piocher_bloquant(self.client)
         
         Joueur.__init__(self, position, pioche, VERTICAL, identifier,
-                        carte_ini= [] if pioche != None else [c1, c2] )
+                        carte_ini= [] if pioche != None else [c1, c2],
+                        face_cachee=[0])
 
         self.pioche_valide = (pioche != None)
             
@@ -365,14 +366,40 @@ class Banque(JoueurOrdi):
 
 class JoueurDistant(Joueur):
 
-    def __init__(self, position):
+    def __init__(self, position, serveur_local=None):
+
+        """
+
+                serveur local sert a indiquer ou les cartes sont piochees
+                (en local ou en distant)
+                si serveur local == None, alors les cartes sont piochees
+                en distant. Sinon, serveur_local doit etre l'instance de Serveur
+                avec laquelle il faut demander les cartes qui ont ete piochees
+        """
 
         self.client = Client(PORT, IP_SERVEUR)
 
-        c1 = piocher_bloquant(self.client)
-        c2 = piocher_bloquant(self.client)
+        if serveur_local == None:
+            print "debut pioche de carte"
+            c1 = piocher_bloquant(self.client)
+            print "carte piochee !"
+            c2 = piocher_bloquant(self.client)
+        else:
+            #attention, ceci est bloquant tant que le client n'a rien demande
+            while 1:
+                try:
+                    print "donnees en local", serveur_local.cartes_donnees
+                    c1, c2 = serveur_local.cartes_donnees[:2]
+                    break
+                except ValueError as e:
+                    print e
+                    sleep(1)
+                    
 
-        Joueur.__init__(self, position, None, VERTICAL, None, carte_ini=[c1, c2])
+        Joueur.__init__(self, position, None, VERTICAL, None,
+                        carte_ini=[c1, c2], face_cachee=[0])
+
+        print "joueur distant cree"
 
         self.doit_piocher = 0
 

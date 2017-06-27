@@ -25,6 +25,10 @@ class Serveur(Thread):
         self.opponent_showing_card=''
         self.fin_manche = False
         self.main = 'True'
+
+        self.cartes_donnees = []
+        self.cartes_du_serveur = []
+        
         self.start()
 
     def run(self):
@@ -38,7 +42,11 @@ class Serveur(Thread):
             if instr == 'draw':
                 
                 #le client a toujours le droit de piocher !
-                self.has_client_drawn(self.pioche.piocher())
+                #le serveur ne pioche jamais
+                c = self.pioche.piocher()
+                self.cartes_donnees.append(c)
+                print "carte ", c, " donnee"
+                self.has_client_drawn(c)
                 if self.client_has_drawn : 
                     clientsock.send(('True;'+ self.client_card_drawn).encode())
                     self.client_has_drawn = False
