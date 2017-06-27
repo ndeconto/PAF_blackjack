@@ -142,6 +142,8 @@ class MainGraphique(GUIComponent, Main):
         Main.__init__(self, contenu)
         img = get_img(self, sens, face_cachee, d_x, d_y)
         self.sens = sens
+        self.dx = d_x
+        self.dy = d_y
         GUIComponent.__init__(self, 1, position, img.get_size(), [], [], img,
                               identifier, e_bord=5)
 
@@ -156,10 +158,17 @@ class MainGraphique(GUIComponent, Main):
         #pour deplacer les cartes
         self.drag = False
 
+
+    def set_face_cachee(self, new_face_cachee):
+        self.face_cachee = new_face_cachee
+        self.background = get_img(self, self.sens, face_cachee=new_face_cachee,
+                                  d_x=self.dx, d_y=self.dy)
+
     def ajouter(self, nouvelle_carte): #redefinition de la methode de Main
         
         Main.ajouter(self, nouvelle_carte)
-        self.background = get_img(self, self.sens)
+        self.background = get_img(self, self.sens, face_cachee=self.face_cachee,
+                                  d_x=self.dx, d_y=self.dy)
         self.size = self.background.get_size()
 
     def retourner_carte(self, i):

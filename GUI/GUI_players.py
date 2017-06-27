@@ -439,6 +439,16 @@ class Banque(JoueurOrdi):
         JoueurOrdi.__init__(self, position, pioche, 0, identifier="banque",
                             fct_decision=pdd.decision_banque)
 
+        self.sleep_time_before_playing = 1.5 #second
+        self.begin = -1
+
+    def jouer(self, *args, **kargs):
+        if self.begin == -1:
+            self.set_face_cachee([])
+            self.begin = clock()
+        elif clock() - self.begin > self.sleep_time_before_playing:
+            JoueurOrdi.jouer(self, *args, **kargs)
+
 
 
 

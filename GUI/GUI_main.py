@@ -107,7 +107,8 @@ def jeu(type_jeu):
     elif type_jeu == IA_VS_BANQUE:
 
         joueur_2 = Banque(POS_J_DROITE, pioche)
-        joueur_1 = JoueurOrdi(POS_J_GAUCHE, pioche, mise, identifier="ia")
+        joueur_1 = JoueurOrdi(POS_J_GAUCHE, pioche, mise, identifier="ia",
+                              face_cachee=[])
         joueur_1.commencer_tour()
         
 

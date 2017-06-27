@@ -79,6 +79,10 @@ class Arbitre(GUIComponent):
                 c.sarreter()
 
 
+        for j in self.liste_joueur:
+            j.set_face_cachee([])
+
+
 
         pause = PauseComponent(K_RETURN, EXIT_GAME_LOOP)
 
@@ -142,8 +146,6 @@ class Arbitre(GUIComponent):
                      if not isinstance(j, JoueurSplitte)]
                 
         if self.type_jeu == JEU_CLASSIQUE or self.type_jeu == IA_VS_BANQUE:
-
-            print type_jeu
 
             #si personne n'a splitte
             if len(l_split) == 0:
