@@ -89,20 +89,20 @@ def jeu(type_jeu):
 
     if type_jeu == JEU_CLASSIQUE:
         
-        joueur_1 = JoueurHumain((125, 250), pioche, "humain")
+        joueur_1 = JoueurHumain((125, 250), pioche, identifier="humain")
         joueur_2 = Banque(POS_J_DROITE, pioche)
 
 
     elif type_jeu == JEU_SYMETRIQUE:
 
-        joueur_1 = JoueurHumain((125, 250), pioche, "humain")
+        joueur_1 = JoueurHumain((125, 250), pioche, identifier="humain")
         joueur_2 = JoueurDistant(POS_J_GAUCHE)
         
         
     elif type_jeu == IA_VS_BANQUE:
 
         joueur_2 = Banque(POS_J_DROITE, pioche)
-        joueur_1 = JoueurOrdi(POS_J_GAUCHE, pioche, identifier="ia")
+        joueur_1 = JoueurOrdi(POS_J_GAUCHE, pioche, mise, identifier="ia")
         joueur_1.commencer_tour()
         
 

@@ -212,7 +212,9 @@ class DeckGraphique(MainGraphique, Sabot):
     def __init__(self, position):
         
         Sabot.__init__(self)
-        MainGraphique.__init__(self, self.pile, position, HORIZONTAL, "",
-                               list(range(52)), d_x=0.001)
+        MainGraphique.__init__(self, self.pile, position, sens=HORIZONTAL,
+                               identifier="",
+                               face_cachee=list(range(len(self.pile))),
+                               d_x=0.0001)
     
     

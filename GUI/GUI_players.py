@@ -357,7 +357,7 @@ class Banque(JoueurOrdi):
         # seulement d'un Deck...
         ## ----------------------------------------------------------##
 
-        JoueurOrdi.__init__(self, position, pioche, identifier="banque",
+        JoueurOrdi.__init__(self, position, pioche, 0, identifier="banque",
                             fct_decision=pdd.decision_banque)
 
 
