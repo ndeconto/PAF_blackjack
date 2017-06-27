@@ -26,10 +26,15 @@ class Client():
                 data = self.get_data('draw')
                 if data[0]=='True':
                         return [True,Carte(int(data[1]),int(data[2]))]
-                else: return [False]
+                else :
+                        if data[0]!='False':print('Closed socket or unknown instruction')
+                        return [False]
 
         def opponent_card(self):  #returns the visible card of the opponent's hand
                 data = self.get_data('op_card')
+                if data[0]=='close':
+                        print('Closed socket or unknown instruction')
+                        return None
                 return Carte(int(data[0]),int(data[1]))
 
         def send_decision(self,bool_draw,mise,bool_split):
@@ -48,7 +53,9 @@ class Client():
                                 if i%2==1:
                                         l.append(Carte(int(data[i]),int(data[i+1])))
                         return l
-                else : return[False]
+                else :
+                        if data[0]!='False':print('Closed socket or unknown instruction')
+                        return[False]
 
-c = Client(5000,"137.194.57.193")
+c = Client(5000,"localhost")
 print(c.has_drawn())
