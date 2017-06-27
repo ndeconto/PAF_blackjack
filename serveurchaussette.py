@@ -9,14 +9,18 @@ PORT        = 5000
 
 
 class Serveur(Thread):
+
     def __init__(self, myport, myaddress, pioche):
         Thread.__init__(self)
+        self._stop_event = Event()
         self.host = myaddress
         self.port = myport
 
         self.pioche = pioche
 
         self.server_up = True
+
+
         self.client_mise = 0
         self.client_has_split = False
         self.client_has_drawn = False
@@ -29,17 +33,28 @@ class Serveur(Thread):
         self.cartes_donnees = []
         self.cartes_du_serveur = []
         
-        self.start()
+       
+        try :
+            self.start()
+        except self._stop_event.is_set():
+            self._stop()
+    
+    def closing(self):
+        return self._stop_event.is_set()
 
     def run(self):
-        while self.server_up:
+        while not self.closing():
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.sock.bind((self.host, self.port))
             self.sock.listen(5)
             (clientsock, address) = self.sock.accept()
             instr = clientsock.recv(1024).decode()
             print("received : "+instr+" from client")
-            if instr == 'draw':
+
+            
+            if self.closing():
+                clientsock.send("close".encode())
+            elif instr == 'draw':
                 
                 #le client a toujours le droit de piocher !
                 #le serveur ne pioche jamais
@@ -47,6 +62,7 @@ class Serveur(Thread):
                 self.cartes_donnees.append(c)
                 print "carte ", c, " donnee"
                 self.has_client_drawn(c)
+                
                 if self.client_has_drawn : 
                     clientsock.send(('True;'+ self.client_card_drawn).encode())
                     self.client_has_drawn = False
@@ -65,6 +81,7 @@ class Serveur(Thread):
             else : print('unknown instruction')
             self.sock.close()
             print("end of instruction and closed socket")
+        print('server properly shut down')
 
     def has_client_drawn(self,card):
         self.client_card_drawn = str(card.hauteur)+';'+str(card.couleur)
@@ -80,7 +97,7 @@ class Serveur(Thread):
         self.main+=';'+str(card.hauteur)+';'+str(card.couleur)
 
     def close_server(self):
-        self.server_up = False
+        self._stop_event.set()
 
 if __name__ == "__main__":
     s = Serveur(5000,"localhost", Deck())
