@@ -195,9 +195,8 @@ class Arbitre(GUIComponent):
 
         elif self.type_jeu == JEU_SYMETRIQUE:
 
-            assert self.liste_joueur[0].a_fini
-            if not self.liste_joueur[0].a_fini:
-                return
+            assert (self.liste_joueur[0].a_fini)
+            assert (self.liste_joueur[1].a_fini)
                 
             #TODO : a implementer !
             raise (Exception("not implemented"))
