@@ -6,8 +6,8 @@ from GUI_component_manager import EXIT_GAME_LOOP
 
 from sys import path
 path.append('..')
-from prise_2_decision import win2, win_split
-
+#from prise_2_decision import win2, win_split
+from prise_3_decision import compute_result
 
 JEU_CLASSIQUE   =   0   #un joueur humain joue contre la banque
 IA_VS_BANQUE    =   1   #l'IA joue contre la banque (l'humain n'est que spectateur)
@@ -74,8 +74,8 @@ class Arbitre(GUIComponent):
             if isinstance(c, Bouton):
                 c.desactiver()
 
-
-            if isinstance(c, JoueurOrdi):
+            #cette condition est douteuse... on ne devrait pas avoir a faire ca
+            if isinstance(c, JoueurOrdi) and not c.finish:
                 c.sarreter()
 
 
@@ -197,9 +197,25 @@ class Arbitre(GUIComponent):
 
             assert (self.liste_joueur[0].a_fini)
             assert (self.liste_joueur[1].a_fini)
+
+            j0 = self.liste_joueur[0]
+            j1 = self.liste_joueur[1]
+
+            main_0 = (j0 if not j0.a_splite else [j0.jeu_1, j0.jeu_2])
+            main_1 = (j1 if not j1.a_splite else [j1.jeu_1, j1.jeu_2])
+
+            #du point de vue de j0   
+            gain = compute_result(main_0, j0.a_double, j0.a_splite,
+                                  main_1, j1.a_double, j1.a_splite,
+                                  1)    #--- la mise est toujours unitaire --------
+
+            if gain > 0:
+                return (main_0, main_1) 
+            elif gain < 0:
+                return (main_1, main_0)
+            else: #match nul
+                return None
                 
-            #TODO : a implementer !
-            raise (Exception("not implemented"))
 
         else:
             raise (ValueError("le type de jeu " + str(self.type_jeu) +
