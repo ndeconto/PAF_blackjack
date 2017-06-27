@@ -222,11 +222,18 @@ def manche2(bet, learning=True): #bet est la mise
     
     ########A la banque de jouer###########
     bank_decision = 1
-    while bank_decision == 1:
-        bank_card = deck.piocher()
-        bank_hand.ajouter(bank_card)
-        bank_decision = bank_playing(bank_hand)
-        bank_state = bank_hand.get_m_valeur()
+    if (bool_splitted == False):
+        while (bank_decision == 1 and bank_state < player_hand.valeur):
+            bank_card = deck.piocher()
+            bank_hand.ajouter(bank_card)
+            bank_decision = bank_playing(bank_hand)
+            bank_state = bank_hand.get_m_valeur()
+    else:
+        while (bank_decision == 1 and bank_state < player_hand_1.valeur and bank_state < player_hand_2.valeur):
+            bank_card = deck.piocher()
+            bank_hand.ajouter(bank_card)
+            bank_decision = bank_playing(bank_hand)
+            bank_state = bank_hand.get_m_valeur()
     ########La banque a fini de jouer########
     
     
