@@ -6,9 +6,9 @@ from threading import *
 class Serveur(Thread):
     def __init__(self, myport, myaddress):
         super(Serveur, self).__init__()
-        self._stop_event = Event()
         self.host = myaddress
         self.port = myport
+        self.running = True
 
         self.client_mise = 0
         self.client_has_split = False
@@ -18,25 +18,17 @@ class Serveur(Thread):
         self.opponent_showing_card=''
         self.fin_manche = False
         self.main = 'True'
-        try :
-            self.start()
-        except self._stop_event.is_set():
-            self._stop()
-    
-    def closing(self):
-        return self._stop_event.is_set()    
+        self.start()
 
     def run(self):
-        while not self.closing():
+        while self.running:
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.sock.bind((self.host, self.port))
             self.sock.listen(5)
             (clientsock, address) = self.sock.accept()
             instr = clientsock.recv(1024).decode()
             print("received : "+instr+" from client")
-            if self.closing():
-                clientsock.send("close".encode())
-            elif instr == 'draw':
+            if instr == 'draw':
                 if self.client_has_drawn : 
                     clientsock.send(('True;'+ self.client_card_drawn).encode())
                     self.client_has_drawn = False
@@ -52,10 +44,9 @@ class Serveur(Thread):
                 else : clientsock.send('False'.encode())
             else : print('unknown instruction')
             self.sock.close()
-            print("end of instruction and closed socket")
-        print('server properly shut down')
+            print('end of instruction and closed socket')
 
-    def has_client_drawn(self,card):
+    def client_has_drawn_card(self,card):
         self.client_card_drawn = str(card.hauteur)+';'+str(card.couleur)
         self.client_has_drawn = True
 
@@ -69,9 +60,10 @@ class Serveur(Thread):
         self.main+=';'+str(card.hauteur)+';'+str(card.couleur)
 
     def close_server(self):
-        self._stop_event.set()
+        self.running=False
+        raise ClosingError
 
 s = Serveur(5000,"localhost")
 c=Carte(8,14)
-s.has_client_drawn(c)
+s.client_has_drawn_card(c)
 s.close_server()
