@@ -46,8 +46,10 @@ class Serveur(Thread):
             self.sock.bind((self.host, self.port))
             self.sock.listen(5)
             (clientsock, address) = self.sock.accept()
-            instr = clientsock.recv(1024).decode()
+            instr_totale = clientsock.recv(1024).decode().split(';')
+            instr = instr_totale[0]
             print("received : "+instr+" from client")
+            print instr_totale
 
             
             if self.closing():
@@ -58,7 +60,6 @@ class Serveur(Thread):
                 #le serveur ne pioche jamais
                 c = self.pioche.piocher()
                 self.cartes_donnees.append(c)
-                print "carte ", c, " donnee"
                 self.has_client_drawn(c)
                 if self.client_has_drawn : 
                     clientsock.send(('True;'+ self.client_card_drawn).encode())
@@ -69,9 +70,9 @@ class Serveur(Thread):
             elif instr == 'op_card' :
                 clientsock.send(self.opponent_showing_card.encode())
             elif instr == 'decision' :
-                self.client_wants_to_draw = (clientsock.recv(1024).decode()=='True')
-                self.client_mise = int(clientsock.recv(1024).decode())
-                self.client_has_split = (clientsock.recv(1024).decode()=='True')
+                self.client_wants_to_draw = (instr_totale[1]=='True')
+                self.client_mise = int(instr_totale[2])
+                self.client_has_split = (instr_totale[3]=='True')
             elif instr == 'state':
                 if self.fin_manche : clientsock.send((self.main).encode())
                 else : clientsock.send('False'.encode())
@@ -79,7 +80,6 @@ class Serveur(Thread):
                 self.fin_manche = True
             else : print('unknown instruction')
             self.sock.close()
-            print("end of instruction and closed socket")
         print('server properly shut down')
 
     def has_client_drawn(self,card):

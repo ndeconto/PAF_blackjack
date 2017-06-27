@@ -251,7 +251,8 @@ class JoueurOrdi(Joueur):
             c1 = piocher_bloquant(self.client)
             c2 = piocher_bloquant(self.client)
         
-        Joueur.__init__(self, position, pioche, VERTICAL, identifier,
+        Joueur.__init__(self, position, pioche, VERTICAL, mise,
+                        identifier=identifier,
                         carte_ini= [] if pioche != None else [c1, c2],
                         face_cachee=face_cachee)
 
@@ -318,11 +319,13 @@ class JoueurOrdi(Joueur):
 
     def display(self):
 
-        r = self.jeu_1.display()
-        self.jeu_2.display()
+        if self.a_splite:
+            self.jeu_1.display()
+            #retour bidon
+            return self.jeu_2.display()
 
-        #retour bidon
-        return r
+        
+        return Joueur.display(self)
 
 
     def piocher(self):
@@ -358,9 +361,13 @@ class JoueurOrdi(Joueur):
             Joueur.sarreter(self)
             if self.pioche == None:
                 self.client.send_decision(False, self.mise.get_value(),
-                                          isinstance(self, JoueurSplitte))
+                                          self.a_splite)
+                sleep(.5)
                 self.client.stop_playing()
-                #TODO : il faut envoyer l'etat, pour savoir quand on a splitte
+                #TODO : il faut envoyer l'etat, pour savoir quand on s'est
+                #arreter apres le premier split
+                #ou alors il faut passer un entier (0: pas de split) indiquant
+                #quand s'arrete la premier main
 
 
         
@@ -390,7 +397,7 @@ class JoueurOrdi(Joueur):
 
         
         can_double = (not self.a_splite and not self.a_double
-                      and len(self.contenu == 2))
+                      and len(self.contenu) == 2)
         can_split = (can_double and self.contenu[0] == self.contenu[1])
 
         decision = self.fct_decision(m, carte_adversaire, compteur, can_split,
@@ -492,6 +499,17 @@ class JoueurDistant(Joueur):
         if c[0]:
             self.doit_piocher -= 1
             self.ajouter(c[1])
+
+
+    def reconstruire(self):
+        """
+            methode a appeler pour reconstuire le joueur a partir de ce qui a
+            ete fait a l'autre bout
+
+        """
+
+        #------------- TODO a implementer -----------------------------#
+        return
 
 
     def update(self, other_comp):

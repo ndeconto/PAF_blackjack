@@ -39,7 +39,7 @@ SPLITTER    =   3
 DOUBLER     =   2
 
 
-def decision_banque(main, carte_adversaire, l_cartes_passees):
+def decision_banque(main, carte_adversaire, compteur, can_split, can_double):
     """
         fonction de la prise de decision de la banque
         classiquement, cette prise de decision est resumee par la regle :

@@ -18,7 +18,7 @@ class Client():
         def get_data(self,instr):
                 self.connect_chaussette()
                 self.s.send(instr.encode())
-                print instr + " send"
+                print (instr + " send")
                 st=self.s.recv(1024).decode()
                 self.disconnect_chaussette()
                 return st.split(';')
@@ -40,17 +40,18 @@ class Client():
                 return Carte(int(data[0]),int(data[1]))
 
         def send_decision(self,bool_draw,mise,bool_split):
-                connect_chaussette()
-                s.send('decision'.encode())
-                s.send(str(bool_draw).encode())
-                s.send(str(mise).encode())
-                s.send(str(bool_split).encode())
-                disconnect_chaussette()
+                self.connect_chaussette()
+                a_envoyer = ('decision' + ";" + str(bool_draw)
+                             + ";" + str(mise)
+                             + ";" + str(bool_split)
+                             ).encode()
+                self.s.send(a_envoyer)
+                self.disconnect_chaussette()
 
         def stop_playing(self):
                 self.connect_chaussette()
                 self.s.send('stop'.encode())
-                print "stop envoye"
+                print ("stop envoye")
                 self.disconnect_chaussette()
 
         def end_turn_state(self):                       #renvoie [True, carte1_adversaire, carte2_adversaire...] si la partie est finie, [False] sinon
