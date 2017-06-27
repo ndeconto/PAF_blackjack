@@ -13,6 +13,7 @@ from openpyxl.styles import Color, PatternFill, Font, Border, Side, Alignment
 from openpyxl.styles.differential import DifferentialStyle
 from openpyxl.formatting.rule import ColorScaleRule, CellIsRule, FormulaRule
 from load_object import *
+from prise_3_decision import *
 ###
 
 def f(values):
@@ -40,9 +41,23 @@ def apprentissage2(n,bet):
     print("Statistiques :\n")
     print(per_vic, gain)
     print("Epsilon final, alpha : ",epsilon,", ",alpha)
+    
+def apprentissage3(n):
+    for k in range(n):
+        result, player_statesActions,bool_as_choice,bool_pair, enemy_state,position_as, enemy_statesActions,enemy_bool_as_choice, enemy_bool_pair, player_state, enemy_position_as = symetricLearning()
+        ###MAJ de mypolicy
+        #print("Main du joueur : ", player_hand)
+        update_value3(player_statesActions,bool_as_choice,bool_pair, enemy_state-1,result,position_as)
+        update_value3(enemy_statesActions,enemy_bool_as_choice,enemy_bool_pair, player_state-1, - result,enemy_position_as)
+        #victoire=update_stats_gains(player_statesActions,result,enemy_state,player_state)
+        ###Fin de la MAJ de mypolicy
+        if(k%100000 == 0):
+            print("progres : ", (k/n)*100 ,"%")  
+    
 
 def f(k):
         return(0.05)
+    
 
    
 def save_mypolicy(p1,p2,p3): #Le fichier sauvegarde est un vecteur comportant les trois tableaux
@@ -52,7 +67,7 @@ def save_mypolicy(p1,p2,p3): #Le fichier sauvegarde est un vecteur comportant le
 #      Pour charger ecrire : policy_simple,policy_as,policy_pair = getPolicy()[0],getPolicy()[1],getPolicy()[2]
 
     policy = [p1,p2,p3]
-    file_handler = open("mypolicy", "wb")
+    file_handler = open("mypolicy_vsIA", "wb")
     pickle.dump(policy,file_handler)
     
 
@@ -69,10 +84,11 @@ def save_to_xlsx():
     ws['A1']="Simple :"
     ws['A2']=""
     ws.append(["","< 9"]+list(range(9,22))+["> 21"])
-    
+#########    
     policy = getPolicy()[:]
+#########    
     i=1
-    for row in policy[0][0] :
+    for row in policy[0] :
         for k in range(len(row)):
             row[k] = row[k].index(max(row[k]))
         if (i==1):
@@ -87,7 +103,7 @@ def save_to_xlsx():
     ws.append([""]+["A,"+str(k) for k in range (2,11)])
     
     i=1
-    for row in policy[1][0] :
+    for row in policy[1] :
         for k in range(len(row)):
             row[k] = row[k].index(max(row[k]))
         if (i==1):
@@ -102,7 +118,7 @@ def save_to_xlsx():
     ws.append([""]+["A,A"]+[str(k)+","+str(k) for k in range (2,11)])
     
     i=1
-    for row in policy[2][0] :
+    for row in policy[2] :
         for k in range(len(row)):
             row[k] = row[k].index(max(row[k]))
         if (i==1):
@@ -227,7 +243,7 @@ def save_to_xlsx():
             cell.alignment=alignment
     
     # Save the file
-    wb.save("policy_compteur.xlsx")
+    wb.save("policy_vsIA.xlsx")
 
 
 
@@ -272,3 +288,24 @@ def graphe_vitesse_apprentissage(a_min=0, pas=2 * 10**5,a_max = 10**7, log=False
     plot(lx, ly)
     show()
 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    

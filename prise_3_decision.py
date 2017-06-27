@@ -12,12 +12,32 @@ nb_parties_gagnees = 0
 nb_parties_jouees = 0
 deck = Sabot()
 
-###Fonction englobant tout
-def symetricGame():
+def symetricLearning():
     bet = 1
-    card1,card2 = initialise()        #On initialise les données communes aux 2 joueurs
-    player_hand, bool_dobled, bool_splitted = manche_sym(card_1,card_2)       #Manche de l'IA
-    enemy_hand, enemy_bool_dobled, enemy_bool_splitted = manche_sym_enemy(card_1,card_2) #Manche de l'adversaire
+    result = 0
+    card1, enemy_card1, enemy_card2 = initialise()        #On initialise les données communes aux 2 joueurs
+    (player_statesActions,bool_as_choice,bool_pair, enemy_state,position_as,player_hand, bool_dobled, bool_splitted) = manche_sym(card1, enemy_card1)       #Manche de l'IA
+    (enemy_statesActions,enemy_bool_as_choice, enemy_bool_pair, player_state, enemy_position_as,enemy_hand, enemy_bool_dobled, enemy_bool_splitted) = manche_sym(enemy_card1,enemy_card2) #Manche de l'adversaire                
+###Appel des foncrions win                
+    if bool_dobled: bet*=2
+    if enemy_bool_dobled: bet*=2                #On double la mise du joueur qu'il double
+    if bool_splitted:
+        if enemy_bool_splitted:
+            result = win_sym_split_split(player_hand[0],player_hand[1],
+                                                    enemy_hand[0],enemy_hand[1],
+                                                    bet)          #Si les 2 ont split on appelle la fonction win associée
+        else:
+            result = win_sym_split(player_hand[0], player_hand[1], enemy_hand,bet)    #Si un a splitté on appelle win_sym_split
+    elif enemy_bool_splitted:
+        result = win_sym_split(enemy_hand[0], enemy_hand[1], player_hand, bet)  #Si l'autre a splitté on appelle win_sym_split "a l'envers"
+        
+    return result, player_statesActions,bool_as_choice,bool_pair, enemy_state,position_as, enemy_statesActions,enemy_bool_as_choice, enemy_bool_pair, player_state, enemy_position_as
+
+
+def compute_result(player_hand, bool_dobled, bool_splitted,
+                   enemy_hand, enemy_bool_dobled, enemy_bool_splitted,
+                   bet):
+
     if bool_dobled: bet*=2
     if enemy_bool_dobled: bet*=2                #On double la mise du joueur qu'il double
     if bool_splitted:
@@ -30,6 +50,21 @@ def symetricGame():
     elif enemy_bool_splitted:
         result = win_sym_split(enemy_hand[0], enemy_hand[1], player_hand, bet)  #Si l'autre a splitté on appelle win_sym_split "a l'envers"
     return result
+
+
+    
+
+###Fonction englobant tout
+def symetricGame():
+    bet = 1
+    result = 0
+    card1, enemy_card1, enemy_card2 = initialise()        #On initialise les données communes aux 2 joueurs
+    player_hand, bool_dobled, bool_splitted = manche_sym(card1, enemy_card1)       #Manche de l'IA
+    enemy_hand, enemy_bool_dobled, enemy_bool_splitted = manche_sym(enemy_card1,enemy_card2) #Manche de l'adversaire
+    return compute_result(player_hand, bool_dobled, bool_splitted,
+                          enemy_hand, enemy_bool_dobled, enemy_bool_splitted,
+                          bet)
+    
     
     
 ###Fonction initialisant les données communes (2 cartes face visible)    
@@ -39,8 +74,9 @@ def initialise():
     
     card1 = deck.piocher()
     card2 = deck.piocher()
+    card3 = deck.piocher()
     
-    return (card1,card2)
+    return (card1,card2,card3)
     
     
 
@@ -163,13 +199,18 @@ def manche_sym(card1,card2,learning=True): #bet est la mise
     bool_pair = False
     number_card = 2
     result = 0
-    enemy_state = card2.get_valeur()
+    enemy_state = 0
+    if isAs(card2):
+        enemy_state = 1
+    else :
+        enemy_state = card2.get_valeur()
     
     player_hand = Main([card1])
     
     ##Tirage de la carte du joueur
     player_card = deck.piocher()            #2e carte
     player_hand.ajouter(player_card)
+    player_state = 0
     if (isAs(player_card)):                 #Si c'est un as
         player_state += 1
         bool_as_choice = True
@@ -181,9 +222,8 @@ def manche_sym(card1,card2,learning=True): #bet est la mise
         bool_can_split = True
         bool_pair = True
         
-    counter = deck.get_counter()
-    player_decision = makeDecision3([player_state,bool_as_choice,bool_can_split,bool_can_doble, counter],(enemy_state-1) % 10)   #decision du joueur
-    player_statesActions.append([player_state,player_decision, counter])
+    player_decision = makeDecision3([player_state,bool_as_choice,bool_can_split,bool_can_doble, 0],(enemy_state-1) % 10)   #decision du joueur
+    player_statesActions.append([player_state,player_decision, 0])
     
     
     
@@ -208,15 +248,13 @@ def manche_sym(card1,card2,learning=True): #bet est la mise
             else :
                 player_state += player_card.get_valeur()
             
-            counter = deck.get_counter()
                 
             #Decision du joueur
-            player_decision = makeDecision3([player_state,bool_as_choice,bool_can_split,bool_can_doble, counter],(enemy_state-1) % 10)
-            player_statesActions.append([player_state,player_decision, counter])
+            player_decision = makeDecision3([player_state,bool_as_choice,bool_can_split,bool_can_doble, 0],(enemy_state-1) % 10)
+            player_statesActions.append([player_state,player_decision, 0])
             
         elif(player_decision == 2):
     #####################Ce que l'on fait si la decision c'est de doubler#######################################
-            bet = 2*bet #mise doublee
             bool_dobled = True
             player_card = deck.piocher()
             number_card += 1
@@ -233,39 +271,60 @@ def manche_sym(card1,card2,learning=True): #bet est la mise
             else :
                 player_state += player_card.get_valeur()
             
-            counter = deck.get_counter()
-            player_statesActions.append([player_state,0, counter])
+            player_statesActions.append([player_state,0, 0])
             player_decision = 0 #Une seule carte a piocher
             
         elif(player_decision == 3):
     #####################Ce que l'on fait si la decision c'est de splitter######################################    
+            bool_as_choice = False ##Cela revient a considerer la paire d'as comme une paire, et non comme un as soft.
+            position_as = 0 #Ne compte de toute facon pas à partir du moment ou on considère bool_as_choice comme faux.
             bool_splitted = True
-            player_card_1 = deck.piocher()
-            player_card_2 = deck.piocher()
             player_hand_1 = Main([player_hand.contenu[0]])
-            player_hand_2 = Main([player_hand.contenu[0]])
-            player_hand_1.ajouter(player_card_1)
-            player_hand_2.ajouter(player_card_2)
+            player_hand_2 = Main([player_hand.contenu[1]])
+            player_hand_1 = play_split(player_hand_1,enemy_state,bool_as_choice,number_card)
+            player_hand_2 = play_split(player_hand_2,enemy_state,bool_as_choice,number_card)
+            player_hand = [player_hand_1,player_hand_2]
             player_decision = 0 #Une seule carte a piocher
     ###############################################FIN DU WHILE#################################################
 
     
-    
-    
-    
-    
-    ########MAJ de my policy#################
-    if learning :
-#        print("Main du joueur : ", player_hand)
-        update_value3(player_statesActions,bool_as_choice,bool_pair,enemy_hand.get_card_at(0)-1,result,position_as) #banque state --> premiere carte
-        victoire=update_stats_gains(player_statesActions,result,enemy_state,player_state)
-    ########Fin de la MAJ de mypolicy########
-    
+    return (player_statesActions,bool_as_choice,bool_pair, enemy_state,position_as,player_hand, bool_dobled, bool_splitted)
 
+
+
+###Fx de jeu en cas de split
+def play_split(player_hand,enemy_state,bool_as_choice, number_card):
+    player_state = 0
+    position_as = 0
+    player_statesActions = []
+    if isAs(player_hand.contenu[0]):
+        player_state += 1
+        position_as = 1
     else:
-        epsilon = epsilon_copy
-    
-    return (player_hand, bool_dobled, bool_splitted)
+        player_state += player_hand.contenu[0].get_valeur()
+    decision = 1
+    while (decision == 1 and player_state < 32):
+        player_card = deck.piocher()
+        number_card += 1
+        player_hand.ajouter(player_card)
+        if (isAs(player_card) and player_state < 11 and bool_as_choice == False):     #Si c'est un as soft
+            bool_as_choice = True
+            if (position_as == 0):
+                position_as = len(player_statesActions) + 1
+            player_state += 1
+        elif (isAs(player_card)): #Si c'est pas un as soft
+            player_state += 1
+            if (position_as == 0):
+                position_as = len(player_statesActions) + 1
+        else :
+            player_state += player_card.get_valeur()
+            
+            
+        #Decision du joueur
+        decision = makeDecision3([player_state,bool_as_choice,False,False, 0],(enemy_state-1) % 10)
+        #print("Decision du split : ",decision)
+        player_statesActions.append([player_state,decision, 0])
+    return(player_hand)
 
 
 ##

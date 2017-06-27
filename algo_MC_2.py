@@ -31,22 +31,29 @@ policy_pair = [[[[0.0]*4 for i in range(10)] for j in range(len(enemystate))]for
 #matrice state = [AA,22,33,...,99,1010)] donc 10 etats
 #matrice cas on pioche un as sans paire. Marche comme ca policy_simple[compteur][enemystate][state][action]
 #Les quatre actions sont possibles
+
+for i in range (len(policy_pair[0])):
+    for j in range(len(policy_pair[0][0])):
+        policy_pair[0][i][j][3] = 2
     
 def initialize_policy():
     global policy_as,policy_pair,policy_simple
     p_simple,p_as,p_pair = getPolicy()[0],getPolicy()[1],getPolicy()[2]
-    for k in range (len(p_as)):
-        for i in range(len(p_as[k])):
-            for j in range (len(p_as[k][i])):
-                policy_as[k][i][j] = p_as[k][i][j]
-    for k in range (len(p_simple)):
-        for i in range(len(p_simple[k])):
-            for j in range (len(p_simple[k][i])):
-                policy_simple[k][i][j] = p_simple[k][i][j]
-    for k in range (len(p_pair)):
-        for i in range(len(p_pair[k])):
-            for j in range (len(p_pair[k][i])):
-                policy_as[k][i][j] = p_pair[k][i][j]
+
+    for k in range (len(p_as[0])):
+        for i in range(len(p_as[0][0])):
+            for j in range (len(p_as[0][0][0])):
+                policy_as[0][k][i][j] = p_as[0][k][i][j]
+    for k in range (len(p_simple[0])):
+        for i in range(len(p_simple[0][k])):
+            for j in range (len(p_simple[0][k][i])):
+                policy_simple[0][k][i][j] = p_simple[0][k][i][j]
+    for k in range (len(p_pair[0])):
+        for i in range(len(p_pair[0][k])):
+            for j in range (len(p_pair[0][k][i])):
+                policy_pair[0][k][i][j] = p_pair[0][k][i][j]
+
+
     
 
 ###
