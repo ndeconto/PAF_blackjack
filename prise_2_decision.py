@@ -3,6 +3,7 @@ from cartes import *
 from Bank_Playing import *
 from algo_MC_2 import *
 import copy
+from strats_enemy import *
 
 ##
 
