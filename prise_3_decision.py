@@ -181,7 +181,6 @@ def manche_sym(card1,card2,learning=True): #bet est la mise
         bool_can_split = True
         bool_pair = True
         
-    counter = deck.get_counter()
     player_decision = makeDecision3([player_state,bool_as_choice,bool_can_split,bool_can_doble, counter],(enemy_state-1) % 10)   #decision du joueur
     player_statesActions.append([player_state,player_decision, counter])
     
@@ -208,7 +207,6 @@ def manche_sym(card1,card2,learning=True): #bet est la mise
             else :
                 player_state += player_card.get_valeur()
             
-            counter = deck.get_counter()
                 
             #Decision du joueur
             player_decision = makeDecision3([player_state,bool_as_choice,bool_can_split,bool_can_doble, counter],(enemy_state-1) % 10)
@@ -233,19 +231,19 @@ def manche_sym(card1,card2,learning=True): #bet est la mise
             else :
                 player_state += player_card.get_valeur()
             
-            counter = deck.get_counter()
             player_statesActions.append([player_state,0, counter])
             player_decision = 0 #Une seule carte a piocher
             
         elif(player_decision == 3):
     #####################Ce que l'on fait si la decision c'est de splitter######################################    
+            bool_as_choice = False ##Cela revient a considerer la paire d'as comme une paire, et non comme un as soft.
+            position_as = 0 #Ne compte de toute facon pas à partir du moment ou on considère bool_as_choice comme faux.
             bool_splitted = True
-            player_card_1 = deck.piocher()
-            player_card_2 = deck.piocher()
             player_hand_1 = Main([player_hand.contenu[0]])
-            player_hand_2 = Main([player_hand.contenu[0]])
-            player_hand_1.ajouter(player_card_1)
-            player_hand_2.ajouter(player_card_2)
+            player_hand_2 = Main([player_hand.contenu[1]])
+            player_hand_1 = play_split(player_hand_1,bank_state,bool_as_choice,number_card)
+            player_hand_2 = play_split(player_hand_2,bank_state,bool_as_choice,number_card)
+            player_hand = [player_hand_1,player_hand_2]
             player_decision = 0 #Une seule carte a piocher
     ###############################################FIN DU WHILE#################################################
 
@@ -266,6 +264,43 @@ def manche_sym(card1,card2,learning=True): #bet est la mise
         epsilon = epsilon_copy
     
     return (player_hand, bool_dobled, bool_splitted)
+
+
+
+###Fx de jeu en cas de split
+def play_split(player_hand,bank_state,bool_as_choice, number_card):
+    player_state = 0
+    position_as = 0
+    player_statesActions = []
+    if isAs(player_hand.contenu[0]):
+        player_state += 1
+        position_as = 1
+    else:
+        player_state += player_hand.contenu[0].get_valeur()
+    decision = 1
+    while (decision == 1 and player_state < 32):
+        player_card = deck.piocher()
+        number_card += 1
+        player_hand.ajouter(player_card)
+        if (isAs(player_card) and player_state < 11 and bool_as_choice == False):     #Si c'est un as soft
+            bool_as_choice = True
+            if (position_as == 0):
+                position_as = len(player_statesActions) + 1
+            player_state += 1
+        elif (isAs(player_card)): #Si c'est pas un as soft
+            player_state += 1
+            if (position_as == 0):
+                position_as = len(player_statesActions) + 1
+        else :
+            player_state += player_card.get_valeur()
+            
+        counter = deck.get_counter()
+                
+        #Decision du joueur
+        decision = makeDecision3([player_state,bool_as_choice,False,False, counter],(bank_state-1) % 10)
+        #print("Decision du split : ",decision)
+        player_statesActions.append([player_state,decision, counter])
+    return(player_hand)
 
 
 ##
