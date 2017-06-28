@@ -26,6 +26,5 @@ def bank_manche_sym(deck,card1,card2):
         bank_hand.ajouter(bank_card)
         bank_decision = bank_playing(bank_hand)
         bank_state = bank_hand.get_m_valeur()
-    print(bank_state)
     ########La banque a fini de jouer########
     return [], False, False, 0,False, bank_hand, False, False
