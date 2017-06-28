@@ -247,7 +247,7 @@ def save_to_xlsx():
             cell.alignment=alignment
     
     # Save the file
-    wb.save("policy_vsBank.xlsx")
+    wb.save("mypolicy_jeux_classique-50M.xlsx")
 
 
 
