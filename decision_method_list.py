@@ -52,7 +52,7 @@ def initialize_policy():
                 policy_pair[0][k][i][j] = p_pair[0][k][i][j]
 
     
-
+initialize_policy()
 ###
     
 
@@ -140,6 +140,6 @@ def makeBestDecision(state,enemystate):
             coeff = coeff[0:2]
         decision = coeff.index(max(coeff))
         return(decision)
-
-initialize_policy()
+    
+    
 print(makeBestDecision([11,False,False,True,0],3))
