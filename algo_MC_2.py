@@ -31,10 +31,6 @@ policy_pair = [[[[0.0]*4 for i in range(10)] for j in range(len(enemystate))]for
 #matrice state = [AA,22,33,...,99,1010)] donc 10 etats
 #matrice cas on pioche un as sans paire. Marche comme ca policy_simple[compteur][enemystate][state][action]
 #Les quatre actions sont possibles
-
-for i in range (len(policy_pair[0])):
-    for j in range(len(policy_pair[0][0])):
-        policy_pair[0][i][j][3] = 2
     
 def initialize_policy():
     global policy_as,policy_pair,policy_simple
