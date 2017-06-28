@@ -39,6 +39,80 @@ def win2(player_hand,bank_hand,bet): #bet est la mise
     
 
 ##
+def win_sym(player_hand,enemy_hand,bet,
+            blackjack_enable_player=True, blackjack_enable_enemy=True): #bet est la mise 
+
+    player_best_value = player_hand.valeur #La valeur est a tout instant la meilleur valeur possible de la main par construction
+    enemy_best_value = enemy_hand.valeur
+    if(player_best_value > 21 and enemy_best_value>21):
+        return(0)
+    elif (player_best_value>21):
+        return (-bet)
+    elif(enemy_best_value > 21):
+        return(bet)
+    
+    #les deux sont a au plus 21 a partir de ce point
+
+    #si player a un blackjack et le droit de s'en servir
+    elif (blackjack_enable_player and
+         player_best_value == 21 and len(player_hand) == 2):
+        
+        if (blackjack_enable_enemy and
+            enemy_best_value == 21 and len(enemy_hand) == 2):
+                return(0)
+        else:
+            return(1.5*bet)
+        
+
+    #si enemy a un blackjack et le droit de s'en servir :
+    elif (blackjack_enable_enemy and
+          enemy_best_value == 21 and len(enemy_hand) == 2):
+
+        #player n'a pas de blackjack ou pas le droit de s'en servir d'apres le ccas precedent
+        return(-1.5*bet)
+        
+
+    #a partir d'ici, plus personne n'a de blackjack et personne n'est au dessus
+    #de 21
+    elif(player_best_value > enemy_best_value):
+        return(bet)
+    
+    elif(player_best_value == enemy_best_value):
+        return(0)
+    elif(player_best_value < enemy_best_value):
+        return(- bet)
+    else:
+
+        raise(RuntimeError("wim_sym s'est retrouve dans un cas non traite !"))
+    
+
+##Cas ou l'un des deux split
+def win_sym_split(player_hand_1,player_hand_2,enemy_hand, bet):
+
+    if (enemy_hand.valeur == 21 and len(enemy_hand) == 2):
+        #Si la banque a un BJ, de toute façon elle gagne les deux mains
+        return(-2*bet)
+
+    return sum(win_sym(x,enemy_hand,bet, blackjack_enable_player=False)
+               for x in [player_hand_1, player_hand_2])
+        
+
+##Cas ou les deux split
+def win_sym_split_split(player_hand_1,player_hand_2,enemy_hand_1, enemy_hand_2, bet):
+
+    result = 0
+    
+    for x in [player_hand_1, player_hand_2]:
+        for y in [enemy_hand_1, enemy_hand_2]:
+
+            result += win_sym(x, y , bet,
+                              blackjack_enable_player=False,
+                              blackjack_enable_enemy=False)
+
+    return result
+
+###Fin des fonctions win
+
 
 def win_split(player_hand_1,player_hand_2,bank_hand,bet):
     player_best_value_1 = player_hand_1.valeur
@@ -236,10 +310,10 @@ def manche2(bet, learning=True): #bet est la mise
     
     ########MAJ de my policy#################
     if (bool_splitted == False):
-        result = win2(player_hand,bank_hand,bet)
+        result = win_sym(player_hand,bank_hand,bet)
         #print("result win2 : ", result)
     else:
-        result = win_split(player_hand_1,player_hand_2,bank_hand,bet)
+        result = win_sym_split(player_hand_1,player_hand_2,bank_hand,bet)
         #print("result winsplit",result)
 
     if learning :

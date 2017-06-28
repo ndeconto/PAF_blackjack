@@ -2,6 +2,7 @@
 from cartes import *
 from algo_MC_2 import *
 import copy
+from strats_enemy import *
 
 ##
 
@@ -17,7 +18,7 @@ def symetricLearning():
     result = 0
     card1, enemy_card1, enemy_card2 = initialise()        #On initialise les données communes aux 2 joueurs
     (player_statesActions,bool_as_choice,bool_pair, enemy_state,position_as,player_hand, bool_dobled, bool_splitted) = manche_sym(card1, enemy_card1)       #Manche de l'IA
-    (enemy_statesActions,enemy_bool_as_choice, enemy_bool_pair, player_state, enemy_position_as,enemy_hand, enemy_bool_dobled, enemy_bool_splitted) = manche_sym(enemy_card1,enemy_card2) #Manche de l'adversaire                
+    (enemy_statesActions,enemy_bool_as_choice, enemy_bool_pair, player_state, enemy_position_as,enemy_hand, enemy_bool_dobled, enemy_bool_splitted) = manche_sym(enemy_card1,card1) #Manche de l'adversaire          
 ###Appel des foncrions win                
     if bool_dobled: bet*=2
     if enemy_bool_dobled: bet*=2                #On double la mise du joueur qu'il double
@@ -27,10 +28,11 @@ def symetricLearning():
                                                     enemy_hand[0],enemy_hand[1],
                                                     bet)          #Si les 2 ont split on appelle la fonction win associée
         else:
-            result = win_sym_split(player_hand[0], player_hand[1], enemy_hand,bet)    #Si un a splitté on appelle win_sym_split
+            result = win_sym_split(player_hand[0], player_hand[1], enemy_hand,bet)    #Si un a splitte on appelle win_sym_split
     elif enemy_bool_splitted:
-        result = win_sym_split(enemy_hand[0], enemy_hand[1], player_hand, bet)  #Si l'autre a splitté on appelle win_sym_split "a l'envers"
-        
+        result = - win_sym_split(enemy_hand[0], enemy_hand[1], player_hand, bet)  #Si l'autre a splitte on appelle win_sym_split "a l'envers"
+    else : 
+        result = win_sym(player_hand, enemy_hand, bet)
     return result, player_statesActions,bool_as_choice,bool_pair, enemy_state,position_as, enemy_statesActions,enemy_bool_as_choice, enemy_bool_pair, player_state, enemy_position_as
 
 
@@ -46,9 +48,9 @@ def compute_result(player_hand, bool_dobled, bool_splitted,
                                          enemy_hand[0],enemy_hand[1],
                                          bet)          #Si les 2 ont split on appelle la fonction win associée
         else:
-            result = win_sym_split(player_hand[0], player_hand[1], enemy_hand,bet)    #Si un a splitté on appelle win_sym_split
+            result = win_sym_split(player_hand[0], player_hand[1], enemy_hand,bet)    #Si un a splitte on appelle win_sym_split
     elif enemy_bool_splitted:
-        result = - win_sym_split(enemy_hand[0], enemy_hand[1], player_hand, bet)  #Si l'autre a splitté on appelle win_sym_split "a l'envers"
+        result = - win_sym_split(enemy_hand[0], enemy_hand[1], player_hand, bet)  #Si l'autre a splitte on appelle win_sym_split "a l'envers"
     else:
         result = win_sym(player_hand, enemy_hand, bet)
     return result
@@ -59,9 +61,9 @@ def compute_result(player_hand, bool_dobled, bool_splitted,
 ###Fonction englobant tout
 def symetricGame():
     bet = 1
-    card1, enemy_card1, enemy_card2 = initialise()        #On initialise les données communes aux 2 joueurs
-    player_hand, bool_dobled, bool_splitted = manche_sym(card1, enemy_card1)       #Manche de l'IA
-    enemy_hand, enemy_bool_dobled, enemy_bool_splitted = manche_sym(enemy_card1,enemy_card2) #Manche de l'adversaire
+    card1,enemy_card1, enemy_card2 = initialise()        #On initialise les donnees communes aux 2 joueurs
+    (player_statesActions,bool_as_choice,bool_pair, enemy_state,position_as,player_hand, bool_dobled, bool_splitted) = manche_sym(card1, enemy_card1)       #Manche de l'IA
+    (enemy_statesActions,enemy_bool_as_choice, enemy_bool_pair, player_state, enemy_position_as,enemy_hand, enemy_bool_dobled, enemy_bool_splitted) = manche_sym(enemy_card1,card1) #Manche de l'adversaire 
     return compute_result(player_hand, bool_dobled, bool_splitted,
                           enemy_hand, enemy_bool_dobled, enemy_bool_splitted,
                           bet)
@@ -189,11 +191,17 @@ def manche_sym(card1,card2,learning=True): #bet est la mise
         enemy_state = card2.get_valeur()
     
     player_hand = Main([card1])
-    
+    player_state=0
+    if (isAs(card1)):                 #Si c'est un as
+        player_state += 1
+        bool_as_choice = True
+        position_as = 1
+    else:
+        player_state += card1.get_valeur()
+        
     ##Tirage de la carte du joueur
     player_card = deck.piocher()            #2e carte
     player_hand.ajouter(player_card)
-    player_state = 0
     if (isAs(player_card)):                 #Si c'est un as
         player_state += 1
         bool_as_choice = True

@@ -43,8 +43,13 @@ def apprentissage2(n,bet):
     print("Epsilon final, alpha : ",epsilon,", ",alpha)
     
 def apprentissage3(n):
+    victoires = 0
+    defeats = 0
+    gain = 0
     for k in range(n):
         result, player_statesActions,bool_as_choice,bool_pair, enemy_state,position_as, enemy_statesActions,enemy_bool_as_choice, enemy_bool_pair, player_state, enemy_position_as = symetricLearning()
+        ###MAJ des stats : 
+        #pourcentage_victoire, gain = update_stats_gains(player_statesActions,result,enemy_state,player_state)
         ###MAJ de mypolicy
         #print("Main du joueur : ", player_hand)
         update_value3(player_statesActions,bool_as_choice,bool_pair, enemy_state-1,result,position_as)
@@ -52,7 +57,17 @@ def apprentissage3(n):
         #victoire=update_stats_gains(player_statesActions,result,enemy_state,player_state)
         ###Fin de la MAJ de mypolicy
         if(k%100000 == 0):
-            print("progres : ", (k/n)*100 ,"%")  
+            print("progres : ", (k/n)*100 ,"%")      
+        gain += result
+        if result > 0:
+            victoires += 1
+        elif result < 0 :
+            defeats +=1
+        if(k%100000 == 0):
+            print("Progrès : ", int((k/n)*100) ,"%")  
+    print("Pourcentage de victoires : ", int((victoires/n)*100000)/1000, "%")
+    print("Pourcentage de victoires de l'adversaire : ", int((defeats/n)*100000)/1000, "%")
+    print("Gain par euro investi : ", int((gain/n)*1000)/1000)
     
 
 def f(k):
@@ -67,8 +82,9 @@ def save_mypolicy(p1,p2,p3): #Le fichier sauvegarde est un vecteur comportant le
 #      Pour charger ecrire : policy_simple,policy_as,policy_pair = getPolicy()[0],getPolicy()[1],getPolicy()[2]
 
     policy = [p1,p2,p3]
-    file_handler = open("mypolicy_vsIA", "wb")
-    pickle.dump(policy,file_handler)
+    with open("mypolicy_IAvsIA_200M_v1", "wb") as file_handler:
+        pickle.dump(policy,file_handler)
+    
     
 
 def save_to_xlsx():
@@ -88,7 +104,7 @@ def save_to_xlsx():
     policy = getPolicy()[:]
 #########    
     i=1
-    for row in policy[0] :
+    for row in policy[0][0] :
         for k in range(len(row)):
             row[k] = row[k].index(max(row[k]))
         if (i==1):
@@ -103,7 +119,7 @@ def save_to_xlsx():
     ws.append([""]+["A,"+str(k) for k in range (2,11)])
     
     i=1
-    for row in policy[1] :
+    for row in policy[1][0] :
         for k in range(len(row)):
             row[k] = row[k].index(max(row[k]))
         if (i==1):
@@ -118,7 +134,7 @@ def save_to_xlsx():
     ws.append([""]+["A,A"]+[str(k)+","+str(k) for k in range (2,11)])
     
     i=1
-    for row in policy[2] :
+    for row in policy[2][0] :
         for k in range(len(row)):
             row[k] = row[k].index(max(row[k]))
         if (i==1):
@@ -243,7 +259,7 @@ def save_to_xlsx():
             cell.alignment=alignment
     
     # Save the file
-    wb.save("policy_vsIA.xlsx")
+    wb.save("mypolicy_IAvsIA_200M_v1.xlsx")
 
 
 
@@ -288,7 +304,7 @@ def graphe_vitesse_apprentissage(a_min=0, pas=2 * 10**5,a_max = 10**7, log=False
     plot(lx, ly)
     show()
 
-    
+ 
     
     
     

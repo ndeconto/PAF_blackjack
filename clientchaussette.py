@@ -81,7 +81,13 @@ class Client():
                               for i in range(2  * n + 1, len(data) - 1, 2)]
                         return (True, (l1, l2))
 
-
+		def server_up(self):
+        	try :
+        		self.connect_chaussette()
+        		self.disconnect_chaussette()
+        		return(True)
+        	except ConnectionRefusedError :
+        		return(False)
 
 def piocher_bloquant(client):
 
@@ -94,6 +100,6 @@ def piocher_bloquant(client):
         return c[1]
 
 
-if __name__ == "__main__":
-        c = Client(5000,"localhost")
-        print(c.has_drawn())
+        
+
+
