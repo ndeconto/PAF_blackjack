@@ -145,6 +145,13 @@ def makeBestDecision(state,enemystate):
             coeff = coeff[0:2]
         decision = coeff.index(max(coeff))
         return(decision)
+
+def bankDecision(state,enemystate):
+    player_state,bool_as,bool_can_split,bool_can_doble, compteur = state[0],state[1],state[2],state[3],state[4]
+    if player_state<17 :
+        return(HIT)
+    else :
+        return(STOP)
     
     
 print(makeBestDecision([11,False,False,True,0],3))
