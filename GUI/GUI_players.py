@@ -8,7 +8,6 @@ import Prise_De_Decision as pdd
 from time import clock, sleep
 
 from GUI_cards_img import *
-from GUI_arbitre_bj import Arbitre
 
 from serveurchaussette import IP_SERVEUR, PORT
 from clientchaussette import Client, piocher_bloquant
@@ -86,14 +85,15 @@ class Joueur(MainGraphique, Arbitrable):
         """
             pioche une carte dans la pioche et la rajoute dans la main
         """
+        
         if not self.a_splite:
             self.ajouter(self.pioche.piocher())
 
         else :
             
-            if self.jeu_1.playing: self.jeu_1.piocher()
+            if self.jeu_1.playing:
+                self.jeu_1.piocher()
             else:
-                
                 self.jeu_2.piocher()
 
 
@@ -265,7 +265,7 @@ class JoueurOrdi(Joueur):
 
     def find_opponent_card(self, other_comp):
         for c in other_comp:
-            if isinstance(c, Arbitre):
+            if c.id == "arbitre":
                 for j in c.liste_joueur:
                     if id(j) != id(self):
                         return j[1]
@@ -390,7 +390,9 @@ class JoueurOrdi(Joueur):
                                      can_split,
                                      can_double,
                                      compteur),
-                                     carte_adversaire.hauteur)
+                                     (carte_adversaire.get_valeur()
+                                     if carte_adversaire != AS else 1) - 1)
+                                    #ATTENTION au -1 pour le parametre enemystate 
         
         if decision == HIT:
             self.piocher()

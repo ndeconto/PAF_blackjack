@@ -123,7 +123,6 @@ def makeBestDecision(state,enemystate):
 
 
     print "make best decision", state, enemystate
-    if player_state < 14: return SPLIT
     
     ###Cas ou on a ni as soft ni paire
     if ( (bool_as == False and bool_can_split == False) or (bool_as == True and player_state > 11) ):
