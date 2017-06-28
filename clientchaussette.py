@@ -82,12 +82,12 @@ class Client():
                         return (True, (l1, l2))
 
 		def server_up(self):
-        	try :
-        		self.connect_chaussette()
-        		self.disconnect_chaussette()
-        		return(True)
-        	except ConnectionRefusedError :
-        		return(False)
+                        try :
+                                self.connect_chaussette()
+                                self.disconnect_chaussette()
+                                return(True)
+                        except ConnectionRefusedError :
+                                return(False)
 
 def piocher_bloquant(client):
 

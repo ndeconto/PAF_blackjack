@@ -77,8 +77,8 @@ class Serveur(Thread):
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.sock.bind((self.host, self.port))
             self.sock.listen(5)
-            (clientsock, address) = self.sock.accept()
-            instr_totale = clientsock.recv(1024).decode().split(';')
+            (self.clientsock, address) = self.sock.accept()
+            instr_totale = self.clientsock.recv(1024).decode().split(';')
             instr = instr_totale[0]
             print("received : "+instr+" from client")
             print instr_totale
@@ -87,7 +87,7 @@ class Serveur(Thread):
 
             
             if self.closing():
-                clientsock.send("close".encode())
+                self.clientsock.send("close".encode())
 
                 
             elif instr == 'draw':
@@ -103,13 +103,13 @@ class Serveur(Thread):
                     
                 self.has_client_drawn(c)
                 if self.client_has_drawn : 
-                    clientsock.send(('True;'+ self.client_card_drawn).encode())
+                    self.clientsock.send(('True;'+ self.client_card_drawn).encode())
                     self.client_has_drawn = False
-                else : clientsock.send('False'.encode())
+                else : self.clientsock.send('False'.encode())
 
                 
             elif instr == 'op_card' :
-                clientsock.send(self.opponent_showing_card.encode())
+                self.clientsock.send(self.opponent_showing_card.encode())
             elif instr == 'decision' :
                 self.client_wants_to_draw = (instr_totale[1]=='True')
                 self.client_mise = int(instr_totale[2])
@@ -119,7 +119,7 @@ class Serveur(Thread):
                 sp = str(self.pos_split) #info du split
                 main = ";".join( str(c.hauteur) + ';' + str(c.couleur)
                               for c in self.cartes_du_serveur[1:])
-                clientsock.send((sp + ";" + main).encode())
+                self.clientsock.send((sp + ";" + main).encode())
 
             elif instr == 'chg_jeu':
                 #on recoit la position du split
@@ -128,7 +128,7 @@ class Serveur(Thread):
             elif instr == 'stop':
                 self.fin_manche = True
             elif instr == "human_finished":
-                clientsock.send(str(self.human_finish).encode())
+                self.clientsock.send(str(self.human_finish).encode())
             else : print('unknown instruction')
             self.sock.close()
         print('server properly shut down')
@@ -148,6 +148,18 @@ class Serveur(Thread):
 
     def close_server(self):
         self.running = False
+        try:
+            #satan
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.connect((self.host,self.port))
+            s.close()
+            
+            self.sock.close()
+            self.clientsock.close()
+            self._stop()
+            print " ========   server closed ====== "
+        except Exception as e:
+            print e
 
 if __name__ == "__main__":
     s = Serveur(5000,"localhost", Deck())

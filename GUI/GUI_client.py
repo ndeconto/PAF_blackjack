@@ -66,6 +66,8 @@ def main():
     while jeu() != CLOSE_WINDOW:
         pass
 
+    pygame.quit()
+
 if __name__ == "__main__":
     main()
 
