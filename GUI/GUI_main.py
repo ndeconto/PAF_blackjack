@@ -197,6 +197,8 @@ def main():
         quit()
         return
 
+    serveur.close_server()
+    sleep(.2)
 
     if r == EXIT_GAME_LOOP:
         main()
