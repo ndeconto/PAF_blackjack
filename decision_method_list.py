@@ -120,6 +120,10 @@ def makeDecision3(state,enemystate):
 def makeBestDecision(state,enemystate):
     player_state,bool_as,bool_can_split,bool_can_doble, compteur = state[0],state[1],state[2],state[3],state[4]
     ####NE PAS OUBLIER D'AJOUTER BOOL_PAIR DANS LES DEUX VESTEURS STATE DE LA FX MANCHE()
+
+
+    print "make best decision", state, enemystate
+    if player_state < 14: return SPLIT
     
     ###Cas ou on a ni as soft ni paire
     if ( (bool_as == False and bool_can_split == False) or (bool_as == True and player_state > 11) ):

@@ -8,11 +8,12 @@ import Prise_De_Decision as pdd
 from time import clock, sleep
 
 from GUI_cards_img import *
+from GUI_arbitre_bj import Arbitre
 
 from serveurchaussette import IP_SERVEUR, PORT
 from clientchaussette import Client, piocher_bloquant
 
-from decision_method_list import STOP, HIT, DOUBLE, SPLIT
+from decision_method_list import makeBestDecision, bankDecision, STOP, HIT, DOUBLE, SPLIT
 
 
 class Arbitrable:
@@ -258,8 +259,18 @@ class JoueurOrdi(Joueur):
         self.derniere_action = clock()
 
         #
-        if fct_decision == None: self.fct_decision = pdd.decision_banque
+        if fct_decision == None: self.fct_decision = makeBestDecision
         else : self.fct_decision = fct_decision
+
+
+    def find_opponent_card(self, other_comp):
+        for c in other_comp:
+            if isinstance(c, Arbitre):
+                for j in c.liste_joueur:
+                    if id(j) != id(self):
+                        return j[1]
+                    
+        raise(RuntimeError("Impossible de trouver la carte de l'adversaire"))
 
     
 
@@ -290,11 +301,12 @@ class JoueurOrdi(Joueur):
             #ci dessous un exemple bidon juste pour tester
             #car de toute facon, pour l'instant, l'historique n'entre pas en compte
             #dans la decision
-            carte_adversaire = Carte(AS, PIQUE)
-            l_cartes_passees = [] #TODO il faudra peut etre un historique
+            carte_adversaire = self.find_opponent_card(other_components)
+            print ("opponent card", carte_adversaire)
+            compteur = 0 #TODO il faudra peut etre un historique
                                 # plus sophistique (peut on doubler / splitter ... )
         
-            self.jouer(carte_adversaire, l_cartes_passees)
+            self.jouer(carte_adversaire, compteur)
 
             self.derniere_action = clock()
 
@@ -365,7 +377,7 @@ class JoueurOrdi(Joueur):
         # de faire un thread pour ca
 
         if      not self.a_splite:  m = self
-        elif    self.playing_1:     m = self.jeu_1
+        elif    self.jeu_1.playing: m = self.jeu_1
         else:                       m = self.jeu_2
 
         
@@ -373,12 +385,12 @@ class JoueurOrdi(Joueur):
                       and len(self.contenu) == 2)
         can_split = (can_double and self.contenu[0] == self.contenu[1])
 
-        decision = self.fct_decision(m.get_m_valeur(),
+        decision = self.fct_decision((m.get_m_valeur(),
                                      m.is_soft(),
                                      can_split,
                                      can_double,
-                                     compteur,
-                                     carte_adversaire.get_valeur())
+                                     compteur),
+                                     carte_adversaire.hauteur)
         
         if decision == HIT:
             self.piocher()
@@ -414,7 +426,7 @@ class Banque(JoueurOrdi):
         ## ----------------------------------------------------------##
 
         JoueurOrdi.__init__(self, position, pioche, 0, identifier="banque",
-                            fct_decision=bank_decision)
+                            fct_decision=bankDecision)
 
         self.sleep_time_before_playing = 0.5 #second
         self.begin = -1
