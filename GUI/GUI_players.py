@@ -477,10 +477,33 @@ class JoueurDistant(Joueur):
         """
 
         if self.serveur_local == None:
+            
             split, r = self.client.end_turn_state()
+
+            print "reconstruire : ", r
+            
             if split :
-                # -------------------------   TODO ----------------------
-                pass
+                m_1 = r[0]
+                m_2 = r[1]
+                self.contenu[0] = m_1[0]
+                self.contenu[1] = m_2[0]
+                self.splitter()
+
+                
+
+                for c in m_1[1:]:
+                    self.jeu_1.ajouter(c)
+                for c in m_2[1:]:
+                    self.jeu_2.ajouter(c)
+
+            else :
+
+                self.a_splite = False
+
+                self.contenu = []
+                for c in r:
+                    self.ajouter(c) 
+             
         return
 
 
@@ -502,11 +525,8 @@ class JoueurDistant(Joueur):
             if self.client.human_is_finished():
 
                 sleep(.2)
-        
-                end = self.client.end_turn_state()
-                if end[0]: #si on a fini
-                    self.contenu = end[1:]
-                    self.sarreter()
+                self.reconstruire()
+                self.sarreter()
 
         
         elif self.serveur_local.fin_manche and not self.finish:
@@ -543,10 +563,10 @@ class ServeurManager(GUIComponent):
     def serveur_format(self, player):
 
         if player.a_splite:
-            return [len(player.jeu_1),
-                    player.jeu_1.contenu + player.jeu_2.contenu]
+            return ([len(player.jeu_1)] + player.jeu_1.contenu
+                    + player.jeu_2.contenu)
 
-        return [0] + [player.contenu]
+        return [0] + player.contenu
 
     
         

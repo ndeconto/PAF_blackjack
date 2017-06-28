@@ -210,17 +210,20 @@ class Arbitre(GUIComponent):
             main_0 = (j0 if not j0.a_splite else [j0.jeu_1, j0.jeu_2])
             main_1 = (j1 if not j1.a_splite else [j1.jeu_1, j1.jeu_2])
 
-            print main_0, main_1
-
             #du point de vue de j0   
             gain = compute_result(main_0, j0.a_double, j0.a_splite,
                                   main_1, j1.a_double, j1.a_splite,
                                   1)    #--- la mise est toujours unitaire --------
 
+            if not isinstance(main_0, list):
+                main_0 = [main_0]
+            if not isinstance(main_1, list):
+                main_1 = [main_1]
+
             if gain > 0:
-                return ([main_0], [main_1]) 
+                return (main_0, main_1) 
             elif gain < 0:
-                return ([main_1], [main_0])
+                return (main_1, main_0)
             else: #match nul
                 return None
                 
