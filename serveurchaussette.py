@@ -116,7 +116,7 @@ class Serveur(Thread):
                 self.client_has_split = (instr_totale[3]=='True')
                 
             elif instr == 'state': #quand le client demande le jeu de l'humain
-                sp = str(self.pos_split) #info du split
+                sp = str(self.cartes_du_serveur[0]) #info du split
                 main = ";".join( str(c.hauteur) + ';' + str(c.couleur)
                               for c in self.cartes_du_serveur[1:])
                 self.clientsock.send((sp + ";" + main).encode())

@@ -10,9 +10,16 @@ from GUI_arbitre_bj import *
 from GUI_slidemenu import slidemenu
 
 
+
+#la fonction de decision qui va etre utilisee pour jouer
+from decision_method_list import makeBestDecision
+
+
 from sys import path
 path.append('..')
 from clientchaussette import *
+
+from serveurchaussette import IP_SERVEUR, PORT
 
 
 def init_GUI():
@@ -39,8 +46,22 @@ def jeu():
     mise = Mise(1, (0, 0), 35, font_color=(219, 201, 101))
 
 
+    client_bidon = Client(PORT, IP_SERVEUR)
+    #attente d'avoir un serveur dispo
+    r = GUIComponentManager([ImageComponent(0, (0, 0), "img/wait_serveur.png"),
+                    WaitForTrueComponent(client_bidon.server_up, EXIT_GAME_LOOP)],
+                    5).run()
+
+    if r == CLOSE_WINDOW:
+        return r
+
+    sleep(1)
+
+
     joueur_1 = JoueurDistant(POS_J_GAUCHE)
-    joueur_2 = JoueurOrdi(POS_J_DROITE, None, mise, face_cachee=[])
+    joueur_2 = JoueurOrdi(POS_J_DROITE, None, mise,
+                          fct_decision=makeBestDecision,
+                          face_cachee=[])
 
     arbitre = Arbitre([joueur_2, joueur_1], JEU_SYMETRIQUE, mise)
     
@@ -49,8 +70,9 @@ def jeu():
     # ---------- on donne tous les composants a un manager ------------ #
     # le manager se debrouille avec tout ca et fait sa cuisine
 
-    #TODO rajouter un arbitre special
     liste_comp = [tapis, mise, joueur_1, joueur_2, pioche, arbitre]
+
+    
     
     game_manager = GUIComponentManager(liste_comp, 20)
 

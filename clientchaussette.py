@@ -67,6 +67,7 @@ class Client():
 
         def end_turn_state(self):                       #renvoie [True, carte1_adversaire, carte2_adversaire...] si la partie est finie, [False] sinon
                 data = self.get_data('state')
+                print "\n===============================\nSTATE : ", data
                 if data[0]=='0':        #si pas de split
                         l=[]
                         for i in range(len(data)):
@@ -81,13 +82,14 @@ class Client():
                               for i in range(2  * n + 1, len(data) - 1, 2)]
                         return (True, (l1, l2))
 
-		def server_up(self):
-                        try :
-                                self.connect_chaussette()
-                                self.disconnect_chaussette()
-                                return(True)
-                        except ConnectionRefusedError :
-                                return(False)
+        def server_up(self):
+                try :
+                        self.connect_chaussette()
+                        self.disconnect_chaussette()
+                        print "la chaussette repond"
+                        return(True)
+                except Exception :
+                        return(False)
 
 def piocher_bloquant(client):
 

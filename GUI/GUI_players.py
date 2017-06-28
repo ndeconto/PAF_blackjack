@@ -12,6 +12,8 @@ from GUI_cards_img import *
 from serveurchaussette import IP_SERVEUR, PORT
 from clientchaussette import Client, piocher_bloquant
 
+from decision_method_list import STOP, HIT, DOUBLE, SPLIT
+
 
 class Arbitrable:
 
@@ -371,16 +373,20 @@ class JoueurOrdi(Joueur):
                       and len(self.contenu) == 2)
         can_split = (can_double and self.contenu[0] == self.contenu[1])
 
-        decision = self.fct_decision(m, carte_adversaire, compteur, can_split,
-                                     can_double)
+        decision = self.fct_decision(m.get_m_valeur(),
+                                     m.is_soft(),
+                                     can_split,
+                                     can_double,
+                                     compteur,
+                                     carte_adversaire.get_valeur())
         
-        if decision == pdd.CONTINUER:
+        if decision == HIT:
             self.piocher()
-        elif decision == pdd.ARRETER:
+        elif decision == STOP:
             self.sarreter()
-        elif decision == pdd.SPLITTER:
+        elif decision == SPLIT:
             self.splitter()
-        elif decision == pdd.DOUBLER:
+        elif decision == DOUBLE:
             self.doubler()
         else:
             raise (ValueError("la decision " + str(decision)
@@ -408,7 +414,7 @@ class Banque(JoueurOrdi):
         ## ----------------------------------------------------------##
 
         JoueurOrdi.__init__(self, position, pioche, 0, identifier="banque",
-                            fct_decision=pdd.decision_banque)
+                            fct_decision=bank_decision)
 
         self.sleep_time_before_playing = 0.5 #second
         self.begin = -1
@@ -539,6 +545,7 @@ class JoueurDistant(Joueur):
 
                 sleep(.2)
                 self.reconstruire_distant()
+                self.sarreter()
                 self.sarreter()
 
         

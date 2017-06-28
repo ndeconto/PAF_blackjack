@@ -3,11 +3,14 @@ HIT = 1
 DOUBLE = 2
 SPLIT = 3
 
+"""
+cf dans load_object.py le fichier qui est load dans policy
+"""
+
 from random import *;
 from load_object import *
 
 ##########################################################################################################################
-actions = {"split":3,"double":2,"draw":1, "fold":0};        #Set d'actions disponibles
 enemystate = {0,1,2,3,4,5,6,7,8,9} # 0 = as, 1= deux .... 9 = 10 ou tete
 alpha = 1 - 0.0058;                 #Taux d'evaporation
 epsilon = 0.05;               #seuil de valeur minimal
