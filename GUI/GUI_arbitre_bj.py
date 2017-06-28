@@ -10,6 +10,8 @@ path.append('..')
 from prise_2_decision import win2, win_split
 from prise_3_decision import compute_result
 
+from compteur import add_to_total
+
 JEU_CLASSIQUE   =   0   #un joueur humain joue contre la banque
 IA_VS_BANQUE    =   1   #l'IA joue contre la banque (l'humain n'est que spectateur)
 JEU_SYMETRIQUE  =   2   #notre jeu special, avec les regles symetrisees
@@ -25,7 +27,7 @@ class Arbitre(GUIComponent):
         qui donne l'historique des cartes passees, ...
     """
 
-    def __init__(self, ordre_joueur, type_jeu, mise):
+    def __init__(self, ordre_joueur, type_jeu, mise, cote_serveur=True):
         """
             ordre joueur doit etre la liste des joueurs dans l'ordre
             dans lequel ils doivent jouer
@@ -45,6 +47,8 @@ class Arbitre(GUIComponent):
 
         self.type_jeu = type_jeu
         self.mise = mise
+
+        self.cote_serveur = cote_serveur
 
 
 
@@ -84,8 +88,18 @@ class Arbitre(GUIComponent):
             j.set_face_cachee([])
 
 
+        if self.cote_serveur:
+            add_to_total(G if self.type_jeu != JEU_SYMETRIQUE else -G)
 
-        pause = PauseComponent(K_RETURN, EXIT_GAME_LOOP)
+
+
+        if self.cote_serveur:
+            pause = PauseComponent(K_RETURN, EXIT_GAME_LOOP)
+        else:
+            G *= -1
+            t_0 = clock()
+            pause = WaitForTrueComponent(lambda : clock() - t_0 > 2, EXIT_GAME_LOOP)
+            
         gain_1 = TextComponent(2, (205, 145), ('+' if G>0 else '')+str(G), 45)
         gain_2 = TextComponent(2, (775, 145), ('+' if G<0 else '')+str(-G), 45)
 

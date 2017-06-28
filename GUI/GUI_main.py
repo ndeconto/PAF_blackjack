@@ -25,8 +25,8 @@ def init_GUI():
     pygame.font.init(); pygame.display.init()
     pygame.display.set_mode((1000, 712), HWSURFACE | DOUBLEBUF)
     pygame.display.set_caption("Men in Blackjack - Joueur Humain")
-
-    #TODO mettre une icone
+    
+    pygame.display.set_icon(pygame.image.load("img/icone.png"))
 
 
 def lauch_server(pioche):

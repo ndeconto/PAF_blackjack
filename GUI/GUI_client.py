@@ -68,7 +68,8 @@ def jeu():
                           fct_decision=makeBestDecision,
                           face_cachee=[])
 
-    arbitre = Arbitre([joueur_2, joueur_1], JEU_SYMETRIQUE, mise)
+    arbitre = Arbitre([joueur_2, joueur_1], JEU_SYMETRIQUE, mise,
+                      cote_serveur=False)
     
 
 

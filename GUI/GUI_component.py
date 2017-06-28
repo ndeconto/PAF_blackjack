@@ -369,13 +369,16 @@ class WaitForTrueComponent(GUIComponent):
 class TextComponent(GUIComponent):
 
     def __init__(self, display_level, position, texte, font_size,
-                 font_color=(255, 255, 255), background_color=(0, 0, 0)):
+                 font_color=(255, 255, 255), background_color=(0, 0, 0),
+                 enable_bg=False):
 
         self.texte = texte
         self.font = font.Font("font/321impact.ttf", font_size)
 
         self.background_color = background_color
         self.font_color = font_color
+
+        self.enable_bg = enable_bg
 
         self.render_txt()
         
@@ -393,7 +396,7 @@ class TextComponent(GUIComponent):
     def display(self):
 
         s = display.get_surface()
-        #s.blit(self.background, self.position)
+        if self.enable_bg: s.blit(self.background, self.position)
         self.render_txt()
         s.blit(self.txt, self.position)
 
