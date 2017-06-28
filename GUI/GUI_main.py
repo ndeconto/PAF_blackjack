@@ -81,7 +81,9 @@ def jeu(type_jeu):
     # ---------- creation des composants de la GUI -------- #
 
     
-    tapis = ImageComponent(0, (0, 0), "img/tapis_bj_new.png")
+    tapis = ImageComponent(0, (0, 0),
+                "img/tapis_bj_new.png" if type_jeu in [JEU_CLASSIQUE, IA_VS_BANQUE]
+                else "img/tapis_bj_vs_ordi.png")
 
     pioche = DeckGraphique((422, 330))
 
@@ -99,6 +101,7 @@ def jeu(type_jeu):
     elif type_jeu == JEU_SYMETRIQUE:
 
         joueur_1 = JoueurHumain(POS_J_GAUCHE, pioche, identifier="humain")
+        serveur.set_opponent_card(joueur_1.contenu[1])
         joueur_2 = JoueurDistant(POS_J_DROITE, serveur_local=serveur)
         
         
@@ -146,7 +149,7 @@ def jeu(type_jeu):
 
     if type_jeu == JEU_SYMETRIQUE:
         #s'assurer que arbitre.liste_joueur[0] est bien le joueur humain
-        liste_comp.append(ServeurManager(serveur, arbitre, 0))
+        liste_comp.append(ServeurManager(serveur,joueur_1))
     
     if type_jeu == JEU_CLASSIQUE or type_jeu == JEU_SYMETRIQUE:
         liste_comp += [bouton_piocher, bouton_stop, bouton_split, bouton_double]

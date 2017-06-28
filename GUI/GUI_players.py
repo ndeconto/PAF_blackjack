@@ -310,7 +310,13 @@ class JoueurOrdi(Joueur):
             c = self.client.has_drawn()
             
             if c[0]:
-                Joueur.piocher(c[1]) 
+                if self.a_splite:
+                    if self.jeu_1.playing:
+                        self.jeu_1.ajouter(c[1])
+                    else:
+                        self.jeu_2.ajouter(c[1])
+                else:
+                    self.ajouter(c[1])
                 self.pioche_valide = True
                 
             else:
@@ -505,7 +511,7 @@ class JoueurDistant(Joueur):
         
         elif self.serveur_local.fin_manche and not self.finish:
             self.sarreter()
-            print "j'ai fini ! "
+            print ("JoueurDistant : j'ai fini ! ")
 
         return r
             
@@ -517,36 +523,30 @@ class ServeurManager(GUIComponent):
         avec les vraies donneees
     """
 
-    def __init__(self, serveur, arbitre, i=0):
+    def __init__(self, serveur, player):
 
         GUIComponent.__init__(self, 0, (0, 0), (0, 0), [], [])
 
         self.serveur = serveur
-
-        self.arbitre = arbitre
-        self.i = i
-
-        self.serveur.set_opponent_card(self.arbitre.liste_joueur[i].contenu[1])
+        self.player = player  
 
 
     def update(self, other_comp):
 
-        j = self.arbitre.liste_joueur[self.i]
-
-        self.serveur.human_finish = k.finished
-        self.serveur.cartes_du_serveur = self.serveur_format(j)
+        self.serveur.human_finish = self.player.finish
+        self.serveur.cartes_du_serveur = self.serveur_format(self.player)
 
 
         return [self]
 
 
-    def serveur_format(player):
+    def serveur_format(self, player):
 
-        if isinstance(player, JoueurSplitte) or player.a_splite:
+        if player.a_splite:
             return [len(player.jeu_1),
                     player.jeu_1.contenu + player.jeu_2.contenu]
 
-        return [0, player.contenu]
+        return [0] + [player.contenu]
 
     
         

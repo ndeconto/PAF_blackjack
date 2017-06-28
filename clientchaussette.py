@@ -61,6 +61,7 @@ class Client():
 
         def end_turn_state(self):                       #renvoie [True, carte1_adversaire, carte2_adversaire...] si la partie est finie, [False] sinon
                 data = self.get_data('state')
+                print data
                 if data[0]=='0':        #si pas de split
                         l=[True]
                         for i in range(len(data)):

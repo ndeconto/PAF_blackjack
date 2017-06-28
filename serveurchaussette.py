@@ -12,7 +12,7 @@ class Serveur(Thread):
     def __init__(self, myport, myaddress, pioche):
         print "serveur init"
         Thread.__init__(self)
-        self._stop_event = Event()
+        self.running = True
         self.host = myaddress
         self.port = myport
 
@@ -34,16 +34,13 @@ class Serveur(Thread):
         self.human_finish = False
         
        
-        try :
-            self.start()
-        except self._stop_event.is_set():
-            self._stop()
+        self.start()
     
     def closing(self):
-        return self._stop_event.is_set()
+        return not self.running
 
     def run(self):
-        while not self.closing():
+        while self.running:
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.sock.bind((self.host, self.port))
             self.sock.listen(5)
@@ -77,9 +74,9 @@ class Serveur(Thread):
                 self.client_has_split = (instr_totale[3]=='True')
                 
             elif instr == 'state': #quand le client demande le jeu de l'humain
-                sp = str(self.cartes_serveur[0]) #info du split
-                main = ";".join( str(card.hauteur) + ';' + str(card.couleur)
-                              for c in self.cartes_serveur[1:])
+                sp = str(self.cartes_du_serveur[0]) #info du split
+                main = ";".join( str(c.hauteur) + ';' + str(c.couleur)
+                              for c in self.cartes_du_serveur[1:])
                 clientsock.send((sp + ";" + main).encode())
                 
             elif instr == 'stop':
@@ -104,7 +101,7 @@ class Serveur(Thread):
         self.main+=';'+str(card.hauteur)+';'+str(card.couleur)
 
     def close_server(self):
-        self._stop_event.set()
+        self.running = False
 
 if __name__ == "__main__":
     s = Serveur(5000,"localhost", Deck())

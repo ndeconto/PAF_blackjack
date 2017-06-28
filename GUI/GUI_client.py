@@ -32,7 +32,7 @@ def jeu():
     # ---------- creation des composants de la GUI -------- #
 
     
-    tapis = ImageComponent(0, (0, 0), "img/tapis_bj_new.png")
+    tapis = ImageComponent(0, (0, 0), "img/tapis_bj_vs_ordi.png")
 
     pioche = DeckGraphique((422, 330)) #juste pour decorer
 

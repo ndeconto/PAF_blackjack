@@ -103,6 +103,8 @@ class Arbitre(GUIComponent):
 
         for gagnant in l_gagnant :
 
+            print "gagnant", gagnant, type(gagnant)
+
             tx, ty = gagnant.background.get_size()
 
             contour_g = Surface((tx + e_bord, ty + e_bord), SRCALPHA, 32)
@@ -118,6 +120,9 @@ class Arbitre(GUIComponent):
             
 
         for perdant in l_perdant:
+
+            print "perdant", perdant, type(perdant)
+            
             tx, ty = perdant.background.get_size()
             contour_p = Surface((tx + e_bord, ty + e_bord), SRCALPHA, 32)
             contour_p.fill(Color(255, 40, 50, 255))
@@ -151,6 +156,7 @@ class Arbitre(GUIComponent):
             if len(l_split) == 0:
 
                 #NB : joueur 2 a l'avantage de l'asymetrie (c'est la banque)
+                print len(self.liste_joueur[0]), len(self.liste_joueur[1])
                 r = win2(self.liste_joueur[0], self.liste_joueur[1],
                          self.mise.get_value())
 
@@ -229,6 +235,9 @@ class Arbitre(GUIComponent):
         r = GUIComponent.update(self, other_components)
 
         tout_le_monde_a_fini = True
+
+        if self.jeu_fini:
+            return r
 
         
         for i, j in enumerate(self.liste_joueur):
