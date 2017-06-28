@@ -70,8 +70,9 @@ def save_mypolicy(p1,p2,p3): #Le fichier sauvegarde est un vecteur comportant le
 #      Pour charger ecrire : policy_simple,policy_as,policy_pair = getPolicy()[0],getPolicy()[1],getPolicy()[2]
 
     policy = [p1,p2,p3]
-    file_handler = open("mypolicy_vsBank", "wb")
-    pickle.dump(policy,file_handler)
+    with open("mypolicy_vsBank", "wb") as file_handler:
+        pickle.dump(policy,file_handler)
+    
     
 
 def save_to_xlsx():
