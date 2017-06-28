@@ -55,9 +55,7 @@ def apprentissage3(n):
         update_value3(player_statesActions,bool_as_choice,bool_pair, enemy_state-1,result,position_as)
         update_value3(enemy_statesActions,enemy_bool_as_choice,enemy_bool_pair, player_state-1, - result,enemy_position_as)
         #victoire=update_stats_gains(player_statesActions,result,enemy_state,player_state)
-        ###Fin de la MAJ de mypolicy
-        if(k%100000 == 0):
-            print("progres : ", (k/n)*100 ,"%")      
+        ###Fin de la MAJ de mypolicy     
         gain += result
         if result > 0:
             victoires += 1
@@ -82,9 +80,8 @@ def save_mypolicy(p1,p2,p3): #Le fichier sauvegarde est un vecteur comportant le
 #      Pour charger ecrire : policy_simple,policy_as,policy_pair = getPolicy()[0],getPolicy()[1],getPolicy()[2]
 
     policy = [p1,p2,p3]
-    with open("mypolicy_IAvsIA_200M_v1", "wb") as file_handler:
+    with open("mypolicy_IAvsIA_100M_v3", "wb") as file_handler:
         pickle.dump(policy,file_handler)
-    
     
 
 def save_to_xlsx():
@@ -259,8 +256,7 @@ def save_to_xlsx():
             cell.alignment=alignment
     
     # Save the file
-    wb.save("mypolicy_IAvsIA_200M_v1.xlsx")
-
+    wb.save("mypolicy_IAvsIA_100M_v4.xlsx")
 
 
 def presenter_resultats(mypolicy):

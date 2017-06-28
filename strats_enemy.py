@@ -12,14 +12,13 @@ def isAs(carte):
 ###Strategie de l'IA --> pour qu'elle joue contre elle-même
 def bank_manche_sym(deck,card1,card2):
     bank_state = 0
-    bank_card = deck.piocher()
-    bank_hand = Main([bank_card])
+    bank_hand = Main([card1])
     bool_bank_at_11 = False
-    if (isAs(bank_card) == True):       #Si c'est un as
+    if (isAs(card1) == True):       #Si c'est un as
         bank_state = 11
         bool_bank_at_11 = True
     else:
-        bank_state = bank_card.get_valeur()
+        bank_state = card1.get_valeur()
     ########A la banque de jouer###########
     bank_decision = 1
     while bank_decision == 1:

@@ -116,6 +116,7 @@ class Main:
 
         #valeur optimale de la main
         self.valeur = 0
+        self.soft = False
         self.calcul_valeur()
 
     def get_card_at(self,indice):
@@ -153,11 +154,18 @@ class Main:
             else: 
             	v += 1
             	b = True
-        if (v<12 and b) : v+=10
+        if (v<12 and b) :
+            self.soft = True
+            v+=10
+        else :
+            self.soft = False
         self.valeur = v
 
     def get_m_valeur(self):
     	return self.valeur
+
+    def is_soft(self):
+        return(self.soft)
 
     def __str__(self):
         return "[" + "; ".join(map(str, self.contenu)) + "]"
