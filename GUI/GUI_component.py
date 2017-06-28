@@ -366,6 +366,43 @@ class WaitForTrueComponent(GUIComponent):
 
 
 
+class TextComponent(GUIComponent):
+
+    def __init__(self, display_level, position, texte, font_size,
+                 font_color=(255, 255, 255), background_color=(0, 0, 0)):
+
+        self.texte = texte
+        self.font = font.Font("font/321impact.ttf", font_size)
+
+        self.background_color = background_color
+        self.font_color = font_color
+
+        self.render_txt()
+        
+        bg = Surface(self.txt.get_size())
+        bg.fill(self.background_color)
+        
+
+        GUIComponent.__init__(self, display_level, position, bg.get_size(),
+                              [], [], background=bg)
+
+
+    def render_txt(self):
+        self.txt = self.font.render(self.texte , 1, self.font_color)
+
+    def display(self):
+
+        s = display.get_surface()
+        #s.blit(self.background, self.position)
+        self.render_txt()
+        s.blit(self.txt, self.position)
+
+        return Rect(self.position, self.size)
+
+    
+
+        
+
 class Mise(GUIComponent):
     """
         objet graphique de la mise
@@ -396,6 +433,7 @@ class Mise(GUIComponent):
         bg.fill(self.background_color)
         GUIComponent.__init__(self, self.DISPLAY_LEVEL, position, bg.get_size(),
                               [], [], background=bg)
+
 
     def render_txt(self):
         self.txt = self.font.render("Mise : " + str(self.x), 1, self.font_color)

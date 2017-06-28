@@ -55,7 +55,7 @@ class Arbitre(GUIComponent):
         
 
 
-    def terminer_partie(self, couple_gagnant_perdant, other_components):
+    def terminer_partie(self, couple_gagnant_perdant, G, other_components):
         """
             tue tous les autres composants, ie fait le menage,
             et termine la partie
@@ -86,6 +86,8 @@ class Arbitre(GUIComponent):
 
 
         pause = PauseComponent(K_RETURN, EXIT_GAME_LOOP)
+        gain_1 = TextComponent(2, (205, 145), ('+' if G>0 else '')+str(G), 45)
+        gain_2 = TextComponent(2, (775, 145), ('+' if G<0 else '')+str(-G), 45)
 
 
         if couple_gagnant_perdant == None:
@@ -97,7 +99,7 @@ class Arbitre(GUIComponent):
         e_bord = 10
         vide = Surface((0, 0), SRCALPHA, 32)
 
-        comp_finaux = [self, pause]
+        comp_finaux = [self, pause, gain_1, gain_2]
 
         
 
@@ -179,24 +181,25 @@ class Arbitre(GUIComponent):
 
             lg = []
             lp = []
+                               
 
             for j1 in lj_1:
                 for j2 in lj_2:
 
-                    r = win2(j1, j2, 1)
+                    r2 = win2(j1, j2, 1)
 
-                    if r > 0:
+                    if r2 > 0:
                         lg.append(j1)
                         lp.append(j2)
 
-                    elif r < 0:
+                    elif r2 < 0:
                         lg.append(j2)
                         lp.append(j1)
 
             if draw:
-                return None
+                return None, 0
 
-            return (lg, lp)
+            return (lg, lp), r
                 
 
         elif self.type_jeu == JEU_SYMETRIQUE:
@@ -221,11 +224,11 @@ class Arbitre(GUIComponent):
                 main_1 = [main_1]
 
             if gain > 0:
-                return (main_0, main_1) 
+                return (main_0, main_1), gain
             elif gain < 0:
-                return (main_1, main_0)
+                return (main_1, main_0), gain
             else: #match nul
-                return None
+                return None, gain
                 
 
         else:
@@ -264,16 +267,11 @@ class Arbitre(GUIComponent):
                 # ----------- NB : ne marche qu'avec deux joueurs ! -----------
 
                 self.liste_joueur[-1].sarreter()
-                #return self.terminer_partie(([self.liste_joueur[1 - i]], [j]),
-                #                                other_components)
-
-
-            
 
 
         if tout_le_monde_a_fini:
-            return self.terminer_partie(self.trouver_gagnant(),
-                                 other_components)
+            g_p, gain = self.trouver_gagnant()
+            return self.terminer_partie(g_p, gain, other_components)
 
 
                 
