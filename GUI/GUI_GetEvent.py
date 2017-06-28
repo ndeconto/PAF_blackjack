@@ -1,4 +1,5 @@
-from pygame import time,event,MOUSEBUTTONDOWN,MOUSEBUTTONUP,NOEVENT
+import pygame
+from pygame import time,event,MOUSEBUTTONDOWN,MOUSEBUTTONUP,NOEVENT, QUIT
 
 
 ### writen by josmiley ####
@@ -38,4 +39,8 @@ def _foo(e):
             else:
                 _Clic[e.button]+=1
             e.dict.update({'click':_Clic})
+
+        elif e.type == QUIT:
+            pygame.quit() #attention c'est sale !
+            
         
