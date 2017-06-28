@@ -1,6 +1,10 @@
 import pygame#, pygame._view
 from pygame.locals import *
 
+
+import sys
+sys.path.append('..')
+
 from GUI_component_manager import *
 from GUI_component import *
 from GUI_cards_img import*
@@ -27,6 +31,7 @@ def init_GUI():
     pygame.font.init(); pygame.display.init()
     pygame.display.set_mode((1000, 712), HWSURFACE | DOUBLEBUF)
     pygame.display.set_caption("Men in Blackjack - Ordinateur")
+    pygame.display.set_icon(pygame.image.load("img/icone.png"))
 
     #TODO mettre une icone
 

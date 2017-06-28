@@ -7,6 +7,8 @@ SPLIT = 3
 cf dans load_object.py le fichier qui est load dans policy
 """
 
+POLICY_FILE = "policy_a_utilise_python2"
+
 from random import *;
 from load_object import *
 
@@ -39,7 +41,7 @@ policy_pair = [[[[0.0]*4 for i in range(10)] for j in range(len(enemystate))]for
   
 def initialize_policy():
     global policy_as,policy_pair,policy_simple
-    p_simple,p_as,p_pair = getPolicy()[0],getPolicy()[1],getPolicy()[2]
+    p_simple,p_as,p_pair = getPolicy(POLICY_FILE)
 
     for k in range (len(p_as[0])):
         for i in range(len(p_as[0][0])):
