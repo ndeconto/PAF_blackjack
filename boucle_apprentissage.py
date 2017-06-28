@@ -82,7 +82,7 @@ def save_mypolicy(p1,p2,p3): #Le fichier sauvegarde est un vecteur comportant le
 #      Pour charger ecrire : policy_simple,policy_as,policy_pair = getPolicy()[0],getPolicy()[1],getPolicy()[2]
 
     policy = [p1,p2,p3]
-    with open("mypolicy_IAvsIA_50M_v2", "wb") as file_handler:
+    with open("mypolicy_IAvsIA_200M_v1", "wb") as file_handler:
         pickle.dump(policy,file_handler)
     
     
@@ -259,7 +259,7 @@ def save_to_xlsx():
             cell.alignment=alignment
     
     # Save the file
-    wb.save("mypolicy_IAvsIA_100M_v2.xlsx")
+    wb.save("mypolicy_IAvsIA_200M_v1.xlsx")
 
 
 
