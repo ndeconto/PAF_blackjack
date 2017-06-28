@@ -18,7 +18,7 @@ def symetricLearning():
     result = 0
     card1, enemy_card1, enemy_card2 = initialise()        #On initialise les données communes aux 2 joueurs
     (player_statesActions,bool_as_choice,bool_pair, enemy_state,position_as,player_hand, bool_dobled, bool_splitted) = manche_sym(card1, enemy_card1)       #Manche de l'IA
-    (enemy_statesActions,enemy_bool_as_choice, enemy_bool_pair, player_state, enemy_position_as,enemy_hand, enemy_bool_dobled, enemy_bool_splitted) = bank_manche_sym(deck, enemy_card1,card1) #Manche de l'adversaire          
+    (enemy_statesActions,enemy_bool_as_choice, enemy_bool_pair, player_state, enemy_position_as,enemy_hand, enemy_bool_dobled, enemy_bool_splitted) = manche_sym( enemy_card1,card1) #Manche de l'adversaire          
 ###Appel des foncrions win                
     if bool_dobled: bet*=2
     if enemy_bool_dobled: bet*=2                #On double la mise du joueur qu'il double
