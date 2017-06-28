@@ -53,8 +53,8 @@ def apprentissage3(n):
         #pourcentage_victoire, gain = update_stats_gains(player_statesActions,result,enemy_state,player_state)
         ###MAJ de mypolicy
         #print("Main du joueur : ", player_hand)
-        update_value3(player_statesActions,bool_as_choice,bool_pair, enemy_state-1,result,position_as)
-        update_value3(enemy_statesActions,enemy_bool_as_choice,enemy_bool_pair, player_state-1, - result,enemy_position_as)
+        #update_value3(player_statesActions,bool_as_choice,bool_pair, enemy_state-1,result,position_as)
+        #update_value3(enemy_statesActions,enemy_bool_as_choice,enemy_bool_pair, player_state-1, - result,enemy_position_as)
         #victoire=update_stats_gains(player_statesActions,result,enemy_state,player_state)
         ###Fin de la MAJ de mypolicy
         if(k%100000 == 0):
@@ -261,7 +261,7 @@ def save_to_xlsx():
     # Save the file
     wb.save("mypolicy_IAvsIA_50M_v2.xlsx")
 
-
+"""
 
 def presenter_resultats(mypolicy):
     matrice_simple = mypolicy[0]
@@ -304,7 +304,7 @@ def graphe_vitesse_apprentissage(a_min=0, pas=2 * 10**5,a_max = 10**7, log=False
     plot(lx, ly)
     show()
 
-"""    
+    
     
     
     
