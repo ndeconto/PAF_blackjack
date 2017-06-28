@@ -11,6 +11,8 @@ from GUI_slidemenu import slidemenu
 
 from serveurchaussette import *
 
+import traceback
+
 
 BOUTON_PIOCHE   = 0
 BOUTON_STOP     = 1
@@ -22,7 +24,7 @@ def init_GUI():
     
     pygame.font.init(); pygame.display.init()
     pygame.display.set_mode((1000, 712), HWSURFACE | DOUBLEBUF)
-    pygame.display.set_caption("Blackjack")
+    pygame.display.set_caption("Men in Blackjack - Joueur Humain")
 
     #TODO mettre une icone
 
@@ -149,6 +151,13 @@ def jeu(type_jeu):
 
     if type_jeu == JEU_SYMETRIQUE:
         #s'assurer que arbitre.liste_joueur[0] est bien le joueur humain
+        r = GUIComponentManager([ImageComponent(0, (0, 0), "img/wait_client.png"),
+                    WaitForTrueComponent(lambda: serveur.a_un_client, EXIT_GAME_LOOP)],
+                    5).run()
+
+        if r == CLOSE_WINDOW:
+            return r
+                     
         liste_comp.append(ServeurManager(serveur,joueur_1))
     
     if type_jeu == JEU_CLASSIQUE or type_jeu == JEU_SYMETRIQUE:
@@ -198,7 +207,18 @@ def main():
 
 
 if __name__ == "__main__" :
-    main()
+    try :
+        main()
+        serveur.close_server()
+
+    except Exception as e:
+        
+        print (traceback.format_exc())
+
+        raise (e)
+
+    finally:
+        serveur.close_server()
 
 
 

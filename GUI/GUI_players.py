@@ -452,13 +452,9 @@ class JoueurDistant(Joueur):
             #attention, ceci est bloquant tant que le client n'a rien demande
             #TODO :s'arranger pour que le serveur ait un "buffer" qui ne bloque
             #pas l'execution
-            while 1:
-                try:
-                    print "donnees en local", serveur_local.cartes_donnees
-                    c1, c2 = serveur_local.cartes_donnees[:2]
-                    break
-                except ValueError as e:
-                    sleep(.5)
+
+            c1 = serveur_local.demander_carte_donne()
+            c2 = serveur_local.demander_carte_donne()
                     
 
         Joueur.__init__(self, position, None, VERTICAL, None,
@@ -467,42 +463,54 @@ class JoueurDistant(Joueur):
         self.last_refresh = clock()
 
         self.doit_piocher = 0
+        self.pos_split_sent = False
 
 
-    def reconstruire(self):
+    def reconstruire_distant(self):
         """
             methode a appeler pour reconstuire le joueur a partir de ce qui a
             ete fait a l'autre bout
 
         """
-
-        if self.serveur_local == None:
             
-            split, r = self.client.end_turn_state()
+        split, r = self.client.end_turn_state()
+        self.reconstruire(split, r)
 
-            print "reconstruire : ", r
+
+    def reconstruire_local(self):
+        #ne doit etre appele que si self.serveur_local != None
+        #cf reconstruire distant sinon !
+        
+        self.reconstruire(self.serveur_local.pos_split,
+                          self.serveur_local.get_info_reconstruction())
+
+
+    def reconstruire(self, split, r):
+
+        print ("reconstruire : ", split, r)
             
-            if split :
-                m_1 = r[0]
-                m_2 = r[1]
-                self.contenu[0] = m_1[0]
-                self.contenu[1] = m_2[0]
-                self.splitter()
+        if split :
+            m_1 = r[0]
+            m_2 = r[1]
+            self.contenu[0] = m_1[0]
+            self.contenu[1] = m_2[0]
+            self.splitter()
 
-                
+            
 
-                for c in m_1[1:]:
-                    self.jeu_1.ajouter(c)
-                for c in m_2[1:]:
-                    self.jeu_2.ajouter(c)
+            for c in m_1[1:]:
+                self.jeu_1.ajouter(c)
+            for c in m_2[1:]:
+                self.jeu_2.ajouter(c)
 
-            else :
+        else :
 
-                self.a_splite = False
+            self.a_splite = False
 
-                self.contenu = []
-                for c in r:
-                    self.ajouter(c) 
+            self.contenu = []
+            for c in r:
+                print c
+                self.ajouter(c) 
              
         return
 
@@ -510,6 +518,11 @@ class JoueurDistant(Joueur):
     def update(self, other_comp):
 
         r = Joueur.update(self, other_comp)
+
+
+        if self.a_splite and not self.jeu_1.playing and not self.pos_split_sent:
+            self.client.send_split_position(len(self))
+            self.pos_split_sent = True
 
         #if self.doit_piocher > 0:
         #    self.piocher()
@@ -525,13 +538,16 @@ class JoueurDistant(Joueur):
             if self.client.human_is_finished():
 
                 sleep(.2)
-                self.reconstruire()
+                self.reconstruire_distant()
                 self.sarreter()
 
         
         elif self.serveur_local.fin_manche and not self.finish:
-            self.sarreter()
-            print ("JoueurDistant : j'ai fini ! ")
+
+            if self.serveur_local.human_finish:
+                self.reconstruire_local()
+                self.sarreter()
+                print ("JoueurDistant : j'ai fini ! ")
 
         return r
             
@@ -566,7 +582,7 @@ class ServeurManager(GUIComponent):
             return ([len(player.jeu_1)] + player.jeu_1.contenu
                     + player.jeu_2.contenu)
 
-        return [0] + player.contenu
+        return [0] +  player.contenu
 
     
         

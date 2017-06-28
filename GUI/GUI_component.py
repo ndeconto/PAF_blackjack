@@ -346,6 +346,25 @@ class PauseComponent(GUIComponent):
         return CONTINUE
 
 
+class WaitForTrueComponent(GUIComponent):
+    """
+        like PauseComponent but the signal is sent when the function returns
+        True
+    """
+    
+    def __init__(self, function, signal):
+        GUIComponent.__init__(self, 0, (0, 0), (0, 0), [], [])
+        self.signal = signal
+        self.f = function
+
+    def manage_event(self, ev_list):
+
+        if self.f():
+            return self.signal
+
+        return CONTINUE
+
+
 
 class Mise(GUIComponent):
     """

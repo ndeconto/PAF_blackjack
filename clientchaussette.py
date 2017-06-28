@@ -54,6 +54,12 @@ class Client():
                 print ("stop envoye")
                 self.disconnect_chaussette()
 
+        def send_split_position(self, split_pos):
+                self.connect_chaussette()
+                self.s.send(('chg_jeu;' + str(split_pos)).encode())
+                print ('chg_jeu;' + str(split_pos) + " envoye")
+                self.disconnect_chaussette()
+
         def human_is_finished(self):
                 data = self.get_data('human_finished')
                 if data[0] == "True": return True

@@ -19,7 +19,7 @@ def init_GUI():
     
     pygame.font.init(); pygame.display.init()
     pygame.display.set_mode((1000, 712), HWSURFACE | DOUBLEBUF)
-    pygame.display.set_caption("Blackjack")
+    pygame.display.set_caption("Men in Blackjack - Ordinateur")
 
     #TODO mettre une icone
 
@@ -63,7 +63,8 @@ def main():
     init_GUI()
     init_lib_cartes()
 
-    jeu()
+    while jeu() != CLOSE_WINDOW:
+        pass
 
 if __name__ == "__main__":
     main()

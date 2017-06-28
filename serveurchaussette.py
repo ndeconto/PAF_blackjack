@@ -29,15 +29,48 @@ class Serveur(Thread):
         self.main = 'True'
 
         self.cartes_donnees = []    #cartes pour l'ordi
+        self.index_buffer_local = 0
+        self.index_buffer_distant = 0
+        
         self.cartes_du_serveur = [] #cartes de l'humain
+        self.pos_split = 0 #info sur le split du joueur cote serveur
 
         self.human_finish = False
+
+        self.a_un_client = False
         
        
         self.start()
     
     def closing(self):
         return not self.running
+
+
+    def demander_carte_donne(self):
+
+        #methode appelee en local uniquement
+
+        if self.index_buffer_local < len(self.cartes_donnees):
+            c = self.cartes_donnees[self.index_buffer_local]
+
+        else :
+            c = self.pioche.piocher()
+            self.cartes_donnees.append(c)
+
+        self.index_buffer_local += 1
+        return c
+
+
+    def get_info_reconstruction(self):
+        #renvoie les cartes donnees au meme format que end_turn_state de
+        #clientchaussette, avec le split en moins
+        if self.pos_split == 0:
+            return self.cartes_donnees
+        a, b = (self.cartes_donnees[:self.pos_split],
+                self.cartes_donnees[self.pos_split:])
+        b = [a.pop(1)] + b
+        return ()
+        
 
     def run(self):
         while self.running:
@@ -50,15 +83,24 @@ class Serveur(Thread):
             print("received : "+instr+" from client")
             print instr_totale
 
+            self.a_un_client = True
+
             
             if self.closing():
                 clientsock.send("close".encode())
-            elif instr == 'draw':
+
                 
+            elif instr == 'draw':
                 #le client a toujours le droit de piocher !
                 #le serveur ne pioche jamais
-                c = self.pioche.piocher()
-                self.cartes_donnees.append(c)
+                if self.index_buffer_distant < len(self.cartes_donnees):
+                    c = self.cartes_donnees[self.index_buffer_distant]
+                else :
+                    c = self.pioche.piocher()
+                    self.cartes_donnees.append(c)
+
+                self.index_buffer_distant += 1
+                    
                 self.has_client_drawn(c)
                 if self.client_has_drawn : 
                     clientsock.send(('True;'+ self.client_card_drawn).encode())
@@ -74,10 +116,14 @@ class Serveur(Thread):
                 self.client_has_split = (instr_totale[3]=='True')
                 
             elif instr == 'state': #quand le client demande le jeu de l'humain
-                sp = str(self.cartes_du_serveur[0]) #info du split
+                sp = str(self.pos_split) #info du split
                 main = ";".join( str(c.hauteur) + ';' + str(c.couleur)
                               for c in self.cartes_du_serveur[1:])
                 clientsock.send((sp + ";" + main).encode())
+
+            elif instr == 'chg_jeu':
+                #on recoit la position du split
+                self.pos_split = int(instr_totale[1])
                 
             elif instr == 'stop':
                 self.fin_manche = True
