@@ -49,7 +49,7 @@ def apprentissage3(n):
         ###MAJ de mypolicy
         #print("Main du joueur : ", player_hand)
         update_value3(player_statesActions,bool_as_choice,bool_pair, enemy_state-1,result,position_as)
-        update_value3(enemy_statesActions,enemy_bool_as_choice,enemy_bool_pair, player_state-1, - result,enemy_position_as)
+        #update_value3(enemy_statesActions,enemy_bool_as_choice,enemy_bool_pair, player_state-1, - result,enemy_position_as)
         #victoire=update_stats_gains(player_statesActions,result,enemy_state,player_state)
         ###Fin de la MAJ de mypolicy
         if(k%100000 == 0):
@@ -88,7 +88,7 @@ def save_to_xlsx():
     policy = getPolicy()[:]
 #########    
     i=1
-    for row in policy[0] :
+    for row in policy[0][0] :
         for k in range(len(row)):
             row[k] = row[k].index(max(row[k]))
         if (i==1):
@@ -103,7 +103,7 @@ def save_to_xlsx():
     ws.append([""]+["A,"+str(k) for k in range (2,11)])
     
     i=1
-    for row in policy[1] :
+    for row in policy[1][0] :
         for k in range(len(row)):
             row[k] = row[k].index(max(row[k]))
         if (i==1):
@@ -118,7 +118,7 @@ def save_to_xlsx():
     ws.append([""]+["A,A"]+[str(k)+","+str(k) for k in range (2,11)])
     
     i=1
-    for row in policy[2] :
+    for row in policy[2][0] :
         for k in range(len(row)):
             row[k] = row[k].index(max(row[k]))
         if (i==1):
