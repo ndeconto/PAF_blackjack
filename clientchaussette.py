@@ -50,5 +50,12 @@ class Client():
                         return l
                 else : return[False]
 
-c = Client(5000,"137.194.57.193")
-print(c.has_drawn())
+        def server_up(self):
+        	try :
+        		self.connect_chaussette()
+        		self.disconnect_chaussette()
+        		return(True)
+        	except ConnectionRefusedError :
+        		return(False)
+
+
