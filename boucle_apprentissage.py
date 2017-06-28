@@ -54,6 +54,24 @@ def apprentissage3(n):
         ###Fin de la MAJ de mypolicy
         if(k%100000 == 0):
             print("progres : ", (k/n)*100 ,"%")  
+            
+def symetricStats(n):
+    victoires = 0
+    defeats = 0
+    gain = 0
+    for k in range (n+1):
+        result = symetricGame()
+        gain += result
+        if result > 0:
+            victoires += 1
+        elif result < 0 :
+            defeats +=1
+        if k%100000 ==0:
+            print("Progrès : ", int(k/n*100), "%")
+    print("Pourcentage de victoires : ", int((victoires/n)*100000)/1000, "%")
+    print("Pourcentage de victoires de l'adversaire : ", int((defeats/n)*100000)/1000, "%")
+    print("Gain par euro investi : ", int((gain/n)*1000)/1000)
+        
     
 
 def f(k):

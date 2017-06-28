@@ -3,6 +3,6 @@ import pickle
 import os
 
 def getPolicy ():
-    with open("mypolicy_vsBank", "rb") as file_handler:
+    with open("mypolicy_21M", "rb") as file_handler:
         r = pickle.load(file_handler)
     return r
