@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from pygame import *
 from pygame.locals import *
 from sys import path
@@ -73,15 +74,24 @@ class Joueur(MainGraphique, Arbitrable):
 
 
     def a_perdu(self):
-        return self.get_m_valeur() > 21
+        if not self.a_splite:
+            return self.get_m_valeur() > 21
+        return self.jeu_1.a_perdu() and self.jeu_2.a_perdu()
 
 
     def piocher(self):
         """
             pioche une carte dans la pioche et la rajoute dans la main
         """
-        if not self.finish:
+        if not self.a_splite:
             self.ajouter(self.pioche.piocher())
+
+        else :
+            
+            if self.jeu_1.playing: self.jeu_1.piocher()
+            else:
+                
+                self.jeu_2.piocher()
 
 
     def doubler(self):
@@ -93,121 +103,89 @@ class Joueur(MainGraphique, Arbitrable):
         """
             pour terminer son tour
         """
-        self.playing = False
-        self.finish = True
+        if not self.a_splite:
+            self.playing = False
+            self.finish = True
 
-    def splitter(self):
-        self.a_splite = True
-        self.joueur_split = JoueurSplitte(self)
-        return self.joueur_split
+        else :
+            if self.jeu_1.playing:
+                self.jeu_1.sarreter()
+                self.jeu_2.commencer_tour()
 
-    
-
-
-    def update(self, other_comp):
-
-        self.encircling_enable = self.playing
-
-        if self.a_perdu() and not self.finish:
-            self.sarreter()
-        
-        r = MainGraphique.update(self, other_comp)
-
-        
-
-        if not self.a_splite: return r
-
-        #si on doit splitter
-        return [self.joueur_split]
-
-
-
-
-def split_joueur(joueur_a_splitter):
-
-    DX = TX / 1.7 #ou TX est la taille des cartes en X
-    DY = 0
-
-    x, y = joueur_a_splitter.position
-
-    jeu_1 = Joueur((x - DX, y + DY), joueur_a_splitter.pioche,
-                            VERTICAL, joueur_a_splitter.mise,
-                            identifier=joueur_a_splitter.id+"split_1",
-                            carte_ini=[joueur_a_splitter[0]])
-
-    jeu_2 = Joueur((x + DX, y + DY), joueur_a_splitter.pioche,
-                            VERTICAL, joueur_a_splitter.mise,
-                            identifier=joueur_a_splitter.id+"split_2",
-                            carte_ini=[joueur_a_splitter[1]])
-
-    return (jeu_1, jeu_2)
-    
-    
-
-class JoueurSplitte(GUIComponent, Arbitrable):
-
-    
-
-    def __init__(self, joueur_a_splitter):
-
-        GUIComponent.__init__(self, joueur_a_splitter.display_level, (0, 0),
-                              (0, 0), [], [])
-        Arbitrable.__init__(self)
-        
-        self.jeu_1, self.jeu_2 = split_joueur(joueur_a_splitter)
-        
-
-        self.bouton_pioche = None
-        self.bouton_stop = None
-        
-
-    def update(self, other_comp):
-        GUIComponent.update(self, other_comp)
-        
-        self.jeu_1.update(other_comp)
-        self.jeu_2.update(other_comp)
-
-        self.jeu_1.playing = not self.jeu_1.finish
-        self.jeu_2.playing = self.jeu_1.finish and (not self.jeu_2.finish)
-
-        if self.bouton_pioche != None and self.bouton_stop != None:
-            
-            if not self.jeu_1.finish:
-                self.bouton_pioche.on_click = self.jeu_1.piocher
-                self.bouton_stop.on_click = self.jeu_1.sarreter
-            elif not self.jeu_2.finish:
-                self.bouton_pioche.on_click = self.jeu_2.piocher
-                self.bouton_stop.on_click = self.jeu_2.sarreter
             else:
-                self.bouton_pioche.desactiver()
-                self.bouton_stop.desactiver()
+                self.jeu_2.sarreter()
 
-                self.bouton_pioche = None
-                self.bouton_stop = None
 
+            self.maj_play_and_finish()
+
+
+
+    def maj_play_and_finish(self):
+        
         self.playing = self.jeu_1.playing or self.jeu_2.playing
         self.finish = self.jeu_1.finish and self.jeu_2.finish
+        
 
-        return [self]
+    def splitter(self):
 
-    def manage_event(self, ev_list):
-        self.jeu_1.manage_event(ev_list)
-        self.jeu_2.manage_event(ev_list)
-        return CONTINUE
+        if self.a_splite: return     #split impossible
+        
+        self.a_splite = True
 
+        DX = TX / 1.7 #ou TX est la taille des cartes en X
+        DY = 0
 
-    def a_perdu(self):
+        x, y = self.position
 
-        return self.jeu_1.a_perdu() and self.jeu_2.a_perdu()
+        self.jeu_1 = Joueur((x - DX, y + DY), self.pioche, VERTICAL, self.mise,
+                            identifier=self.id+"split_1", carte_ini=[self[0]])
+
+        self.jeu_2 = Joueur((x + DX, y + DY), self.pioche, VERTICAL, self.mise,
+                            identifier=self.id+"split_2", carte_ini=[self[1]])
+
+        self.jeu_1.commencer_tour()
+    
 
 
     def display(self):
 
-        r1 = self.jeu_1.display()
-        r2 = self.jeu_2.display()
+        if not self.a_splite:
+            MainGraphique.display(self)
 
-        #retour douteux ? 
-        return [r1, r2]
+        else :
+            self.jeu_1.display()
+            return self.jeu_2.display()
+
+    
+
+
+    def update(self, other_comp):
+
+        if self.a_perdu() and not self.finish:
+            self.sarreter()
+        
+        if not self.a_splite:
+            self.encircling_enable = self.playing
+            MainGraphique.update(self, other_comp)
+            
+        else:
+            self.jeu_1.update(other_comp)
+            self.jeu_2.update(other_comp)
+
+            self.maj_play_and_finish()
+
+            #print self.playing, self.jeu_1.playing, self.jeu_2.playing
+
+        return [self]
+
+
+    def manage_event(self, ev_list):
+        if self.a_splite:
+            self.jeu_1.manage_event(ev_list)
+            self.jeu_2.manage_event(ev_list)
+            return CONTINUE
+
+        return MainGraphique.manage_event(self, ev_list)
         
 
 
@@ -218,8 +196,21 @@ class JoueurHumain(Joueur):
 
         Joueur.__init__(self, position, pioche, VERTICAL, identifier)
 
+        
+        self.bouton_pioche = None
+        self.bouton_stop = None
 
-    
+
+    def piocher(self):
+
+        if not self.finish:
+            Joueur.piocher(self)
+
+
+    def sarreter(self):
+        if not self.finish:
+            Joueur.sarreter(self)
+            
 
 class JoueurOrdi(Joueur):
 
@@ -280,7 +271,7 @@ class JoueurOrdi(Joueur):
         #tant qu'on n'a pas encore reussi a piocher la carte qu'on devait piocher
         #on reessaie.
 
-        print self.pioche_valide, self.playing, clock() - self.derniere_action > self.period
+        #print self.pioche_valide, self.playing, clock() - self.derniere_action > self.period
         
         if not self.pioche_valide:
 
@@ -308,25 +299,6 @@ class JoueurOrdi(Joueur):
 
         return r
 
-    def splitter(self):
-        self.a_splite = True
-
-        self.jeu_1, self.jeu_2 = split_joueur(self)
-
-        self.playing_1 = True
-        self.playing_2 = False
-
-
-    def display(self):
-
-        if self.a_splite:
-            self.jeu_1.display()
-            #retour bidon
-            return self.jeu_2.display()
-
-        
-        return Joueur.display(self)
-
 
     def piocher(self):
         if self.pioche != None: #si on pioche en local
@@ -336,15 +308,11 @@ class JoueurOrdi(Joueur):
         else :
 
             c = self.client.has_drawn()
+            
             if c[0]:
-                if not self.a_splite:
-                    self.ajouter(c[1])
-                elif self.playing_1:
-                    self.jeu_1.ajouter(c[1])
-                else:
-                    self.jeu_2.ajouter(c[1])
-                    
+                Joueur.piocher(c[1]) 
                 self.pioche_valide = True
+                
             else:
                 self.pioche_valide = False
 
@@ -352,13 +320,10 @@ class JoueurOrdi(Joueur):
 
     def sarreter(self):
 
-        if self.a_splite and self.playing_1:
-            self.playing_1 = False
-            self.playing_2 = True
+        Joueur.sarreter(self)
 
-        else:
-        
-            Joueur.sarreter(self)
+        if self.finish:
+
             if self.pioche == None:
                 self.client.send_decision(False, self.mise.get_value(),
                                           self.a_splite)
@@ -439,7 +404,7 @@ class Banque(JoueurOrdi):
         JoueurOrdi.__init__(self, position, pioche, 0, identifier="banque",
                             fct_decision=pdd.decision_banque)
 
-        self.sleep_time_before_playing = 1.5 #second
+        self.sleep_time_before_playing = 0.5 #second
         self.begin = -1
 
     def jouer(self, *args, **kargs):
@@ -498,19 +463,6 @@ class JoueurDistant(Joueur):
         self.doit_piocher = 0
 
 
-    # -----  un joueur distant ne pioche jamais !!!!!! ----------------
-    def piocher_(self, nouv=True):
-
-        if nouv:
-            self.doit_piocher += 1
-
-        c = self.client.has_drawn()
-
-        if c[0]:
-            self.doit_piocher -= 1
-            self.ajouter(c[1])
-
-
     def reconstruire(self):
         """
             methode a appeler pour reconstuire le joueur a partir de ce qui a
@@ -518,7 +470,11 @@ class JoueurDistant(Joueur):
 
         """
 
-        #------------- TODO a implementer -----------------------------#
+        if self.serveur_local == None:
+            split, r = self.client.end_turn_state()
+            if split :
+                # -------------------------   TODO ----------------------
+                pass
         return
 
 
@@ -536,17 +492,15 @@ class JoueurDistant(Joueur):
 
         #si on tourne sur le client
         if self.serveur_local == None and not self.finish:
-            #self.client.stop_playing()
 
-            #comment un JoueurDistant sait-il qu'il a fini s'il ne tourne pas
-            #sur le serveur ?
-            pass
+            if self.client.human_is_finished():
+
+                sleep(.2)
         
-            """end = self.client.end_turn_state()
-            print "end = ", end
-            if end[0]: #si on a fini
-                self.contenu = end[1:]
-                self.sarreter()"""
+                end = self.client.end_turn_state()
+                if end[0]: #si on a fini
+                    self.contenu = end[1:]
+                    self.sarreter()
 
         
         elif self.serveur_local.fin_manche and not self.finish:
@@ -556,6 +510,45 @@ class JoueurDistant(Joueur):
         return r
             
 
+
+class ServeurManager(GUIComponent):
+    """
+        s'occupe de coordonner les donnees que le serveur peut envoyer
+        avec les vraies donneees
+    """
+
+    def __init__(self, serveur, arbitre, i=0):
+
+        GUIComponent.__init__(self, 0, (0, 0), (0, 0), [], [])
+
+        self.serveur = serveur
+
+        self.arbitre = arbitre
+        self.i = i
+
+        self.serveur.set_opponent_card(self.arbitre.liste_joueur[i].contenu[1])
+
+
+    def update(self, other_comp):
+
+        j = self.arbitre.liste_joueur[self.i]
+
+        self.serveur.human_finish = k.finished
+        self.serveur.cartes_du_serveur = self.serveur_format(j)
+
+
+        return [self]
+
+
+    def serveur_format(player):
+
+        if isinstance(player, JoueurSplitte) or player.a_splite:
+            return [len(player.jeu_1),
+                    player.jeu_1.contenu + player.jeu_2.contenu]
+
+        return [0, player.contenu]
+
+    
         
 
     

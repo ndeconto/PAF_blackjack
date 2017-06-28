@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from pygame import *
 
 from GUI_component import *
@@ -6,7 +7,7 @@ from GUI_component_manager import EXIT_GAME_LOOP
 
 from sys import path
 path.append('..')
-#from prise_2_decision import win2, win_split
+from prise_2_decision import win2, win_split
 from prise_3_decision import compute_result
 
 JEU_CLASSIQUE   =   0   #un joueur humain joue contre la banque
@@ -140,10 +141,9 @@ class Arbitre(GUIComponent):
         """
 
         #liste des joueurs qui ont splitte
-        l_split = [j for j in self.liste_joueur if isinstance(j, JoueurSplitte)]
+        l_split = [j for j in self.liste_joueur if j.a_splite]
         #liste des joueurs qui n'ont pas splitte
-        l_n_split = [j for j in self.liste_joueur
-                     if not isinstance(j, JoueurSplitte)]
+        l_n_split = [j for j in self.liste_joueur if not j.a_splite]
                 
         if self.type_jeu == JEU_CLASSIQUE or self.type_jeu == IA_VS_BANQUE:
 
@@ -230,12 +230,8 @@ class Arbitre(GUIComponent):
 
         tout_le_monde_a_fini = True
 
-
+        
         for i, j in enumerate(self.liste_joueur):
-
-            if j.a_splite:
-                self.liste_joueur[i] = j.joueur_split
-                break
             
             if j.playing:
                 break
@@ -243,6 +239,7 @@ class Arbitre(GUIComponent):
             if not j.playing and not j.a_fini():
                 j.commencer_tour()
                 break
+            
 
         for i, j in enumerate(self.liste_joueur):
 

@@ -30,6 +30,8 @@ class Serveur(Thread):
 
         self.cartes_donnees = []    #cartes pour l'ordi
         self.cartes_du_serveur = [] #cartes de l'humain
+
+        self.human_finish = False
         
        
         try :
@@ -73,11 +75,17 @@ class Serveur(Thread):
                 self.client_wants_to_draw = (instr_totale[1]=='True')
                 self.client_mise = int(instr_totale[2])
                 self.client_has_split = (instr_totale[3]=='True')
-            elif instr == 'state':
-                if self.fin_manche : clientsock.send((self.main).encode())
-                else : clientsock.send('False'.encode())
+                
+            elif instr == 'state': #quand le client demande le jeu de l'humain
+                sp = str(self.cartes_serveur[0]) #info du split
+                main = ";".join( str(card.hauteur) + ';' + str(card.couleur)
+                              for c in self.cartes_serveur[1:])
+                clientsock.send((sp + ";" + main).encode())
+                
             elif instr == 'stop':
                 self.fin_manche = True
+            elif instr == "human_finished":
+                clientsock.send(str(self.human_finish).encode())
             else : print('unknown instruction')
             self.sock.close()
         print('server properly shut down')

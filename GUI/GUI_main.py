@@ -35,8 +35,11 @@ def lauch_server(pioche):
 def stop_button_action(joueur_humain, button_list):
     def f():
         joueur_humain.sarreter()
-        for b in button_list:
-            b.desactiver()
+
+        #attention avec le split le joueur n'a pas forcement fini !!
+        if joueur_humain.a_fini():
+            for b in button_list:
+                b.desactiver()
     return f
 
 
@@ -54,9 +57,7 @@ def split_button_action(button_list, joueur):
 
     def f():
         j = joueur.splitter()
-        j.bouton_stop = button_list[BOUTON_STOP]
-        j.bouton_pioche = button_list[BOUTON_PIOCHE]
-
+        
         button_list[BOUTON_DOUBLE].desactiver()
         button_list[BOUTON_SPLIT].desactiver()
 
@@ -84,7 +85,8 @@ def jeu(type_jeu):
 
     pioche = DeckGraphique((422, 330))
 
-    serveur = lauch_server(pioche)
+    if type_jeu == JEU_SYMETRIQUE:
+        serveur = lauch_server(pioche)
 
     mise = Mise(1, (0, 0), 35, font_color=(219, 201, 101))
 
@@ -97,10 +99,6 @@ def jeu(type_jeu):
     elif type_jeu == JEU_SYMETRIQUE:
 
         joueur_1 = JoueurHumain(POS_J_GAUCHE, pioche, identifier="humain")
-
-        serveur.cartes_du_serveur = joueur_1.contenu #meme reference
-        serveur.set_opponent_card(joueur_1.contenu[1])
-        
         joueur_2 = JoueurDistant(POS_J_DROITE, serveur_local=serveur)
         
         
@@ -112,7 +110,7 @@ def jeu(type_jeu):
         joueur_1.commencer_tour()
         
 
-    arbitre = Arbitre([joueur_1, joueur_2], type_jeu, mise)
+    arbitre = Arbitre([joueur_1, joueur_2], type_jeu, mise)  
 
 
     if type_jeu == JEU_CLASSIQUE or type_jeu == JEU_SYMETRIQUE:
@@ -145,6 +143,10 @@ def jeu(type_jeu):
     # ---------- on donne tous les composants a un manager ------------ #
     # le manager se debrouille avec tout ca et fait sa cuisine
     liste_comp = [tapis, mise, joueur_1, joueur_2, pioche, arbitre]
+
+    if type_jeu == JEU_SYMETRIQUE:
+        #s'assurer que arbitre.liste_joueur[0] est bien le joueur humain
+        liste_comp.append(ServeurManager(serveur, arbitre, 0))
     
     if type_jeu == JEU_CLASSIQUE or type_jeu == JEU_SYMETRIQUE:
         liste_comp += [bouton_piocher, bouton_stop, bouton_split, bouton_double]
@@ -152,7 +154,8 @@ def jeu(type_jeu):
     game_manager = GUIComponentManager(liste_comp, 20)
 
     r = game_manager.run()
-    serveur.close_server()
+    if type_jeu == JEU_SYMETRIQUE: serveur.close_server()
+    sleep(.3)
     return r
 
 
@@ -193,7 +196,6 @@ def main():
 
 if __name__ == "__main__" :
     main()
-    serveur.close_server()
 
 
 

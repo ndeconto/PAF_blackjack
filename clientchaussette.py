@@ -54,17 +54,26 @@ class Client():
                 print ("stop envoye")
                 self.disconnect_chaussette()
 
+        def human_is_finished(self):
+                data = self.get_data('human_finished')
+                if data[0] == "True": return True
+                return False
+
         def end_turn_state(self):                       #renvoie [True, carte1_adversaire, carte2_adversaire...] si la partie est finie, [False] sinon
                 data = self.get_data('state')
-                if data[0]=='True':
+                if data[0]=='0':        #si pas de split
                         l=[True]
                         for i in range(len(data)):
                                 if i%2==1:
                                         l.append(Carte(int(data[i]),int(data[i+1])))
-                        return l
+                        return (False, l)
                 else :
-                        if data[0]!='False':print('Closed socket or unknown instruction')
-                        return[False]
+                        n = int(data[0])
+                        l1 = [Carte(int(data[i]), int(data[i + 1]))
+                              for i in range(1, 2 * n, 2)]
+                        l2 = [Carte(int(data[i]), int(data[i + 1]))
+                              for i in range(2  * n + 1, len(data) - 1, 2)]
+                        return (True, (l1, l2))
 
 
 
