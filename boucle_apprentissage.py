@@ -8,10 +8,10 @@ Created on Sun Jun 18 18:23:29 2017
 from algo_MC_2 import *
 from prise_2_decision import *
 import numpy as np
-from openpyxl import Workbook
-from openpyxl.styles import Color, PatternFill, Font, Border, Side, Alignment
-from openpyxl.styles.differential import DifferentialStyle
-from openpyxl.formatting.rule import ColorScaleRule, CellIsRule, FormulaRule
+#from openpyxl import Workbook
+#from openpyxl.styles import Color, PatternFill, Font, Border, Side, Alignment
+#from openpyxl.styles.differential import DifferentialStyle
+#from openpyxl.formatting.rule import ColorScaleRule, CellIsRule, FormulaRule
 from load_object import *
 from prise_3_decision import *
 ###
@@ -85,7 +85,7 @@ def save_mypolicy(p1,p2,p3): #Le fichier sauvegarde est un vecteur comportant le
     with open("mypolicy_IAvsIA_200M_v1", "wb") as file_handler:
         pickle.dump(policy,file_handler)
     
-    
+"""    
 
 def save_to_xlsx():
     wb = Workbook()
@@ -261,7 +261,7 @@ def save_to_xlsx():
     # Save the file
     wb.save("mypolicy_IAvsIA_200M_v1.xlsx")
 
-
+"""
 
 def presenter_resultats(mypolicy):
     matrice_simple = mypolicy[0]
