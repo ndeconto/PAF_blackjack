@@ -72,6 +72,10 @@ class Arbitre(GUIComponent):
 
         if self.jeu_fini : return [self]
         self.jeu_fini = True
+
+        print "mise : \t:", self.liste_joueur[0].mise.get_value(), self.liste_joueur[1].mise.get_value()
+        if self.cote_serveur: G *= self.liste_joueur[0].mise.get_value()
+        G *= self.liste_joueur[1].mise.get_value()
         
         for c in other_components :
 
@@ -95,10 +99,13 @@ class Arbitre(GUIComponent):
 
         if self.cote_serveur:
             pause = PauseComponent(K_RETURN, EXIT_GAME_LOOP)
+            for c in other_components:
+                if isinstance(c, ServeurManager):
+                    self.do_in_x_seconds(1.5, c.serveur.close_server)
         else:
             G *= -1
             t_0 = clock()
-            pause = WaitForTrueComponent(lambda : clock() - t_0 > 2, EXIT_GAME_LOOP)
+            pause = WaitForTrueComponent(lambda : clock() - t_0 > 5, EXIT_GAME_LOOP)
             
         gain_1 = TextComponent(2, (205, 145), ('+' if G>0 else '')+str(G), 45)
         gain_2 = TextComponent(2, (775, 145), ('+' if G<0 else '')+str(-G), 45)
@@ -173,8 +180,7 @@ class Arbitre(GUIComponent):
 
                 #NB : joueur 2 a l'avantage de l'asymetrie (c'est la banque)
                 print len(self.liste_joueur[0]), len(self.liste_joueur[1])
-                r = win2(self.liste_joueur[0], self.liste_joueur[1],
-                         self.mise.get_value())
+                r = win2(self.liste_joueur[0], self.liste_joueur[1], 1)
 
                 lj_1  = [self.liste_joueur[0]]
                 lj_2 = [self.liste_joueur[1]]

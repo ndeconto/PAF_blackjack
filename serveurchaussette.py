@@ -19,7 +19,6 @@ class Serveur(Thread):
         self.pioche = pioche
 
         self.server_up = True
-        self.client_mise = 0
         self.client_has_split = False
         self.client_has_drawn = False
         self.client_wants_to_draw = False
@@ -27,6 +26,9 @@ class Serveur(Thread):
         self.opponent_showing_card=''
         self.fin_manche = False
         self.main = 'True'
+
+        self.client_mise = 1
+        self.server_mise = 1
 
         self.cartes_donnees = []    #cartes pour l'ordi
         self.index_buffer_local = 0
@@ -69,7 +71,7 @@ class Serveur(Thread):
         a, b = (self.cartes_donnees[:self.pos_split],
                 self.cartes_donnees[self.pos_split:])
         b = [a.pop(1)] + b
-        return ()
+        return a, b
         
 
     def run(self):
@@ -117,6 +119,7 @@ class Serveur(Thread):
                 
             elif instr == 'state': #quand le client demande le jeu de l'humain
                 sp = str(self.cartes_du_serveur[0]) #info du split
+                print("sp = ", sp, "\nmain = ", self.cartes_du_serveur[1:]) 
                 main = ";".join( str(c.hauteur) + ';' + str(c.couleur)
                               for c in self.cartes_du_serveur[1:])
                 self.clientsock.send((sp + ";" + main).encode())
@@ -129,7 +132,10 @@ class Serveur(Thread):
                 self.fin_manche = True
             elif instr == "human_finished":
                 self.clientsock.send(str(self.human_finish).encode())
-            else : print('unknown instruction')
+            elif instr == 'get_server_mise':
+                self.clientsock.send(str(self.server_mise))
+                
+            else : print('unknown instruction : ' + str(instr))
             self.sock.close()
         print('server properly shut down')
 
@@ -156,7 +162,6 @@ class Serveur(Thread):
             
             self.sock.close()
             self.clientsock.close()
-            self._stop()
             print " ========   server closed ====== "
         except Exception as e:
             print e

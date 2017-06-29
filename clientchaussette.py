@@ -2,6 +2,8 @@
 import socket
 from cartes import *
 
+from time import sleep
+
 from warnings import warn
 
 class Client():
@@ -9,6 +11,8 @@ class Client():
         def __init__(self, givenport, givenip):
                 self.host = givenip
                 self.port = givenport
+
+                self.get_data_essai = 10
 
         def connect_chaussette(self):
                 self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -24,10 +28,16 @@ class Client():
                         print (instr + " send")
                         st=self.s.recv(1024).decode()
                         self.disconnect_chaussette()
+
+                        self.get_data_essai = 10
                         return st.split(';')
                 except (Exception) as e:
 
                         warn(UserWarning("get data n'a pas fonctionne !"))
+                        sleep(.2)
+                        self.get_data_essai -= 1
+                        if self.get_data_essai > 0:
+                                return self.get_data(instr)
                         return "0"
                         
 
@@ -72,6 +82,10 @@ class Client():
                 data = self.get_data('human_finished')
                 if data[0] == "True": return True
                 return False
+
+
+        def get_server_mise(self):
+                return int(self.get_data('get_server_mise')[0])
 
         def end_turn_state(self):                       #renvoie [True, carte1_adversaire, carte2_adversaire...] si la partie est finie, [False] sinon
                 data = self.get_data('state')

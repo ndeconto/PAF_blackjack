@@ -97,13 +97,13 @@ def jeu(type_jeu):
 
     if type_jeu == JEU_CLASSIQUE:
         
-        joueur_1 = JoueurHumain((125, 250), pioche, identifier="humain")
+        joueur_1 = JoueurHumain((125, 250), pioche, mise, identifier="humain")
         joueur_2 = Banque(POS_J_DROITE, pioche)
 
 
     elif type_jeu == JEU_SYMETRIQUE:
 
-        joueur_1 = JoueurHumain(POS_J_GAUCHE, pioche, identifier="humain")
+        joueur_1 = JoueurHumain(POS_J_GAUCHE, pioche, mise, identifier="humain")
         serveur.set_opponent_card(joueur_1.contenu[1])
         joueur_2 = JoueurDistant(POS_J_DROITE, serveur_local=serveur)
         
@@ -198,9 +198,6 @@ def main():
         quit()
         return
 
-    if t == 2: serveur.close_server()
-    sleep(.2)
-
     if r == EXIT_GAME_LOOP:
         main()
 
@@ -212,7 +209,6 @@ def main():
 if __name__ == "__main__" :
     try :
         main()
-        serveur.close_server()
 
     except Exception as e:
         

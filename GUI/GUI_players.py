@@ -195,9 +195,10 @@ class Joueur(MainGraphique, Arbitrable):
 class JoueurHumain(Joueur):
 
 
-    def __init__(self, position, pioche, identifier=""):
+    def __init__(self, position, pioche, mise, identifier=""):
 
-        Joueur.__init__(self, position, pioche, VERTICAL, identifier)
+        Joueur.__init__(self, position, pioche, VERTICAL, mise,
+                        identifier=identifier)
 
         
         self.bouton_pioche = None
@@ -427,8 +428,8 @@ class Banque(JoueurOrdi):
         # seulement d'un Deck...
         ## ----------------------------------------------------------##
 
-        JoueurOrdi.__init__(self, position, pioche, 0, identifier="banque",
-                            fct_decision=bankDecision)
+        JoueurOrdi.__init__(self, position, pioche, Mise(1, (0, 0), 0),
+                            identifier="banque", fct_decision=bankDecision)
 
         self.sleep_time_before_playing = 0.5 #second
         self.begin = -1
@@ -494,12 +495,16 @@ class JoueurDistant(Joueur):
         """
             
         split, r = self.client.end_turn_state()
+        sleep(.1)
+        self.mise = Mise(self.client.get_server_mise(), (0, 0), 0)
         self.reconstruire(split, r)
 
 
     def reconstruire_local(self):
         #ne doit etre appele que si self.serveur_local != None
         #cf reconstruire distant sinon !
+
+        self.mise = Mise(self.serveur_local.client_mise, (0, 0), 0)
         
         self.reconstruire(self.serveur_local.pos_split,
                           self.serveur_local.get_info_reconstruction())
@@ -592,6 +597,7 @@ class ServeurManager(GUIComponent):
 
         self.serveur.human_finish = self.player.finish
         self.serveur.cartes_du_serveur = self.serveur_format(self.player)
+        self.serveur.server_mise = self.player.mise.get_value()
 
 
         return [self]
