@@ -40,7 +40,7 @@ def apprentissage2(n,bet):
     Y = []
     for k in range(n):
         p_gain,gain = manche2(bet)
-        if(k%1000 == 0 and k > 999):
+        if(k%1000 == 0 and k >= 10000):
             X.append(k)
             Y.append(gain)
         if (k%100000 == 0):
