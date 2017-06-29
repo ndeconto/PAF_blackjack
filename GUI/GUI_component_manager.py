@@ -3,7 +3,8 @@ from pygame import *
 from pygame.locals import *
 
 CONTINUE                =   0
-EXIT_MAIN_LOOP          =   -1
+EXIT_GAME_LOOP          =   -1
+CLOSE_WINDOW            =   1
 
 class GUIComponentManager:
     """
@@ -56,6 +57,7 @@ class GUIComponentManager:
 
                 if ev.type == QUIT:
                     running = False
+                    ret = CLOSE_WINDOW
                     break
 
             if not running : break
@@ -64,7 +66,9 @@ class GUIComponentManager:
 
             for c in self.component_list:
 
-                if c.manage_event(ev_list) == EXIT_MAIN_LOOP:
+                ret = c.manage_event(ev_list)
+
+                if ret == EXIT_GAME_LOOP or ret == CLOSE_WINDOW:
                     running = False
                     break
                 
@@ -85,7 +89,7 @@ class GUIComponentManager:
 
 
             #probably not optimal, to_update should be used to refresh modified
-            #parts only
+            #parts only; here the entiere screen is refreshed
             display.flip()
 
 
@@ -93,5 +97,8 @@ class GUIComponentManager:
 
 
             sleep(max(0, self.period - (clock() - t_start)))
+
+
+        return ret
 
             

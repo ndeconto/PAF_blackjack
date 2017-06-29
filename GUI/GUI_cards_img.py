@@ -11,9 +11,10 @@ sys.path.append("..")
 from cartes import *
 
 
+
 #taille des cartes en pixels
-TX = 192.3
-TY = 279
+TX = 153.85 #192.3
+TY = 223.4 #279
 
 #constantes pour parametrer l'affichage
 HORIZONTAL  =   0
@@ -21,7 +22,7 @@ VERTICAL    =   1
 
 #decalage des cartes lorsqu'on en affiche plusieurs
 DECALAGE_RELATIF_X = .2
-DECALAGE_RELATIF_Y = .1
+DECALAGE_RELATIF_Y = .2
 
 
 #matrice 4 * 13 contenant les images
@@ -36,7 +37,7 @@ def init_lib_cartes():
     """
     global img_carte_cachee
     
-    all_cards = image.load("img/img_cartes_2.png").convert_alpha()
+    all_cards = image.load("img/img_cartes_2_petit.png").convert_alpha()
 
     
 
@@ -141,8 +142,12 @@ class MainGraphique(GUIComponent, Main):
         Main.__init__(self, contenu)
         img = get_img(self, sens, face_cachee, d_x, d_y)
         self.sens = sens
+        self.dx = d_x
+        self.dy = d_y
         GUIComponent.__init__(self, 1, position, img.get_size(), [], [], img,
-                              identifier)
+                              identifier, e_bord=5)
+
+        self.set_encircling_color((219, 201, 101))
 
         #attention, il ne faut pas que face_cachee contienne deux fois le meme
         #element (du genre face_cachee = [2, 2]) sinon les autres methodes ne
@@ -153,10 +158,17 @@ class MainGraphique(GUIComponent, Main):
         #pour deplacer les cartes
         self.drag = False
 
+
+    def set_face_cachee(self, new_face_cachee):
+        self.face_cachee = new_face_cachee
+        self.background = get_img(self, self.sens, face_cachee=new_face_cachee,
+                                  d_x=self.dx, d_y=self.dy)
+
     def ajouter(self, nouvelle_carte): #redefinition de la methode de Main
         
         Main.ajouter(self, nouvelle_carte)
-        self.background = get_img(self, self.sens)
+        self.background = get_img(self, self.sens, face_cachee=self.face_cachee,
+                                  d_x=self.dx, d_y=self.dy)
         self.size = self.background.get_size()
 
     def retourner_carte(self, i):
@@ -198,16 +210,20 @@ class MainGraphique(GUIComponent, Main):
 
                     self.display_level -= .5
 
+                    print self.position
+
         return CONTINUE
         
             
             
-class DeckGraphique(MainGraphique, Deck):
+class DeckGraphique(MainGraphique, Sabot):
 
     def __init__(self, position):
         
-        Deck.__init__(self)
-        MainGraphique.__init__(self, self.pile, position, HORIZONTAL, "",
-                               list(range(52)), d_x=0.001)
+        Sabot.__init__(self)
+        MainGraphique.__init__(self, self.pile, position, sens=HORIZONTAL,
+                               identifier="",
+                               face_cachee=list(range(len(self.pile))),
+                               d_x=0.0001)
     
     
