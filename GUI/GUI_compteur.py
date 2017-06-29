@@ -19,6 +19,7 @@ class MonCompteur(TextComponent):
 
     def update(self, o_c):
         x, n = read_total()
+        if x == int(x): x = int(x)
         self.texte = "GAINS : " + str(x) + " / " + str(n)
         display.get_surface().fill((0, 0, 0))
 
@@ -26,9 +27,10 @@ class MonCompteur(TextComponent):
         return [self]
 
 
-GUIComponentManager([MonCompteur(1, (10, 20), " ", 70,
-                                 font_color=(255, 128, 25),
-                     enable_bg=True)], 3).run() 
+
+mon_compteur = MonCompteur(1, (10, 20), " ", 70, font_color=(255, 128, 25),
+                     enable_bg=True)
+GUIComponentManager([mon_compteur], 3).run() 
 
 quit()
 
