@@ -7,7 +7,8 @@ SPLIT = 3
 cf dans load_object.py le fichier qui est load dans policy
 """
 
-POLICY_FILE = "policy_a_utilise_python2"
+POLICY_FILE_SYM = "JEU_SYM_mypolicy_IAvsIA_100M_v4_PYTHON2"
+POLICY_FILE_ASYM = "JEU_BJ_CLASSIQUE_mypolicy_IAvsBank_asymetrique_100M_v2_PYTHON2"
 
 from random import *;
 from load_object import *
@@ -39,9 +40,9 @@ policy_pair = [[[[0.0]*4 for i in range(10)] for j in range(len(enemystate))]for
 #matrice cas on pioche un as sans paire. Marche comme ca policy_simple[compteur][enemystate][state][action]
 #Les quatre actions sont possibles
   
-def initialize_policy():
+def initialize_policy(filename):
     global policy_as,policy_pair,policy_simple
-    p_simple,p_as,p_pair = getPolicy(POLICY_FILE)
+    p_simple,p_as,p_pair = getPolicy(filename)
 
     for k in range (len(p_as[0])):
         for i in range(len(p_as[0][0])):
@@ -56,8 +57,10 @@ def initialize_policy():
             for j in range (len(p_pair[0][k][i])):
                 policy_pair[0][k][i][j] = p_pair[0][k][i][j]
 
+    print (filename + " correctly initialized")
+
     
-initialize_policy()
+initialize_policy(POLICY_FILE_SYM)  #default
 ###
     
 

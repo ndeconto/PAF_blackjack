@@ -71,6 +71,8 @@ class GUIComponent:
 
         self.encircling_enable = False
 
+        self.comp_to_add        = []
+
 
     def set_encircling_color(self, color):
         self.encircling_color   = color
@@ -85,6 +87,19 @@ class GUIComponent:
         """
 
         self.todo.append((clock(), x, function))
+
+
+    def add_component_in_x_seconds(self, x, component):
+        self.comp_to_add.append((x + clock(), component))
+
+
+    def new_component(self):
+        l = []
+        for t, c in self.comp_to_add:
+            if clock() > t:
+                l.append(c)
+        return l
+        
 
 
     def update(self, other_components):
@@ -119,7 +134,7 @@ class GUIComponent:
                 else: l.append((t2, x, f))
             self.todo = l
             
-            return [self]
+            return [self] + self.new_component()
 
         return []
 
@@ -263,7 +278,8 @@ class FlashingImageComponent(GUIComponent):
         
 class Bouton(ImageComponent):
 
-    def __init__(self, display_level, position, img, on_click, identifier=""):
+    def __init__(self, display_level, position, img, on_click, identifier="",
+                 special_return=CONTINUE):
         """
             represente un bouton d'image img.
             onClick doit etre une fonction sans parametre qui est appelee
@@ -278,6 +294,8 @@ class Bouton(ImageComponent):
         self.click_in = False
 
         self.enable = True
+
+        self.special_return = special_return
 
 
 
@@ -296,6 +314,8 @@ class Bouton(ImageComponent):
         
         ImageComponent.manage_event(self, ev_list)
 
+        click = False
+
         for ev in ev_list:
 
 
@@ -311,11 +331,13 @@ class Bouton(ImageComponent):
 
                     if self.click_in and self.enable:
                         self.on_click()
+                        click = True
 
                 else :
                     self.click_in = False
 
-        return CONTINUE
+        if not click: return CONTINUE
+        return self.special_return
 
         
 class PauseComponent(GUIComponent):

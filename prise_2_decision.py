@@ -21,7 +21,12 @@ def win2(player_hand,bank_hand,bet): #bet est la mise
     bank_best_value = bank_hand.valeur
     if(player_best_value > 21):
         return(-bet)
-    elif(player_best_value == 21 and len(player_hand) == 2):
+    elif(bank_best_value == 21 and len(bank_hand) == 2): #La banque a un BJ, elle fait soit egalite soit gagne.
+        if (player_best_value == 21 and len(player_hand) == 2):
+            return(0)
+        else:
+            return(-bet)        
+    elif(player_best_value == 21 and len(player_hand) == 2): #Le joueur a un BJ. Il gagne ou fait egalite.
         if (bank_best_value == 21 and len(bank_hand) == 2):
             return(0)
         else:
@@ -310,15 +315,15 @@ def manche2(bet, learning=True): #bet est la mise
     
     ########MAJ de my policy#################
     if (bool_splitted == False):
-        result = win_sym(player_hand,bank_hand,bet)
+        result = win2(player_hand,bank_hand,bet)
         #print("result win2 : ", result)
     else:
-        result = win_sym_split(player_hand_1,player_hand_2,bank_hand,bet)
+        result = win_split(player_hand_1,player_hand_2,bank_hand,bet)
         #print("result winsplit",result)
 
     if learning :
 #        print("Main du joueur : ", player_hand)
-        update_value3(player_statesActions,bool_as_choice,bool_pair,bank_hand.get_card_at(0)-1,result,position_as) #banque state --> premiere carte
+        #update_value3(player_statesActions,bool_as_choice,bool_pair,bank_hand.get_card_at(0)-1,result,position_as) #banque state --> premiere carte
         victoire=update_stats_gains(player_statesActions,result,bank_state,player_state)
         return victoire
     ########Fin de la MAJ de mypolicy########
@@ -398,8 +403,8 @@ def update_stats_gains(statesActions,result,bank_state,player_state):
     if (result > 0):
         nb_parties_gagnees+=1
     
-    pourcentage_victoire = str((nb_parties_gagnees/nb_parties_jouees)*100) + "% de victoires"
-    gain = "Gain par partie : " + str(mise_gagnee/mise_investie) + " millions d'euros"
+    pourcentage_victoire = (nb_parties_gagnees/nb_parties_jouees)*100 
+    gain = mise_gagnee/mise_investie
     
     return pourcentage_victoire, gain
 

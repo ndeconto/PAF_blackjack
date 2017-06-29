@@ -14,6 +14,7 @@ from openpyxl.styles.differential import DifferentialStyle
 from openpyxl.formatting.rule import ColorScaleRule, CellIsRule, FormulaRule
 from load_object import *
 from prise_3_decision import *
+import matplotlib.pyplot as plt
 ###
 
 def f(values):
@@ -34,12 +35,25 @@ def apprentissage(n):
 #    print('\n'.join([''.join(['{:4}'.format(item) for item in row]) for row in result]))
 
 def apprentissage2(n,bet):
+    victoire = 0
+    X = []
+    Y = []
     for k in range(n):
-        per_vic,gain = manche2(bet)
-        if(k%100000 == 0):
-            print("progress stage 1 : ", (k/n)*100 ,"%")
+        p_gain,gain = manche2(bet)
+        if(k%1000 == 0 and k > 999):
+            X.append(k)
+            Y.append(gain)
+        if (k%100000 == 0):
+            print("progres : ", (k/n)*100 ,"%")
+    f = plt.figure()
+    plt.plot(X,Y)
+    plt.xlabel("Nombre d'apprentissage")
+    plt.ylabel("Gain réalisé")
+    plt.title("Vitesse d'apprentisissage de l'IA au BlackJack Classique\n 1M d'itérations")
+    plt.show()
+    f.savefig("Vitesse d'apprentisissage de l'IA au BlackJack Classique_1M d'itérations.pdf", bbox_inches='tight')
     print("Statistiques :\n")
-    print(per_vic, gain)
+    print(victoire)
     print("Epsilon final, alpha : ",epsilon,", ",alpha)
     
 def apprentissage3(n):
@@ -301,7 +315,9 @@ def graphe_vitesse_apprentissage(a_min=0, pas=2 * 10**5,a_max = 10**7, log=False
     show()
 
  
-    
+def save_to_pdf(plot1):
+    pp = PdfPages("Vitesse d'apprentisissage de l'IA au BlackJack Classique_1M d'itérations.pdf")
+    pp.savefig(plot1)    
     
     
     

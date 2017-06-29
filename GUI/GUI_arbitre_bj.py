@@ -3,7 +3,7 @@ from pygame import *
 
 from GUI_component import *
 from GUI_players import *
-from GUI_component_manager import EXIT_GAME_LOOP
+from GUI_component_manager import EXIT_GAME_LOOP, REPLAY
 
 from sys import path
 path.append('..')
@@ -76,6 +76,8 @@ class Arbitre(GUIComponent):
         print "mise : \t:", self.liste_joueur[0].mise.get_value(), self.liste_joueur[1].mise.get_value()
         if self.cote_serveur: G *= self.liste_joueur[0].mise.get_value()
         G *= self.liste_joueur[1].mise.get_value()
+
+        print ("Gain", G)
         
         for c in other_components :
 
@@ -92,7 +94,7 @@ class Arbitre(GUIComponent):
             j.set_face_cachee([])
 
 
-        if self.cote_serveur:
+        if self.cote_serveur and self.type_jeu != JEU_CLASSIQUE:
             add_to_total(G if self.type_jeu != JEU_SYMETRIQUE else -G)
 
 
@@ -101,7 +103,7 @@ class Arbitre(GUIComponent):
             pause = PauseComponent(K_RETURN, EXIT_GAME_LOOP)
             for c in other_components:
                 if isinstance(c, ServeurManager):
-                    self.do_in_x_seconds(1.5, c.serveur.close_server)
+                    self.do_in_x_seconds(2.5, c.serveur.close_server)
         else:
             G *= -1
             t_0 = clock()
@@ -110,11 +112,14 @@ class Arbitre(GUIComponent):
         gain_1 = TextComponent(2, (205, 145), ('+' if G>0 else '')+str(G), 45)
         gain_2 = TextComponent(2, (775, 145), ('+' if G<0 else '')+str(-G), 45)
 
-
+        bouton = Bouton(4, (462, 400), "img/next_game.png", lambda : 0, special_return=REPLAY)
         if couple_gagnant_perdant == None:
             #TODO c'est pas hyper beau...
-            img_draw = ImageComponent(4, (350, 300), "img/draw.png")
-            return [self, img_draw, pause]
+            img_draw = ImageComponent(4, (350, 250), "img/draw.png")
+            l = [self, img_draw, pause]
+            if self.cote_serveur:
+                self.add_component_in_x_seconds(3, bouton)
+            return  l
 
         l_gagnant, l_perdant = couple_gagnant_perdant
         e_bord = 10
@@ -122,6 +127,14 @@ class Arbitre(GUIComponent):
 
         comp_finaux = [self, pause, gain_1, gain_2]
 
+        if self.type_jeu != IA_VS_BANQUE and self.cote_serveur:
+            self.add_component_in_x_seconds(3, bouton)
+
+
+        if self.type_jeu == IA_VS_BANQUE:
+            self.add_component_in_x_seconds(5,
+                                            WaitForTrueComponent(lambda: True,
+                                                                 REPLAY))
         
 
         for gagnant in l_gagnant :
