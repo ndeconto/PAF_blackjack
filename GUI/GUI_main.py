@@ -85,8 +85,9 @@ def jeu(type_jeu):
 
     
     tapis = ImageComponent(0, (0, 0),
-                "img/tapis_bj_new.png" if type_jeu in [JEU_CLASSIQUE, IA_VS_BANQUE]
-                else "img/tapis_bj_vs_ordi.png")
+                "img/tapis_bj_new.png" if type_jeu  == JEU_CLASSIQUE
+                else ("img/tapis_bj_ia_vs_bank.png" if type_jeu == IA_VS_BANQUE
+                else "img/tapis_bj_vs_ordi.png"))
 
     pioche = DeckGraphique((422, 330))
 
@@ -172,18 +173,19 @@ def jeu(type_jeu):
     return r
 
 
-def main():
+def main(t=-1):
 
+    if t == -1:
+        
+        m, t = slidemenu(['IA against dealer::the AI will play against the dealer',
+                          'classic game::play against the dealer',
+                          'symetric game::play against the artificial intelligence',
+                          '',
+                          #'rules::click here to learn the rules',
+                          #'re-show::click here to show again',
+                          'quit::good bye'])
 
-    m, t = slidemenu(['IA against dealer::the AI will play against the dealer',
-                      'classic game::play against the dealer',
-                      'symetric game::play against the artificial intelligence',
-                      '',
-                      #'rules::click here to learn the rules',
-                      #'re-show::click here to show again',
-                      'quit::good bye'])
-
-    
+        
     # ----------   intialisation  ----------------- #
     init_GUI()
     init_lib_cartes()
@@ -200,6 +202,9 @@ def main():
 
     if r == EXIT_GAME_LOOP:
         main()
+
+    elif r == REPLAY:
+        main(t)
 
 
     

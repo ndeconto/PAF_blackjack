@@ -5,6 +5,7 @@ from pygame.locals import *
 CONTINUE                =   0
 EXIT_GAME_LOOP          =   -1
 CLOSE_WINDOW            =   1
+REPLAY                  =   2
 
 class GUIComponentManager:
     """
@@ -68,7 +69,7 @@ class GUIComponentManager:
 
                 ret = c.manage_event(ev_list)
 
-                if ret == EXIT_GAME_LOOP or ret == CLOSE_WINDOW:
+                if ret == EXIT_GAME_LOOP or ret == CLOSE_WINDOW or ret == REPLAY:
                     running = False
                     break
                 
