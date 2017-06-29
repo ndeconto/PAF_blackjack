@@ -112,7 +112,7 @@ def jeu(type_jeu):
 
         joueur_2 = Banque(POS_J_DROITE, pioche)
         joueur_1 = JoueurOrdi(POS_J_GAUCHE, pioche, mise, identifier="ia",
-                              face_cachee=[])
+                              face_cachee=[], regle="asym")
         joueur_1.commencer_tour()
         
 

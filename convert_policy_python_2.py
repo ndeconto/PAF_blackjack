@@ -1,5 +1,5 @@
 import pickle
-
+from sys import argv
 ## ne doit etre lance qu'avec python 2 !!!!
 
 with open("temp.txt", "r") as f:
@@ -7,6 +7,6 @@ with open("temp.txt", "r") as f:
 
 print p
 
-with open("policy_a_utilise_python2", "wb") as f:
+with open("policy_pour_python2/" + argv[1] + "_PYTHON2", "wb") as f:
     pickle.dump(p, f)
     

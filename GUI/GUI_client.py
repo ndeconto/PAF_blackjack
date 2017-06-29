@@ -66,7 +66,7 @@ def jeu():
     joueur_1 = JoueurDistant(POS_J_GAUCHE)
     joueur_2 = JoueurOrdi(POS_J_DROITE, None, mise,
                           fct_decision=makeBestDecision,
-                          face_cachee=[])
+                          face_cachee=[], regle="sym")
 
     arbitre = Arbitre([joueur_2, joueur_1], JEU_SYMETRIQUE, mise,
                       cote_serveur=False)

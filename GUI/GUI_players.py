@@ -12,7 +12,7 @@ from GUI_cards_img import *
 from serveurchaussette import IP_SERVEUR, PORT
 from clientchaussette import Client, piocher_bloquant
 
-from decision_method_list import makeBestDecision, bankDecision, STOP, HIT, DOUBLE, SPLIT
+from decision_method_list import POLICY_FILE_SYM, POLICY_FILE_ASYM, initialize_policy, makeBestDecision, bankDecision, STOP, HIT, DOUBLE, SPLIT
 
 
 class Arbitrable:
@@ -220,7 +220,7 @@ class JoueurOrdi(Joueur):
 
 
     def __init__(self, position, pioche, mise, identifier="",
-                 fct_decision=None, face_cachee=[0]):
+                 fct_decision=None, face_cachee=[0], regle="sym"):
         """
             pioche:
                 soit un Deck soit None
@@ -252,6 +252,8 @@ class JoueurOrdi(Joueur):
                         face_cachee=face_cachee)
 
         self.pioche_valide = True
+
+        initialize_policy(POLICY_FILE_SYM if regle=="sym" else POLICY_FILE_ASYM)
             
         
 
