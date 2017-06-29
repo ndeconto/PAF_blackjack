@@ -327,8 +327,8 @@ class Sabot(Deck):
 
         if self.counter >= self.counter_bound:
             return self.counter_bound
-        if self.counter <= self.counter_bound:
-            return - self.couunter_bound
+        if self.counter <= - self.counter_bound:
+            return - self.counter_bound
         
         return self.counter
     
@@ -348,20 +348,6 @@ class Sabot(Deck):
         #cas 10, J, Q, K, A
         return -1
 
-
-class SabotDistant(Sabot):
-
-
-    def __init__(self, ip, port):
-
-        self.client = Client(port, ip)
-
-    def piocher(self):
-        
-        r = c.has_drawn()
-
-        
-
-        
-
-    
+    def truquer(self,cardlist):
+    	for c in reversed(cardlist):
+    		self.pile.append(c)
