@@ -47,7 +47,7 @@ def stop_button_action(joueur_humain, button_list):
 
 def double_button_action(mise, joueur, button_list):
     def f():
-        if len(joueur == 2):
+        if len(joueur) == 2:
             mise.doubler()
             joueur.do_in_x_seconds(1, joueur.piocher)
             joueur.do_in_x_seconds(2, joueur.sarreter)
