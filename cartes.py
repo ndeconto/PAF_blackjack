@@ -342,8 +342,6 @@ class Sabot(Deck):
         #cas 10, J, Q, K, A
         return -1
 
-        
-
-        
-
-    
+    def truquer(self,cardlist):
+    	for c in reversed(cardlist):
+    		self.pile.append(c)
