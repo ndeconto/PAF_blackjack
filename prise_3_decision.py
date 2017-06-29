@@ -93,6 +93,23 @@ def win_sym(player_hand,enemy_hand,bet,
 
     player_best_value = player_hand.valeur #La valeur est a tout instant la meilleur valeur possible de la main par construction
     enemy_best_value = enemy_hand.valeur
+    
+    if (blackjack_enable_player and
+        player_best_value == 21 and len(player_hand) == 2):
+        
+        if (blackjack_enable_enemy and
+            enemy_best_value == 21 and len(enemy_hand) == 2):
+                return(0)
+        else:
+            return(1.5*bet)
+    
+    #si enemy a un blackjack et le droit de s'en servir :
+    elif (blackjack_enable_enemy and
+          enemy_best_value == 21 and len(enemy_hand) == 2):
+
+        #player n'a pas de blackjack ou pas le droit de s'en servir d'apres le ccas precedent
+        return(-1.5*bet)
+    
     if(player_best_value > 21 and enemy_best_value>21):
         return(0)
     elif (player_best_value>21):
@@ -101,24 +118,9 @@ def win_sym(player_hand,enemy_hand,bet,
         return(bet)
     
     #les deux sont a au plus 21 a partir de ce point
-
-    #si player a un blackjack et le droit de s'en servir
-    elif (blackjack_enable_player and
-         player_best_value == 21 and len(player_hand) == 2):
-        
-        if (blackjack_enable_enemy and
-            enemy_best_value == 21 and len(enemy_hand) == 2):
-                return(0)
-        else:
-            return(1.5*bet)
         
 
-    #si enemy a un blackjack et le droit de s'en servir :
-    elif (blackjack_enable_enemy and
-          enemy_best_value == 21 and len(enemy_hand) == 2):
-
-        #player n'a pas de blackjack ou pas le droit de s'en servir d'apres le ccas precedent
-        return(-1.5*bet)
+    
         
 
     #a partir d'ici, plus personne n'a de blackjack et personne n'est au dessus

@@ -315,15 +315,15 @@ def manche2(bet, learning=True): #bet est la mise
     
     ########MAJ de my policy#################
     if (bool_splitted == False):
-        result = win_sym(player_hand,bank_hand,bet)
+        result = win2(player_hand,bank_hand,bet)
         #print("result win2 : ", result)
     else:
-        result = win_sym_split(player_hand_1,player_hand_2,bank_hand,bet)
+        result = win_split(player_hand_1,player_hand_2,bank_hand,bet)
         #print("result winsplit",result)
 
     if learning :
 #        print("Main du joueur : ", player_hand)
-        update_value3(player_statesActions,bool_as_choice,bool_pair,bank_hand.get_card_at(0)-1,result,position_as) #banque state --> premiere carte
+        #update_value3(player_statesActions,bool_as_choice,bool_pair,bank_hand.get_card_at(0)-1,result,position_as) #banque state --> premiere carte
         victoire=update_stats_gains(player_statesActions,result,bank_state,player_state)
         return victoire
     ########Fin de la MAJ de mypolicy########
