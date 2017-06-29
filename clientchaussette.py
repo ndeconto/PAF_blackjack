@@ -2,6 +2,8 @@
 import socket
 from cartes import *
 
+from warnings import warn
+
 class Client():
 
         def __init__(self, givenport, givenip):
@@ -16,12 +18,18 @@ class Client():
                 self.s.close()
 
         def get_data(self,instr):
-                self.connect_chaussette()
-                self.s.send(instr.encode())
-                print (instr + " send")
-                st=self.s.recv(1024).decode()
-                self.disconnect_chaussette()
-                return st.split(';')
+                try:
+                        self.connect_chaussette()
+                        self.s.send(instr.encode())
+                        print (instr + " send")
+                        st=self.s.recv(1024).decode()
+                        self.disconnect_chaussette()
+                        return st.split(';')
+                except (Exception) as e:
+
+                        warn(UserWarning("get data n'a pas fonctionne !"))
+                        return "0"
+                        
 
         def has_drawn(self):   #returns a list containing a boolean True=we have drawn then the card drawn if we have drawn 
                 data = self.get_data('draw')

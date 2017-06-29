@@ -58,10 +58,11 @@ def double_button_action(mise, joueur, button_list):
 def split_button_action(button_list, joueur):
 
     def f():
-        j = joueur.splitter()
+        if len(joueur) == 2 and joueur[0].hauteur == joueur[1].hauteur:
+            j = joueur.splitter()
         
-        button_list[BOUTON_DOUBLE].desactiver()
-        button_list[BOUTON_SPLIT].desactiver()
+            button_list[BOUTON_DOUBLE].desactiver()
+            button_list[BOUTON_SPLIT].desactiver()
 
     return f
     
@@ -176,9 +177,9 @@ def main():
 
     m, t = slidemenu(['IA against dealer::the AI will play against the dealer',
                       'classic game::play against the dealer',
-                      'symetric game::play against an other player',
+                      'symetric game::play against the artificial intelligence',
                       '',
-                      'rules::click here to learn the rules',
+                      #'rules::click here to learn the rules',
                       #'re-show::click here to show again',
                       'quit::good bye'])
 
@@ -193,7 +194,7 @@ def main():
         r = jeu(JEU_CLASSIQUE)
     elif t == 2:
         r = jeu(JEU_SYMETRIQUE)
-    elif t == 4:
+    elif t == 3:
         quit()
         return
 
