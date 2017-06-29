@@ -71,6 +71,8 @@ class GUIComponent:
 
         self.encircling_enable = False
 
+        self.comp_to_add        = []
+
 
     def set_encircling_color(self, color):
         self.encircling_color   = color
@@ -85,6 +87,19 @@ class GUIComponent:
         """
 
         self.todo.append((clock(), x, function))
+
+
+    def add_component_in_x_seconds(self, x, component):
+        self.comp_to_add.append((x + clock(), component))
+
+
+    def new_component(self):
+        l = []
+        for t, c in self.comp_to_add:
+            if clock() > t:
+                l.append(c)
+        return l
+        
 
 
     def update(self, other_components):
@@ -119,7 +134,7 @@ class GUIComponent:
                 else: l.append((t2, x, f))
             self.todo = l
             
-            return [self]
+            return [self] + self.new_component()
 
         return []
 
