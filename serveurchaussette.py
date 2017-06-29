@@ -3,6 +3,8 @@ import socket
 from cartes import *
 from threading import *
 
+import traceback
+
 
 IP_SERVEUR  = "localhost"
 PORT        = 5000
@@ -162,6 +164,7 @@ class Serveur(Thread):
             
             self.sock.close()
             self.clientsock.close()
+            print (traceback.format_exc())
             print " ========   server closed ====== "
         except Exception as e:
             print e

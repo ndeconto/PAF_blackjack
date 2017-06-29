@@ -101,7 +101,7 @@ class Arbitre(GUIComponent):
             pause = PauseComponent(K_RETURN, EXIT_GAME_LOOP)
             for c in other_components:
                 if isinstance(c, ServeurManager):
-                    self.do_in_x_seconds(1.5, c.serveur.close_server)
+                    self.do_in_x_seconds(2.5, c.serveur.close_server)
         else:
             G *= -1
             t_0 = clock()
