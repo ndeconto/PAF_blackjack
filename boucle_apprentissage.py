@@ -60,6 +60,8 @@ def apprentissage3(n):
     victoires = 0
     defeats = 0
     gain = 0
+    X = []
+    Y = []
     for k in range(n):
         result, player_statesActions,bool_as_choice,bool_pair, enemy_state,position_as, enemy_statesActions,enemy_bool_as_choice, enemy_bool_pair, player_state, enemy_position_as = symetricLearning()
         ###MAJ des stats : 
@@ -75,8 +77,19 @@ def apprentissage3(n):
             victoires += 1
         elif result < 0 :
             defeats +=1
-        if(k%100000 == 0):
-            print("Progrès : ", int((k/n)*100) ,"%")  
+        if(k%10000 == 0):
+            print("Progrès : ", int((k/n)*100) ,"%")
+        if(k%100 == 0 and k >= 1000):
+            
+            X.append(k)
+            Y.append(res)
+    f = plt.figure()
+    plt.plot(X,Y)
+    plt.xlabel("Nombre d'apprentissage")
+    plt.ylabel("Gain réalisé")
+    plt.title("Vitesse d'apprentisissage de l'IA au BlackJack Symetrique\n 1M d'itérations")
+    plt.show()
+    f.savefig("Vitesse d'apprentisissage de l'IA au BlackJack Symetrique_1M d'itérations.pdf", bbox_inches='tight')
     print("Pourcentage de victoires : ", int((victoires/n)*100000)/1000, "%")
     print("Pourcentage de victoires de l'adversaire : ", int((defeats/n)*100000)/1000, "%")
     print("Gain par euro investi : ", int((gain/n)*1000)/1000)
@@ -311,24 +324,22 @@ def graphe_vitesse_apprentissage(a_min=0, pas=2 * 10**5,a_max = 10**7, log=False
     xlabel("nombre d'iterations d'apprentissage")
     ylabel("gain moyen pour une mise de 1")
     plot(lx, ly)
-    show()
-
- 
-def save_to_pdf(plot1):
-    pp = PdfPages("Vitesse d'apprentisissage de l'IA au BlackJack Classique_1M d'itérations.pdf")
-    pp.savefig(plot1)    
+    show() 
     
     
     
+def jouer_vs_bank():
+    for k in range (10000):
+        #On va jouer 10 000 parties avec la policy et compter les gains.
+        gain = 0
+        res = play_graph_sym()
+        gain += res 
+    return(gain/10000)    
     
     
-    
-    
-    
-    
-    
-    
-    
+def play_graph_sym():
+    result, player_statesActions,bool_as_choice,bool_pair, enemy_state,position_as, enemy_statesActions,enemy_bool_as_choice, enemy_bool_pair, player_state, enemy_position_as = symetricLearning_graph()
+    return(result)    
     
     
     
