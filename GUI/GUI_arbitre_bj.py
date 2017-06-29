@@ -112,7 +112,7 @@ class Arbitre(GUIComponent):
         gain_1 = TextComponent(2, (205, 145), ('+' if G>0 else '')+str(G), 45)
         gain_2 = TextComponent(2, (775, 145), ('+' if G<0 else '')+str(-G), 45)
 
-        bouton = Bouton(4, (465, 400), "img/next_game.png", lambda : 0, special_return=REPLAY)
+        bouton = Bouton(4, (462, 400), "img/next_game.png", lambda : 0, special_return=REPLAY)
         if couple_gagnant_perdant == None:
             #TODO c'est pas hyper beau...
             img_draw = ImageComponent(4, (350, 250), "img/draw.png")
