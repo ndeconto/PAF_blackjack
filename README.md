@@ -6,7 +6,7 @@ We applied the reinforcement learning technique to BlackJack, and more particula
 
 ## Principle
 
-The AI relies on a system of rewards : although it does not know any rule of the game initially, the AI will gradually improve its decision-making because the matrix of decisions is updated every end of the game.
+The AI relies on a system of rewards : although it does not know any rule of the game initially, the AI will gradually improve its decision-making because the matrix of decisions is updated at every end of game.
 
 This matrix has 4 dimensions : Category of hand (see below), Oponent state (the first card of the oponent), Player state (the current hand of the AI) and decision's rating (the index of the highest number gives the best decision).
 
