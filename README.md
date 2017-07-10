@@ -1,4 +1,4 @@
-# An AI playing BlackJack
+﻿# An AI playing BlackJack
 
 This project has been created by 5 first-year students at Télécom Paristech in 14 days.
 We applied the reinforcement learning technique to BlackJack, and more particularly to a symetric version of BlackJack we created to let people try to beat the AI in a balanced game.
@@ -48,6 +48,29 @@ We also have to decide how much the result of a game should impact the learning,
 
 ## Usage
 
+# Learning 
+
 To see what the AI decisions look like, you can check out the excel sheets in the results folders (obtained with openpyxl)
 
-To play against the computer, 
+
+# lauch the main program and play
+To launch the main program, open a terminal in the directory GUI and simply write something like
+'''
+$ python27 GUI_main.py
+'''
+
+Make sure you have [python27](https://www.python.org/downloads/) installed on your computer, with the [pygame library](http://pygame.org/download.shtml). 
+
+
+There are three different modes in this program :
+1. **IA against dealer** : in this mode, you are just a spectator, who watchs the Artificial Intelligence playing against a classic dealer
+2. **classic game** :  in this mode, you play blackjack against the dealer, like in a casino. Our AI is not used.
+3. **symetric game** : in this mode, you play against our AI. Therefore, the rules of blackjack were a little bit modified (see below). Note that this mode needs two different window (on two different screens if possible). Thus, if you want to play a symetric game, you have to launch GUI_main.py **and** GUI_client.py. You will play on the first window, while spectators can see on the other window what the AI is playing. The game ends when both you and the AI are finished.
+
+When a game is finished, you can play again in the same mode by clicking on the button NEXT GAME in the center of the screen. If you want to play in an other mode, press _escape_
+
+## Special rules for a symetric game
+
+Sorry, it is not yet explained...
+
+
