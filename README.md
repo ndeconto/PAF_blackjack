@@ -48,16 +48,17 @@ We also have to decide how much the result of a game should impact the learning,
 
 ## Usage
 
-# Learning 
+### Learning 
 
 To see what the AI decisions look like, you can check out the excel sheets in the results folders (obtained with openpyxl)
 
 
-# lauch the main program and play
+### lauch the main program and play
 To launch the main program, open a terminal in the directory GUI and simply write something like
-'''
+
+```
 $ python27 GUI_main.py
-'''
+```
 
 Make sure you have [python27](https://www.python.org/downloads/) installed on your computer, with the [pygame library](http://pygame.org/download.shtml). 
 
@@ -65,9 +66,9 @@ Make sure you have [python27](https://www.python.org/downloads/) installed on yo
 There are three different modes in this program :
 1. **IA against dealer** : in this mode, you are just a spectator, who watchs the Artificial Intelligence playing against a classic dealer
 2. **classic game** :  in this mode, you play blackjack against the dealer, like in a casino. Our AI is not used.
-3. **symetric game** : in this mode, you play against our AI. Therefore, the rules of blackjack were a little bit modified (see below). Note that this mode needs two different window (on two different screens if possible). Thus, if you want to play a symetric game, you have to launch GUI_main.py **and** GUI_client.py. You will play on the first window, while spectators can see on the other window what the AI is playing. The game ends when both you and the AI are finished.
+3. **symetric game** : in this mode, you play against our AI. Therefore, the rules of blackjack were a little bit modified (see below). Note that this mode needs two different window (on two different screens if possible). Thus, if you want to play a symetric game, you have to **launch GUI_main.py** _and_ **GUI_client.py**. You will play on the first window, while spectators can see on the other window what the AI is playing. The game ends when both you and the AI are finished.
 
-When a game is finished, you can play again in the same mode by clicking on the button NEXT GAME in the center of the screen. If you want to play in an other mode, press _escape_
+When a game is finished, you can play again in the same mode by clicking on the button **NEXT GAME** in the center of the screen. If you want to play in an other mode, press **escape**.
 
 ## Special rules for a symetric game
 
