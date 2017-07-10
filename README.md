@@ -54,13 +54,13 @@ To see what the AI decisions look like, you can check out the excel sheets in th
 
 
 ### lauch the main program and play
-To launch the main program, open a terminal in the directory GUI and simply write something like
+To launch the main program, open a terminal in the directory **GUI** and simply write something like
 
 ```
-$ python27 GUI_main.py
+$ python GUI_main.py
 ```
 
-Make sure you have [python27](https://www.python.org/downloads/) installed on your computer, with the [pygame library](http://pygame.org/download.shtml). 
+Make sure you have [python](https://www.python.org/downloads/) installed on your computer, with the [pygame library](http://pygame.org/download.shtml). Python's version and pygame's version must of course be compatible.  
 
 
 There are three different modes in this program :
