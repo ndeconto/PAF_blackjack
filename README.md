@@ -1,7 +1,7 @@
 ﻿# An AI playing BlackJack
 
 This project has been created by 5 first-year students at Télécom Paristech in 14 days.
-We applied the reinforcement learning technique to BlackJack, and more particularly to a symetric version of BlackJack we created to let people try to beat the AI in a balanced game.
+We implemented Monte Carlo's epsilon-greedy method for reinforcement learning and applied it to BlackJack, and more particularly to a symetric version of BlackJack we created to let people try to beat the AI in a balanced game.
 
 
 ## Principle
